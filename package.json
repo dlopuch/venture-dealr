@@ -1,0 +1,22 @@
+{
+  "name": "sketchpack",
+  "version": "0.0.1",
+  "description": "Using webpack for javascript sketches",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dlopuch/sketchpack.git"
+  },
+  "author": "Dan Lopuch (http://www.datahero.com/)",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/dlopuch/sketchpack/issues"
+  },
+  "homepage": "https://github.com/dlopuch/sketchpack",
+  "devDependencies": {
+    "webpack": "^1.8.10"
+  }
+}
