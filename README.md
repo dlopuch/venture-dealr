@@ -11,4 +11,5 @@ Webpack frontend boilerplate for javascript sketching.  Includes:
 2. Change package.json to have your project settings
 3. Install webpack: `npm install -g webpack` (global to make webpack CLI available)
 4. Add some neat stuff to this project, eg `npm install --save lodash`
-5. Start up webpack:
+5. Start up webpack watch server: `$ webpack-dev-server`
+6. Change files and make something awesome!
