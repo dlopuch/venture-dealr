@@ -17,6 +17,5 @@
   },
   "homepage": "https://github.com/dlopuch/sketchpack",
   "devDependencies": {
-    "webpack": "^1.8.10"
   }
 }
