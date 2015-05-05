@@ -1,22 +1,26 @@
 {
-  "name": "sketchpack",
+  "name": "smaller-slice-larger-pie",
   "version": "0.0.1",
-  "description": "Using webpack for javascript sketches",
+  "description": "d3 experiment",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dlopuch/sketchpack.git"
+    "url": "https://github.com/dlopuch/smaller-slice-larger-pie.git"
   },
   "author": "Dan Lopuch (http://www.datahero.com/)",
   "license": "GPLv2",
   "bugs": {
-    "url": "https://github.com/dlopuch/sketchpack/issues"
+    "url": "https://github.com/dlopuch/smaller-slice-larger-pie/issues"
   },
-  "homepage": "https://github.com/dlopuch/sketchpack",
+  "homepage": "https://github.com/dlopuch/smaller-slice-larger-pie",
   "devDependencies": {
     "webpack": "^1.8.10"
+  },
+  "dependencies": {
+    "d3": "^3.5.5",
+    "lodash": "^3.8.0"
   }
 }
