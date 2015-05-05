@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/dlopuch/smaller-slice-larger-pie",
   "devDependencies": {
-    "webpack": "^1.8.10"
   },
   "dependencies": {
     "d3": "^3.5.5",
