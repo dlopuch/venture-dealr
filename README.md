@@ -5,6 +5,7 @@ Webpack frontend boilerplate for javascript sketching.  Includes:
 - webpack for building your CommonJS or RequireJS files
 - watch server to rebuild on change
 - sourcemaps to trace through your code
+- jslint integrated
 
 # To get started
 1. Fork me
