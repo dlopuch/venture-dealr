@@ -1,7 +1,9 @@
 module.exports = {
-  entry: {
-    app: ['./public/entry.js']
-  },
+  context: __dirname + '/public/js',
+  entry: './main',
+  // entry: {
+    // app: ['main.js']
+  // },
   output: {
     path: './public/',
     filename: 'bundle.js'
@@ -15,29 +17,30 @@ module.exports = {
     ],
     loaders: [
       // { test: /\.css$/, loader: "style!css" }
+      { loader: 'babel-loader', test: /\.js$/, exclude: /node_modules/}
     ]
   },
   devServer: {
     contentBase: './public/',
-    
+
     // Trying to get hotloading to work.  Not quite there yet.
     //hot: true,
     //inline: true
     // also: need to enable special script in index.html
   },
   jshint: {
-        // any jshint option http://www.jshint.com/docs/options/
-        // i. e.
-        camelcase: true,
+    // any jshint option http://www.jshint.com/docs/options/
+    // i. e.
+    camelcase: true,
 
-        // jshint errors are displayed by default as warnings
-        // set emitErrors to true to display them as errors
-        emitErrors: true,
+    // jshint errors are displayed by default as warnings
+    // set emitErrors to true to display them as errors
+    emitErrors: true,
 
-        // jshint to not interrupt the compilation
-        // if you want any file with jshint errors to fail
-        // set failOnHint to true
-        failOnHint: true,
+    // jshint to not interrupt the compilation
+    // if you want any file with jshint errors to fail
+    // set failOnHint to true
+    failOnHint: true,
   },
   devtool: '#inline-source-map'
 };

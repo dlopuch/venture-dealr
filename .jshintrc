@@ -70,8 +70,9 @@
     "passfail"      : false,
     "white"         : false,
 
-    "-W002"          : true,
+    "-W002"         : true,
+    "esnext"        : true,
 
-    "predef"        : [ "define", "require", "module", "exports", "global", "process", "alert", "DH_CONF", "Stripe", "Datahero", "Backbone", "google", "_gaq", "Highcharts", "io", "asynchRequestHandler", "getChart", "getChartSVG", "setTimeScale", "groupBy", "groupByDomain", "orderBy", "removeSeries", "updateChart", "oTable", "HMS_R", "ESCAPE_REGEXP", "geochart", "chart", "showChartLoadingOverlay", "typeEnum_toGoogleName", "moment", "edit_finish", "getUserData", "deleteUser", "resendEmail", "changeUser", "Modernizr", "_chartModel", "_chartDataModel", "phantomJsPath", "renderChartTimeout", "console", "prompt", "confirm", "__dirname", "requestAnimationFrame", "context", "describe", "before"]
+    "predef"        : [ "define", "require", "module", "exports", "global", "console"]
 
 }
