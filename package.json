@@ -23,8 +23,10 @@
   },
   "dependencies": {
     "d3": "^3.5.5",
-    "lodash": "^3.8.0",
+    "flux": "^2.0.3",
     "jshint": "^2.7.0",
-    "jshint-loader": "^0.8.3"
+    "jshint-loader": "^0.8.3",
+    "lodash": "^3.8.0",
+    "object-assign": "^2.0.0"
   }
 }
