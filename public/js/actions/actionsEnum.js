@@ -2,7 +2,8 @@ var _ = require('lodash');
 
 var ACTIONS = {
   ROUND: {
-    ADD_PREFERRED: true
+    ADD_INVESTMENT: true,
+    UPDATED_MONEY: true,
   }
 };
 

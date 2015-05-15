@@ -1,9 +1,8 @@
+var CONTEXT = __dirname + '/public/js';
+
 module.exports = {
-  context: __dirname + '/public/js',
+  context: CONTEXT,
   entry: './main',
-  // entry: {
-    // app: ['main.js']
-  // },
   output: {
     path: './public/',
     filename: 'bundle.js'
@@ -19,6 +18,17 @@ module.exports = {
       // { test: /\.css$/, loader: "style!css" }
       { loader: 'babel-loader', test: /\.js$/, exclude: /node_modules/}
     ]
+  },
+  resolve: {
+    alias: {
+      // allows you to require('app/someRootFile') anywhere in the app instead of the
+      // relative-form require('../../../someRootFile') enabled by the context config.
+      app: CONTEXT
+    }
+
+    // Alternative to app alias: put public/js into the resolve list.
+    // Kinda confusing wrt node_modules requires though...
+    //modulesDirectories: ['node_modules', 'public/js']
   },
   devServer: {
     contentBase: './public/',
