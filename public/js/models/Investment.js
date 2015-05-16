@@ -13,7 +13,7 @@ module.exports = class Investment {
 
     // TODO: Specify an investment in terms of post-money percentage (changes round pre-money)
 
-    this.id = 'investment_' + (id++);
+    this.id = id++;
 
     this.round = round;
 

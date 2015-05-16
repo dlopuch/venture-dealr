@@ -29,7 +29,7 @@ class EquityStake {
     if (!shareClass)
       throw new Error('shareClass required');
 
-    this.id = 'stake_' + (id++);
+    this.id = id++;
 
     this.round = round;
     round.addStake(this);

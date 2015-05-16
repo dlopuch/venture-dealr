@@ -27,7 +27,7 @@ module.exports = class Round extends EventEmitter {
 
     super();
 
-    this.id = 'round_' + (id++);
+    this.id = id++;
 
     this.name = name;
 
@@ -165,7 +165,7 @@ module.exports = class Round extends EventEmitter {
 
 
     // Finally, calculate percentages
-    stats.stakesAndPercentages = stakes.map(
+    stats.stakesAndPercentages = _.sortBy(stakes, 'id').reverse().map(
       stake => ({stake: stake, percentage: stake.numShares / stats.numSharesPostMoney})
     );
 

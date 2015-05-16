@@ -25,9 +25,9 @@ describe('Round', function() {
       roundMoney           : 0,
       sharePrice           : null,
       stakesAndPercentages : [
-        {stake: stake1, percentage: 0.5},
+        {stake: stake3, percentage: 0.2},
         {stake: stake2, percentage: 0.3},
-        {stake: stake3, percentage: 0.2}
+        {stake: stake1, percentage: 0.5}
       ]
     }, 'Round 0 stats incorrect!');
   });
@@ -51,11 +51,11 @@ describe('Round', function() {
       roundMoney           : 30000,
       sharePrice           : 10,
       stakesAndPercentages : [
-        {stake: investment1a.equityStake, percentage: 0.25},
         {stake: investment1b.equityStake, percentage: 0.5},
-        {stake: stake1, percentage: 0.25 * 0.5},
+        {stake: investment1a.equityStake, percentage: 0.25},
+        {stake: stake3, percentage: 0.25 * 0.2},
         {stake: stake2, percentage: 0.25 * 0.3},
-        {stake: stake3, percentage: 0.25 * 0.2}
+        {stake: stake1, percentage: 0.25 * 0.5}
       ]
     }, 'Round 1 stats incorrect!');
   });
