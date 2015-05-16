@@ -40,6 +40,7 @@ module.exports = class Round extends EventEmitter {
     if (optionsPool.type !== 'post')
       throw new Error('Pre-money options pool not yet supported');
     this._roundOptionsPoolSpec = optionsPool;
+    this.roundOptionsPoolEquity = null;
   }
 
   getRoundMoney() {
@@ -79,7 +80,18 @@ module.exports = class Round extends EventEmitter {
     if (!(equityStake instanceof EquityStake))
       throw new Error('Invalid investment');
 
+    if (equityStake.round !== this)
+      throw new Error('Cannot add equity stake -- part of a different round');
+
+    if (equityStake.isOptionsPool && this.roundOptionsPoolEquity)
+      throw new Error('Cannot add option pool -- round already has one');
+
     this._equityStakes.push(equityStake);
+
+    if (equityStake.isOptionsPool) {
+      this.roundOptionsPoolEquity = equityStake;
+    }
+
     return this;
   }
 
@@ -90,8 +102,11 @@ module.exports = class Round extends EventEmitter {
 
   /**
    * Returns all EquityStake's up to and (by default) including this Round.
+   *
    * @param {Object} [opts]
-   *   onlyPrevRounds: {boolean} Only the EquityStakes from previous rounds (ie not including this round)
+   *   [onlyPrevRounds]: {boolean} Only the EquityStakes from previous rounds (ie not including this round)
+   *   [includeSubEquities]: {boolean} If true, won't filter 'double counting' equities that are part of a counted pool
+   *     (eg will include pieces of the option pool as well as the option pool itself)
    * @returns {Array(EquityStake)} All EquityStakes
    */
   getAllStakes(opts={}) {
@@ -102,7 +117,13 @@ module.exports = class Round extends EventEmitter {
       stakes = stakes.concat(prevRound._equityStakes);
       prevRound = prevRound.prevRound;
     }
-    return stakes;
+
+    if (!opts.includeSubEquities) {
+      return stakes;
+    }
+
+    return stakes
+    .filter(s => !s.opts.fromOptionsPool); // filter out "sub-equities" that are counted as part of the options pool
   }
 
   calculateStats() {
@@ -151,10 +172,27 @@ module.exports = class Round extends EventEmitter {
 
 
       // Now that we know the share price, figure out how much equity each investment bought
-      var anyChanged = false;
+      let anyChanged = false;
       roundInvestments.forEach(function(investment) {
         anyChanged = this._calculateInvestmentEquity(stats, investment) || anyChanged;
       }.bind(this));
+
+      // Also recalculate the options pool using share price
+      anyChanged = this._calculateOptionsPoolFromSharePrice(stats) || anyChanged;
+
+      if (anyChanged) {
+        stakes = this.getAllStakes();
+        roundStakes = null; // possibly dirty, don't use
+        stats.numSharesPostMoney = stakes.reduce(STAKES_TO_NUM_SHARES_REDUCER, 0);
+      }
+
+    // If no investments this round (eg founding round)...
+    } else {
+
+      let anyChanged = false;
+
+      // Calculate option pool based on percentage
+      anyChanged = this._calculateOptionsPoolFromPercentage();
 
       if (anyChanged) {
         stakes = this.getAllStakes();
@@ -183,7 +221,7 @@ module.exports = class Round extends EventEmitter {
    * @return {boolean} True if the equity has changed, false otherwise
    */
   _calculateInvestmentEquity(roundStats, investment) {
-    if (roundStats.sharePrice <= 0)
+    if (!roundStats.sharePrice || roundStats.sharePrice <= 0)
       throw new Error('Cannot make investment with 0 or negative share price');
 
     var numShares = investment.money / roundStats.sharePrice;
@@ -201,6 +239,82 @@ module.exports = class Round extends EventEmitter {
         stake.numShares = numShares;
         stakeChanged = true;
       }
+    }
+
+    return stakeChanged;
+  }
+
+  /**
+   * Calculates how much equity has been allocated to the option pool for this round
+   *
+   * If equity is not yet known, it is created and registered with the entities
+   *
+   * @param {Object} roundStats Object like:
+   *   .sharePrice: {number} Cost per share
+   * @return {boolean} True if the equity has changed, false otherwise
+   */
+  _calculateOptionsPoolFromSharePrice(roundStats) {
+    if (!roundStats.sharePrice || roundStats.sharePrice <= 0)
+      throw new Error('Cannot make investment with 0 or negative share price');
+
+    if (this._roundOptionsPoolSpec.type !== 'post')
+      throw new Error('pre-round option pool spec not supported');
+
+    var numShares = roundStats.postMoney * this._roundOptionsPoolSpec.percent / roundStats.sharePrice;
+
+    var stakeChanged = false;
+    if (!this.roundOptionsPoolEquity) {
+      this.roundOptionsPoolEquity = new EquityStake(this, numShares, ShareClass.COMMON, {isOptionsPool: true});
+      stakeChanged = true;
+
+    } else {
+      if (numShares !== this.roundOptionsPoolEquity.numShares) {
+        this.roundOptionsPoolEquity.numShares = numShares;
+        stakeChanged = true;
+      }
+    }
+
+    return stakeChanged;
+  }
+
+  /**
+   * Calculates how much equity has been allocated to the option pool for this round based on just the round option
+   * pool spec (percentage of round to options pool)
+   *
+   * If equity is not yet known, it is created and registered with the entities
+   *
+   * @return {boolean} True if the equity has changed, false otherwise
+   */
+  _calculateOptionsPoolFromPercentage() {
+    if (this._roundOptionsPoolSpec.type !== 'post')
+      throw new Error('pre-round option pool spec not supported');
+
+    var stakes = this.getAllStakes();
+
+    if (this.roundOptionsPoolEquity) {
+      stakes = stakes.filter(s => s !== this.roundOptionsPoolEquity);
+    }
+
+    var nNonRoundOptionShares = stakes.reduce(STAKES_TO_NUM_SHARES_REDUCER, 0);
+
+    // %PostMoneyOptShares = nPostMOptShares / ( nPreMoneyShares + nRoundShares + nPostMOptShares)
+    // Re-arrange to solve for nPostMOptShares and you get:
+    var nPostMoneyOptShares =
+      ( this._roundOptionsPoolSpec.percent * nNonRoundOptionShares ) / (1 - this._roundOptionsPoolSpec.percent);
+
+    var stakeChanged = false;
+    if (!this.roundOptionsPoolEquity) {
+      this.roundOptionsPoolEquity = new EquityStake(
+        this, nPostMoneyOptShares, ShareClass.COMMON, {isOptionsPool: true}
+      );
+      stakeChanged = true;
+
+    } else {
+      if (nPostMoneyOptShares !== this.roundOptionsPoolEquity.numShares) {
+        this.roundOptionsPoolEquity.numShares = nPostMoneyOptShares;
+        stakeChanged = true;
+      }
+
     }
 
     return stakeChanged;
