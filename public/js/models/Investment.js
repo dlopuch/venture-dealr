@@ -6,8 +6,10 @@ module.exports = class Investment {
   /**
    * @param {models.Round} round Investment's round
    * @param {number} money Investment amount (in currency)
+   * @param {Object} [opts] like:
+   *   [name]: {string} Investment name
    */
-  constructor(round, money) {
+  constructor(round, money, opts={}) {
     if (!round)
       throw new Error('Round required!');
 
@@ -17,7 +19,9 @@ module.exports = class Investment {
 
     this.round = round;
 
-    round.addInvestment(this);
+    round._registerInvestment(this);
+
+    this.name = opts.name || (money + ' investment from ' + round.name + ' round');
 
     this.money = money;
     this.equityStake = null; // to be calculated

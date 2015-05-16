@@ -11,6 +11,8 @@ var STAKES_TO_NUM_SHARES_REDUCER = function(sum, equityStake) {
   return sum + equityStake.numShares;
 };
 
+const EVENT_STATS_CHANGED = 'statsChanged';
+
 module.exports = class Round extends EventEmitter {
 
   /**
@@ -32,7 +34,12 @@ module.exports = class Round extends EventEmitter {
     this.name = name;
 
     this.preMoneyValuation = preMoneyValuation;
+
     this.prevRound = prevRound || null;
+    if (prevRound) {
+      this._handlePrevRoundChange = this._handlePrevRoundChange.bind(this);
+      prevRound.on(EVENT_STATS_CHANGED, this._handlePrevRoundChange);
+    }
 
     this._investments = [];
     this._equityStakes = [];
@@ -41,6 +48,19 @@ module.exports = class Round extends EventEmitter {
       throw new Error('Pre-money options pool not yet supported');
     this._roundOptionsPoolSpec = optionsPool;
     this.roundOptionsPoolEquity = null;
+
+    this.stats = null;
+  }
+
+  destroy() {
+    this.prevRound.removeListener(this._handlePrevRoundChange);
+    this.removeAllListeners();
+  }
+
+  _handlePrevRoundChange() {
+    // If a previous round changed its stats, invalidate this round's changed stats and pass it up the chain.
+    this.stats = null;
+    this.emit(EVENT_STATS_CHANGED, this);
   }
 
   getRoundMoney() {
@@ -51,11 +71,18 @@ module.exports = class Round extends EventEmitter {
     return this.preMoneyValuation + this.getRoundMoney();
   }
 
-  addInvestment(investment) {
+  /**
+   * Called by Investment constructor... Investments self-register with Rounds upon construction.
+   * @param {models.Investment}
+   */
+  _registerInvestment(investment) {
     if (!(investment instanceof Investment))
       throw new Error('Invalid investment');
 
     this._investments.push(investment);
+
+    this.stats = null;
+
     return this;
   }
 
@@ -76,7 +103,11 @@ module.exports = class Round extends EventEmitter {
     return investments;
   }
 
-  addStake(equityStake) {
+  /**
+   * Called by EquityStake constructor... EquityStakes self-register with Rounds upon construction.
+   * @param {models.EquityStake}
+   */
+  _registerStake(equityStake) {
     if (!(equityStake instanceof EquityStake))
       throw new Error('Invalid investment');
 
@@ -92,11 +123,16 @@ module.exports = class Round extends EventEmitter {
       this.roundOptionsPoolEquity = equityStake;
     }
 
+    this.stats = null;
+
     return this;
   }
 
   removeStake(toDeleteStake) {
     this._equityStakes = this._equityStakes.filter(function(stake) { return stake !== toDeleteStake; });
+
+    this.stats = null;
+
     return this;
   }
 
@@ -127,6 +163,16 @@ module.exports = class Round extends EventEmitter {
   }
 
   calculateStats() {
+    // If memoized (not dirty), return existing stats
+    if (this.stats) {
+      return this.stats;
+    }
+
+    // Make sure previous round chain is up to date
+    if (this.prevRound && !this.prevRound.stats) {
+      this.prevRound.calculateStats();
+    }
+
     var stats = {
       stakesAndPercentages: null, // {Array}, calculated below
       numSharesPostMoney: 0,
@@ -167,7 +213,7 @@ module.exports = class Round extends EventEmitter {
         }
 
         // TODO: Add debt into the numerator
-        stats.sharePrice = (stats.preMoney - (stats.roundMoney * this._roundOptionsPoolSpec.percent)) / numPriorShares;
+        stats.sharePrice = (stats.preMoney - (stats.postMoney * this._roundOptionsPoolSpec.percent)) / numPriorShares;
       }
 
 
@@ -207,6 +253,12 @@ module.exports = class Round extends EventEmitter {
       stake => ({stake: stake, percentage: stake.numShares / stats.numSharesPostMoney})
     );
 
+    // memoize indicating up-to-date
+    this.stats = stats;
+
+    // tell later Rounds that we've changed
+    this.emit(EVENT_STATS_CHANGED, this);
+
     return stats;
   }
 
@@ -230,7 +282,7 @@ module.exports = class Round extends EventEmitter {
 
     var stake = investment.equityStake;
     if (!stake) {
-      stake = new EquityStake(this, numShares, ShareClass.PREFERRED, {fromInvestment: investment});
+      stake = new EquityStake(this, numShares, {shareClass: ShareClass.PREFERRED, fromInvestment: investment});
       investment.equityStake = stake;
       stakeChanged = true;
 
@@ -264,7 +316,9 @@ module.exports = class Round extends EventEmitter {
 
     var stakeChanged = false;
     if (!this.roundOptionsPoolEquity) {
-      this.roundOptionsPoolEquity = new EquityStake(this, numShares, ShareClass.COMMON, {isOptionsPool: true});
+      this.roundOptionsPoolEquity = new EquityStake(this, numShares,
+        {shareClass: ShareClass.COMMON, isOptionsPool: true}
+      );
       stakeChanged = true;
 
     } else {
@@ -305,7 +359,7 @@ module.exports = class Round extends EventEmitter {
     var stakeChanged = false;
     if (!this.roundOptionsPoolEquity) {
       this.roundOptionsPoolEquity = new EquityStake(
-        this, nPostMoneyOptShares, ShareClass.COMMON, {isOptionsPool: true}
+        this, nPostMoneyOptShares, {shareClass: ShareClass.COMMON, isOptionsPool: true}
       );
       stakeChanged = true;
 
