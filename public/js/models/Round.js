@@ -27,6 +27,9 @@ module.exports = class Round extends EventEmitter {
     if (prevRound && !(prevRound instanceof Round))
       throw new Error('Invalid round!');
 
+    if (!_.isNumber(optionsPool.percent) || optionsPool.percent < 0 || 1 < optionsPool.percent)
+      throw new Error('Options pool percent must be specified as number between 0-1');
+
     super();
 
     this.id = id++;
