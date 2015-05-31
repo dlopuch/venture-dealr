@@ -20,6 +20,33 @@ var RoundStore = assign({}, EventEmitter.prototype, {
     setTimeout(_.partial(roundActions.updatedMoney, payload.round));
   },
 
+  /**
+   * Turns a round into a data to be fed into a d3 stack layout.
+   *
+   *
+   *
+   * @param {models.Round} upToRound last round to data-ify
+   * @returns {Object} like: {
+   *   rounds: {Array(model.Round)} List of rounds in order, ie the x-axis
+   *   stakes: {Array(Object)} where each object is like:
+   *     stake: {models.EquityStake} Underlying stake for the series
+   *     percentages: {Array(Object)} List of d3 stack layout objects for percentage measure
+   *     values: {Array(Object)} List of d3 stack layout objects for value of equity shares measure
+   *   }
+   * }
+   *
+   * .percentages and .values are Objects like: {
+   *   x: {number} index into .rounds
+   *   n: {number} value of the measure (eg percentage if .percentages)
+   *   xRound: {models.Round} the Round
+   *   yStake: {models.EquityStake} the stake for the datum (same across entire series)
+   * }
+   *
+   * To generate .y and .y0's, should be fed into a d3 layout like so:
+   *   d3.layout.stack()
+   *   .values(s => s.percentages)  [note: or .values, whichever measure you want]
+   *   .y(o => o.n)
+   */
   generateChartSeries: function(upToRound) {
     var percentagesByStakeIds = {};
     var valuesByStakeIds = {};
@@ -89,8 +116,26 @@ var RoundStore = assign({}, EventEmitter.prototype, {
       stakes: _(stakeDataById)
         .values()
         .forEach(function(s) {
+
+          // correct for 'backwards' iteration-from-last-round
           s.percentages.reverse();
           s.values.reverse();
+
+          // transform into d3 stack layout format, and for convenience link to all other entities
+          function xyify(number, i) {
+            return {
+              x: i,
+              n: number,
+
+              xRound: roundData[i].round,
+              xRoundStats: roundData[i].stats,
+              yStake: s.stake
+
+              // .y and .y0 added in by the stack layout
+            };
+          }
+          s.percentages = s.percentages.map(xyify);
+          s.values      = s.values.map(xyify);
         })
         .value()
     };

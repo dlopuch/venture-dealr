@@ -61,41 +61,39 @@ describe('RoundStore', function() {
         [IS_NULL, IS_NULL, false],
         [IS_NULL, IS_NULL, false]
       ];
-      nullsByStakeAndRound.forEach(function(nullMask, stakeI) {
-        nullMask.forEach(function(maskValue, roundI) {
-          if (maskValue) {
-            assert.isNull(chartData.stakes[stakeI].percentages[roundI],
-              "Expected null for .percentage[" + roundI + "] on stake '" + chartData.stakes[stakeI].stake.name + "'"
-            );
-            assert.isNull(chartData.stakes[stakeI].values[roundI],
-              "Expected null for .values[" + roundI + "] on stake '" + chartData.stakes[stakeI].stake.name + "'"
-            );
+      ['percentages', 'values'].forEach(function(accessor) {
+        _.pluck(chartData.stakes, accessor)
+        .forEach(function(stakeMeasure, stakeI) {
+          var stake = chartData.stakes[stakeI].stake;
 
-          } else {
-            assert.isNumber(chartData.stakes[stakeI].percentages[roundI],
-              "Expected number for .percentage[" + roundI + "] on stake '" + chartData.stakes[stakeI].stake.name + "'"
-            );
-            assert.isTrue(
-              chartData.stakes[stakeI].percentages[roundI] <= 1 && chartData.stakes[stakeI].percentages[roundI] >= 0,
-              ".percentage[" + roundI + "] on stake '" + chartData.stakes[stakeI].stake.name + "' is not a percentage!"
-            );
+          assert.equal(stakeMeasure.length, chartData.rounds.length,
+            "Expected ." + accessor + " for stake '" + stake.name + "' to have same length as num rounds"
+          );
 
-            assert.isNumber(chartData.stakes[stakeI].values[roundI],
-              "Expected number for .values[" + roundI + "] on stake '" + chartData.stakes[stakeI].stake.name + "'"
-            );
-          }
+          stakeMeasure.forEach(function(value, roundI) {
+            var whereAmI = "." + accessor + "[" + roundI + "] on '" + chartData.stakes[stakeI].stake.name + "'";
+
+            // Check measure has number or null for .n
+            if (nullsByStakeAndRound[stakeI][roundI]) {
+              assert.isNull(value.n, 'Expected null for ' + whereAmI);
+            } else if (nullsByStakeAndRound[stakeI][roundI] === false) {
+              assert.isNumber(value.n, 'Expected a number for ' + whereAmI);
+            } else {
+              assert.fail("Nulls mask doesn't spec expectation for " + whereAmI);
+            }
+
+
+            // Check other linkages
+            assert.strictEqual(value.yStake, stake, whereAmI + ': Stake link not correct');
+
+            assert.equal(value.x, roundI, whereAmI + ': x-value should be the measure index');
+            assert.strictEqual(value.xRound, chartData.rounds[roundI].round,
+              whereAmI + ': Round link not correct');
+            assert.strictEqual(value.xRoundStats, chartData.rounds[roundI].stats,
+              whereAmI + ': Round stats link not correct');
+
+          });
         });
-      });
-
-      // Finally, all measures must be the same length as the x-axis
-      chartData.stakes.forEach(function(s) {
-        assert.equal(s.percentages.length, chartData.rounds.length,
-          "Expected .percentages measure length to equal x-axis length for stake '" + s.stake.name + "'"
-        );
-
-        assert.equal(s.values.length, chartData.rounds.length,
-          "Expected .values measure length to equal x-axis length for stake '" + s.stake.name + "'"
-        );
       });
 
     });

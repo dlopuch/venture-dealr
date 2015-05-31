@@ -1,3 +1,5 @@
+var d3 = require('d3');
+
 window.onload = function() {
   var Chart = require('./Chart');
 
@@ -32,6 +34,17 @@ window.onload = function() {
   var stats = window.seriesARound.calculateStats(); // also calculates previous round stats
 
 
-  window.scenario = require('../../test/unit/_scenarios/foundingSeedSeriesA');
+  window.scenario = require('../../test/unit/_scenarios/foundingSeedSeriesA')();
+
+  window.chartData = RoundStore.generateChartSeries(window.scenario.seriesARound);
+
+  var stack = d3.layout.stack().values(stake => stake.percentages).y(o => o.n);
+  stack(window.chartData.stakes);
+
+  stack.values(stake => stake.values);
+  stack(window.chartData.stakes);
+
+  // now try looking at say: _.pluck(chartData.stakes, 'percentages')
+  // Should be a list of calculated datums you can make a graph off of.
 
 };
