@@ -1,5 +1,5 @@
 var ACTIONS = require('./actionsEnum');
-var dispatcher = require('app/dispatcher');
+var dispatcher = require('dispatcher');
 
 module.exports = {
   addInvestment: function(round, investment) {

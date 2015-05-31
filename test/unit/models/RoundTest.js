@@ -1,23 +1,12 @@
 var _ = require('lodash');
 var assert = require('chai').assert;
 
+var utils = require('../utils');
+
 var Round = require('models/Round');
 var EquityStake = require('models/EquityStake');
 var Investment = require('models/Investment');
 var ShareClass = require('models/ShareClass');
-
-var NAMEIFY_STAKES = function(stakeAndPercentage) { stakeAndPercentage.stake = stakeAndPercentage.stake.name; };
-
-/**
- * 0.2 !== 0.20000000000000000001 as far as assertions are concerned, but it basically is.
- *
- * Turns float percentages into *1000 integers for "close enough" (eg 0.2... -> 200)
- *
- * @param {Object} stakeAndPercentage
- */
-var DEFLOAT_STAKES = function(stakeAndPercentage) {
-   stakeAndPercentage.percentage = Math.round(stakeAndPercentage.percentage * 1000);
-};
 
 describe('Round', function() {
   it('instantiates', function() {
@@ -163,8 +152,8 @@ describe('Round w/ Options Pool', function() {
     var stats = seedRound.calculateStats();
 
     _(stats.stakesAndPercentages)
-    .forEach(NAMEIFY_STAKES)
-    .forEach(DEFLOAT_STAKES) // eg .20 --> 200
+    .forEach(utils.NAMEIFY_STAKES)
+    .forEach(utils.DEFLOAT_STAKES) // eg .20 --> 200
     .value();
 
     assert.deepEqual(stats, {
@@ -185,22 +174,11 @@ describe('Round w/ Options Pool', function() {
   });
 
   it('calculates option pool stats properly for a later investment round', function() {
-    var foundingRound  = new Round('Founding', null, 0, {type: 'post', percent: 0.25});
-    var founder1Equity = new EquityStake(foundingRound, 250, {name: 'founder 1 stake 25%'});
-    var founder2Equity = new EquityStake(foundingRound, 250, {name: 'founder 2 stake 25%'});
-    var founder3Equity = new EquityStake(foundingRound, 250, {name: 'founder 3 stake 25%'});
+    var scenario = require('../_scenarios/foundingSeedSeriesA')();
 
-    var seedRound = new Round('Seed', foundingRound, 8000000, {type: 'post', percent: 0.20});
-    var investment1 = new Investment(seedRound     , 1000000, {name: '1M investment a'});
-    var investment2 = new Investment(seedRound     , 1000000, {name: '1M investment b'});
+    var stats = scenario.seriesARound.calculateStats();
 
-    var seriesARound = new Round('Series A', seedRound, 20000000, {type: 'post', percent: 0.10});
-    var investment1 = new Investment(seriesARound     ,  5000000, {name: '5M investment c'});
-    var investment2 = new Investment(seriesARound     ,  5000000, {name: '5M investment d'});
-
-    var stats = seriesARound.calculateStats();
-
-    _(stats.stakesAndPercentages).forEach(NAMEIFY_STAKES).forEach(DEFLOAT_STAKES).value();
+    _(stats.stakesAndPercentages).forEach(utils.NAMEIFY_STAKES).forEach(utils.DEFLOAT_STAKES).value();
 
     assert.deepEqual(stats, {
       numSharesPostMoney: 2941.176470588235,

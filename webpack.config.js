@@ -1,7 +1,7 @@
-var CONTEXT = __dirname + '/public/js';
+var APP_ROOT = __dirname + '/public/js';
 
 module.exports = {
-  context: CONTEXT,
+  context: APP_ROOT,
   entry: './main',
   output: {
     path: './public/',
@@ -20,15 +20,7 @@ module.exports = {
     ]
   },
   resolve: {
-    alias: {
-      // allows you to require('app/someRootFile') anywhere in the app instead of the
-      // relative-form require('../../../someRootFile') enabled by the context config.
-      app: CONTEXT
-    }
-
-    // Alternative to app alias: put public/js into the resolve list.
-    // Kinda confusing wrt node_modules requires though...
-    //modulesDirectories: ['node_modules', 'public/js']
+    root: APP_ROOT
   },
   devServer: {
     contentBase: './public/',

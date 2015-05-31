@@ -7,29 +7,31 @@ window.onload = function() {
 
 
   // flux
-  var dispatcher = require('app/dispatcher');
-  var ACTIONS = require('app/actions/actionsEnum');
-  var RoundStore = require('app/stores/RoundStore');
+  var dispatcher = require('dispatcher');
+  var ACTIONS = require('actions/actionsEnum');
+  var RoundStore = window.RoundStore = require('stores/RoundStore');
 
 
-  var EquityStake = window.EquityStake = require('app/models/EquityStake');
-  var Round       = window.Round = require('app/models/Round');
-  var Investment  = window.Investment = require('app/models/Investment');
+  var EquityStake = window.EquityStake = require('models/EquityStake');
+  var Round       = window.Round = require('models/Round');
+  var Investment  = window.Investment = require('models/Investment');
 
-  var round0 = window.round0 = new Round('Founding', null, 0);
-  //var investment = window.investment = new Investment(round0, 10);
-  var stake0 = window.stake0 = new EquityStake(round0, 500);
-  var stake1 = window.stake1 = new EquityStake(round0, 250);
-  var stake2 = window.stake2 = new EquityStake(round0, 250);
+  window.foundingRound  = new Round('Founding', null, 0, {type: 'post', percent: 0.25});
+  window.founder1Equity = new EquityStake(window.foundingRound, 250, {name: 'founder 1 stake 25%'});
+  window.founder2Equity = new EquityStake(window.foundingRound, 250, {name: 'founder 2 stake 25%'});
+  window.founder3Equity = new EquityStake(window.foundingRound, 250, {name: 'founder 3 stake 25%'});
 
-  var round0Stats = window.round0Stats = round0.calculateStats();
-  console.log('round0 stats:', round0Stats);
+  window.seedRound = new Round('Seed', window.foundingRound, 8000000, {type: 'post', percent: 0.20});
+  window.investment1 = new Investment(window.seedRound     , 1000000, {name: '1M investment a'});
+  window.investment2 = new Investment(window.seedRound     , 1000000, {name: '1M investment b'});
 
-  var round1 = window.round1 = new Round('Seed', round0, 10000);         // pre-money: 10k
-  var investment1 = window.investment1 = new Investment(round1, 10000);  // investment 1: 10k
-  var investment2 = window.investment2 = new Investment(round1, 20000);  // investment 2: 20k
+  window.seriesARound = new Round('Series A', window.seedRound, 20000000, {type: 'post', percent: 0.10});
+  window.investment1 = new Investment(window.seriesARound     ,  5000000, {name: '5M investment c'});
+  window.investment2 = new Investment(window.seriesARound     ,  5000000, {name: '5M investment d'});
 
-  var round1Stats = window.round1Stats = round1.calculateStats();        // investment1 and 2's equity are 25 and 50%,
-  console.log('round1 stats:', round1Stats);                             // remaining sum to 25%
+  var stats = window.seriesARound.calculateStats(); // also calculates previous round stats
+
+
+  window.scenario = require('../../test/unit/_scenarios/foundingSeedSeriesA');
 
 };

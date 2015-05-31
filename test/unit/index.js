@@ -5,3 +5,4 @@
 //   - make sure you're running mocha with the babel compile option
 
 require('./models/RoundTest');
+require('./stores/RoundStoreTest');
