@@ -3,8 +3,10 @@ var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
 
 var dispatcher = require('dispatcher');
+
 var ACTIONS = require('actions/actionsEnum');
 var roundActions = require('actions/roundActions');
+var chartActions = require('actions/chartActions');
 
 
 var RoundStore = assign({}, EventEmitter.prototype, {
@@ -21,9 +23,16 @@ var RoundStore = assign({}, EventEmitter.prototype, {
   },
 
   /**
+   * Change the visualization to a fully-linked round
+   * @param {Object} payload Contains a .round {models.Round} which is the last round to show, fully linked.
+   */
+  handleSetScenario: function(payload) {
+    var roundChartSeries = this._generateChartSeries(payload.round);
+    setTimeout(_.partial(chartActions.newRoundData, roundChartSeries));
+  },
+
+  /**
    * Turns a round into a data to be fed into a d3 stack layout.
-   *
-   *
    *
    * @param {models.Round} upToRound last round to data-ify
    * @returns {Object} like: {
@@ -47,7 +56,7 @@ var RoundStore = assign({}, EventEmitter.prototype, {
    *   .values(s => s.percentages)  [note: or .values, whichever measure you want]
    *   .y(o => o.n)
    */
-  generateChartSeries: function(upToRound) {
+  _generateChartSeries: function(upToRound) {
     var percentagesByStakeIds = {};
     var valuesByStakeIds = {};
 
@@ -124,7 +133,7 @@ var RoundStore = assign({}, EventEmitter.prototype, {
           // transform into d3 stack layout format, and for convenience link to all other entities
           function xyify(number, i) {
             return {
-              x: i,
+              x: roundData[i].round.id,
               n: number,
 
               xRound: roundData[i].round,
@@ -143,6 +152,10 @@ var RoundStore = assign({}, EventEmitter.prototype, {
 
   dispatchToken: dispatcher.register(function(payload) {
     switch (payload.action) {
+      case ACTIONS.ROUND.SET_SCENARIO:
+        RoundStore.handleSetScenario(payload);
+        break;
+
       case ACTIONS.ROUND.ADD_INVESTMENT:
         RoundStore.handleAddInvestment(payload);
         break;

@@ -9,9 +9,13 @@ window.onload = function() {
 
 
   // flux
+  var RoundStore = window._RoundStore = require('stores/RoundStore');
+  var ChartStore = window._ChartStore = require('stores/ChartStore');
+
+
   var dispatcher = require('dispatcher');
   var ACTIONS = require('actions/actionsEnum');
-  var RoundStore = window.RoundStore = require('stores/RoundStore');
+  var roundActions = require('actions/roundActions');
 
 
   var EquityStake = window.EquityStake = require('models/EquityStake');
@@ -36,15 +40,6 @@ window.onload = function() {
 
   window.scenario = require('../../test/unit/_scenarios/foundingSeedSeriesA')();
 
-  window.chartData = RoundStore.generateChartSeries(window.scenario.seriesARound);
-
-  var stack = d3.layout.stack().values(stake => stake.percentages).y(o => o.n);
-  stack(window.chartData.stakes);
-
-  stack.values(stake => stake.values);
-  stack(window.chartData.stakes);
-
-  // now try looking at say: _.pluck(chartData.stakes, 'percentages')
-  // Should be a list of calculated datums you can make a graph off of.
+  roundActions.setScenario(window.scenario.seriesARound);
 
 };

@@ -2,9 +2,15 @@ var _ = require('lodash');
 
 var ACTIONS = {
   ROUND: {
+    SET_SCENARIO: true,
     ADD_INVESTMENT: true,
     UPDATED_MONEY: true,
+  },
+
+  CHART: {
+    NEW_ROUND_DATA: true
   }
+
 };
 
 (function buildActions(accKey, tree) {

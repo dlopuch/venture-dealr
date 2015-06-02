@@ -9,7 +9,7 @@ describe('RoundStore', function() {
       // Note: the numbers in this scenario were tested in RoundTest
       var models = require('../_scenarios/foundingSeedSeriesA')();
 
-      var chartData = RoundStore.generateChartSeries(models.seriesARound);
+      var chartData = RoundStore._generateChartSeries(models.seriesARound);
 
       assert.isNotNull(chartData.rounds, 'Expected x-axis series');
       assert.equal(chartData.rounds.length, 3, 'Expected three rounds');
@@ -86,7 +86,7 @@ describe('RoundStore', function() {
             // Check other linkages
             assert.strictEqual(value.yStake, stake, whereAmI + ': Stake link not correct');
 
-            assert.equal(value.x, roundI, whereAmI + ': x-value should be the measure index');
+            assert.equal(value.x, value.xRound.id, whereAmI + ": x-value should be the round's ID");
             assert.strictEqual(value.xRound, chartData.rounds[roundI].round,
               whereAmI + ': Round link not correct');
             assert.strictEqual(value.xRoundStats, chartData.rounds[roundI].stats,
