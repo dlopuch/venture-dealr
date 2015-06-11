@@ -43,6 +43,8 @@ class ChartStore extends EventEmitter {
   constructor() {
     super();
     this.dispatchToken = dispatcher.register(this.dispatch.bind(this));
+
+    this.lastGetMeasure = _.property('percentages');
   }
 
   handleNewRoundData(payload) {
@@ -69,7 +71,9 @@ class ChartStore extends EventEmitter {
         'percentages': processStakesIntoSeries(chartData.stakes, 'percentages'),
 
         'values': processStakesIntoSeries(chartData.stakes, 'values'),
-      }
+      },
+
+      getMeasure: this.lastGetMeasure
     };
 
     window.hdConfig = chartConfig;
@@ -77,10 +81,21 @@ class ChartStore extends EventEmitter {
     this.emit('roundTimelineData', chartConfig);
   }
 
+  handleSelectMeasure(payload) {
+    this.lastGetMeasure = _.property(payload.measureName);
+
+    this.emit('selectMeasure', this.lastGetMeasure);
+  }
+
   dispatch(payload) {
     switch (payload.action) {
       case ACTIONS.CHART.NEW_ROUND_DATA:
         this.handleNewRoundData(payload);
+        break;
+
+      case ACTIONS.CHART.SELECT_MEASURE:
+        this.handleSelectMeasure(payload);
+        break;
 
     }
   }

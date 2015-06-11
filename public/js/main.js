@@ -16,6 +16,7 @@ window.onload = function() {
   var dispatcher = require('dispatcher');
   var ACTIONS = require('actions/actionsEnum');
   var roundActions = require('actions/roundActions');
+  window.chartActions = require('actions/chartActions');
 
 
   var EquityStake = window.EquityStake = require('models/EquityStake');
@@ -41,5 +42,12 @@ window.onload = function() {
   window.scenario = require('../../test/unit/_scenarios/foundingSeedSeriesA')();
 
   roundActions.setScenario(window.scenario.seriesARound);
+
+  var toggleIsPercent = true;
+  d3.select('#toggle_measure').on('click', function() {
+    toggleIsPercent = !toggleIsPercent;
+
+    window.chartActions.selectMeasure(toggleIsPercent ? 'percentages' : 'values');
+  });
 
 };

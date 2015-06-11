@@ -8,7 +8,8 @@ var ACTIONS = {
   },
 
   CHART: {
-    NEW_ROUND_DATA: true
+    NEW_ROUND_DATA: true,
+    SELECT_MEASURE: true
   }
 
 };

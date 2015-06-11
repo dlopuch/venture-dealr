@@ -3,6 +3,8 @@ var d3 = require('d3');
 
 var ChartStore = require('stores/ChartStore');
 
+var DEFAULT_TRANSITION_MS = 1000;
+
 class Chart {
   constructor(svgSelector='svg', opts={}) {
     var svg = this.svg = d3.select(svgSelector);
@@ -55,6 +57,7 @@ class Chart {
     };
 
     ChartStore.on('roundTimelineData', this.handleRoundTimelineData.bind(this));
+    ChartStore.on('selectMeasure', this.handleSelectMeasure.bind(this));
 
     // Example load
     // this.handleRoundTimelineData({
@@ -70,33 +73,65 @@ class Chart {
   }
 
   handleRoundTimelineData(data) {
+    this._data = data;
     this._components.colorScale = d3.scale.category10().domain( _.pluck(data.datasets.percentages.series, 'id') );
 
     this._renderXAxis(data.xAxis);
-    this._renderYAxis(data.datasets.percentages.yAxis);
-    this._renderData(data.datasets.percentages);
+
+    this.handleSelectMeasure(data.getMeasure);
+  }
+
+  handleSelectMeasure(getMeasure) {
+    var measure = getMeasure(this._data.datasets);
+
+    this._renderYAxis(measure.yAxis);
+    this._renderData(measure);
   }
 
   _renderData(measure) {
     var seriesG = this._svg.chartArea.selectAll('g')
-      .data(measure.series)
-    .enter().append('g');
+      .data(measure.series, d => '' + d.id);
+
+    seriesG.enter().append('g');
 
     var self = this;
 
-    var width = this._components.xScale.rangeBand() * 0.8;
+    var barWidth = this._components.xScale.rangeBand() * 0.8;
 
-    seriesG.selectAll('rect')
-      .data((d, i) => d.data)
-    .enter().append('rect')
-    .style('fill', function() {
-      return self._components.colorScale( d3.select(this.parentNode).datum().id );
-    })
-    .attr('x', d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - width/2 )
-    .attr('y', d => this._components.yScale(d.y0) )
-    .attr('width', width)
-    .attr('height', d => d.y ? this._components.yScale(d.y) : 0);
+    // each seriesG now has a list of values at each round.  Make a subselection to turn those into chart glyphs, keying
+    // each subselection node to it's round ID
+    var rects = seriesG.selectAll('rect')
+      .data(
+        d => d.data,
+        d => '' + d.xRound.id
+      );
 
+    rects.enter().append('rect')
+      .attr({
+        'width': barWidth,
+        'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
+
+        'height': 0,
+        'y': 0
+      })
+      .style('fill', function() {
+        return self._components.colorScale( d3.select(this.parentNode).datum().id );
+      });
+
+    rects.exit().transition()
+      .duration(DEFAULT_TRANSITION_MS)
+      .attr({
+        'y': 0,
+        'height': 0
+      })
+      .remove();
+
+    rects.transition()
+      .duration(DEFAULT_TRANSITION_MS)
+      .attr({
+        'y': d => this._components.yScale(d.y0),
+        'height': d => d.y ? this._components.yScale(d.y) : 0
+      });
   }
 
   _renderXAxis(xAxis) {
@@ -124,7 +159,7 @@ class Chart {
       .range([0, this.opts.chartArea.height]);
 
     this._components.yAxis.scale( this._components.yOutputScale );
-    this._svg.yAxis.call(this._components.yAxis);
+    this._svg.yAxis.transition().duration(DEFAULT_TRANSITION_MS).call(this._components.yAxis);
   }
 
 
