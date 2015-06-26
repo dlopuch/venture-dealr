@@ -53,8 +53,18 @@ class Chart {
       chartArea: svg.append('g')
         .classed('chart-canvas', true)
         .attr("transform", "translate(" + opts.margin.left + "," + (opts.margin.top + opts.chartArea.height) + ")" +
-              " scale(1, -1)") // flip y-axis to y-is-up instead of svg's y-is-down
+              " scale(1, -1)"), // flip y-axis to y-is-up instead of svg's y-is-down
+
+      tooltipContainer: svg.append('g')
+        .classed('chart-tooltip', true)
     };
+
+    this._svg.tooltipText = this._svg.tooltipContainer.append('text').style('font-weight', 'bold');
+
+    // bind this context to function self args
+    this.positionTooltip = _.partial(this.positionTooltip, this);
+    this.hideTooltip     = _.partial(this.hideTooltip, this);
+    this._doHideTooltip  = _.partial(this._doHideTooltip, this);
 
     ChartStore.on('roundTimelineData', this.handleRoundTimelineData.bind(this));
     ChartStore.on('selectMeasure', this.handleSelectMeasure.bind(this));
@@ -70,6 +80,37 @@ class Chart {
       // }
     // });
 
+  }
+
+  positionTooltip(self, d) {
+    if (!d.yStake)
+      return; // skip if not hovering over a series bar
+
+    // clear hide timer
+    if (self._hideTooltipTimeout) {
+      clearTimeout(self._hideTooltipTimeout);
+      delete self._hideTooltipTimeout;
+    }
+
+
+    var mouseXY = d3.mouse(self.svg[0][0]);
+
+    self._svg.tooltipText
+    .attr('x', mouseXY[0] + 10)
+    .attr('y', mouseXY[1] - 10)
+    .text(d.yStake.name)
+    .transition().duration(100).style('opacity', 1);
+  }
+
+  hideTooltip(self) {
+    clearTimeout(self._hideTooltipTimeout);
+    self._hideTooltipTimeout = setTimeout(self._doHideTooltip, 200);
+  }
+
+  _doHideTooltip(self) {
+    self._svg.tooltipText
+    .transition().duration(200)
+    .style('opacity', 0);
   }
 
   handleRoundTimelineData(data) {
@@ -116,7 +157,10 @@ class Chart {
       })
       .style('fill', function() {
         return self._components.colorScale( d3.select(this.parentNode).datum().id );
-      });
+      })
+      .on('mouseover', this.positionTooltip)
+      .on('mousemove', this.positionTooltip)
+      .on('mouseout', this.hideTooltip);
 
     rects.exit().transition()
       .duration(DEFAULT_TRANSITION_MS)
