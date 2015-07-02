@@ -37,8 +37,6 @@ class Chart {
       xAxis: d3.svg.axis().tickSize(3).tickPadding(6).orient('bottom'),
       yScale: null,
       yAxis: d3.svg.axis().tickSize(3).tickPadding(6).orient('left'),
-
-      colorScale: null
     };
 
     this._svg = {
@@ -115,7 +113,6 @@ class Chart {
 
   handleRoundTimelineData(data) {
     this._data = data;
-    this._components.colorScale = d3.scale.category10().domain( _.pluck(data.datasets.percentages.series, 'id') );
 
     this._renderXAxis(data.xAxis);
 
@@ -155,8 +152,9 @@ class Chart {
         'height': 0,
         'y': 0
       })
-      .style('fill', function() {
-        return self._components.colorScale( d3.select(this.parentNode).datum().id );
+      .style('fill', function(d) {
+        // color is in the parent g's datum
+        return d3.select(this.parentElement).datum().color;
       })
       .on('mouseover', this.positionTooltip)
       .on('mousemove', this.positionTooltip)

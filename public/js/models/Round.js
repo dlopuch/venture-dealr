@@ -44,6 +44,8 @@ module.exports = class Round extends EventEmitter {
       prevRound.on(EVENT_STATS_CHANGED, this._handlePrevRoundChange);
     }
 
+    this.sequenceI = prevRound ? prevRound.sequenceI + 1 : 0;
+
     this._investments = [];
     this._equityStakes = [];
 
@@ -144,6 +146,7 @@ module.exports = class Round extends EventEmitter {
    *
    * @param {Object} [opts]
    *   [onlyPrevRounds]: {boolean} Only the EquityStakes from previous rounds (ie not including this round)
+   *   [onlyThisRound]: {boolean} True to only return the EquityStakes from this round
    *   [includeSubEquities]: {boolean} If true, won't filter 'double counting' equities that are part of a counted pool
    *     (eg will include pieces of the option pool as well as the option pool itself)
    * @returns {Array(EquityStake)} All EquityStakes
@@ -151,10 +154,12 @@ module.exports = class Round extends EventEmitter {
   getAllStakes(opts={}) {
     var stakes = opts.onlyPrevRounds ? [] : _.clone(this._equityStakes);
 
-    var prevRound = this.prevRound;
-    while (prevRound) {
-      stakes = stakes.concat(prevRound._equityStakes);
-      prevRound = prevRound.prevRound;
+    if (!opts.onlyThisRound) {
+      var prevRound = this.prevRound;
+      while (prevRound) {
+        stakes = stakes.concat(prevRound._equityStakes);
+        prevRound = prevRound.prevRound;
+      }
     }
 
     if (!opts.includeSubEquities) {
