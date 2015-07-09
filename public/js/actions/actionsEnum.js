@@ -2,9 +2,15 @@ var _ = require('lodash');
 
 var ACTIONS = {
   ROUND: {
+    /** Indicates a new 'Latest Round' is present, indicating a new chain of rounds is ready */
     SET_SCENARIO: true,
+
     ADD_INVESTMENT: true,
+
+    /** Indicates the round money has changed (valuation or investments) */
     UPDATED_MONEY: true,
+
+    CHANGE_ROUND_PRE_MONEY_VALUATION: true,
   },
 
   CHART: {

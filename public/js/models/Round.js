@@ -36,7 +36,7 @@ module.exports = class Round extends EventEmitter {
 
     this.name = name;
 
-    this.preMoneyValuation = preMoneyValuation;
+    this._preMoneyValuation = preMoneyValuation;
 
     this.prevRound = prevRound || null;
     if (prevRound) {
@@ -54,8 +54,25 @@ module.exports = class Round extends EventEmitter {
     this._roundOptionsPoolSpec = optionsPool;
     this.roundOptionsPoolEquity = null;
 
-    this.stats = null;
+    this._stats = null;
   }
+
+
+  // `.stats` getters and setters
+  // Note: stats can only be set in calculateStats().  Otherwise, they can only be cleared (set to null).
+  // When they're cleared, we automagically notify downstream Rounds that they're stale because upstream ones have
+  // changed the math they depend on.
+  get stats() {
+    return this._stats;
+  }
+  set stats(newValue) {
+    if (newValue !== null && newValue !== undefined)
+      throw new Error('Cannot set stats -- use Round.calculateStats()');
+
+    this._stats = null;
+    this.emit(EVENT_STATS_CHANGED, this);
+  }
+
 
   destroy() {
     this.prevRound.removeListener(this._handlePrevRoundChange);
@@ -63,9 +80,17 @@ module.exports = class Round extends EventEmitter {
   }
 
   _handlePrevRoundChange() {
-    // If a previous round changed its stats, invalidate this round's changed stats and pass it up the chain.
-    this.stats = null;
-    this.emit(EVENT_STATS_CHANGED, this);
+    // If a previous round changed its stats, invalidate this round's changed stats
+    this.stats = null; // (setter fires event to pass it up the Round chain)
+  }
+
+  // preMoneyValuation getters/setters:
+  get preMoneyValuation() {
+    return this._preMoneyValuation;
+  }
+  set preMoneyValuation(newPreMoney) {
+    this._preMoneyValuation = newPreMoney;
+    this.stats = null; // stats are now dirty, clear them.
   }
 
   getRoundMoney() {
@@ -73,7 +98,7 @@ module.exports = class Round extends EventEmitter {
   }
 
   getPostMoney() {
-    return this.preMoneyValuation + this.getRoundMoney();
+    return this._preMoneyValuation + this.getRoundMoney();
   }
 
   /**
@@ -184,7 +209,7 @@ module.exports = class Round extends EventEmitter {
     var stats = {
       stakesAndPercentages: null, // {Array}, calculated below
       numSharesPostMoney: 0,
-      preMoney: this.preMoneyValuation,
+      preMoney: this._preMoneyValuation,
       roundMoney: 0,
       postMoney: 0,
       sharePrice: null,
@@ -262,7 +287,7 @@ module.exports = class Round extends EventEmitter {
     );
 
     // memoize indicating up-to-date
-    this.stats = stats;
+    this._stats = stats;
 
     // tell later Rounds that we've changed
     this.emit(EVENT_STATS_CHANGED, this);

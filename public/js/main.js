@@ -1,4 +1,5 @@
 var d3 = require('d3');
+var _ = require('lodash');
 
 window.onload = function() {
   var Chart = require('./Chart');
@@ -41,11 +42,20 @@ window.onload = function() {
     window.chartActions.selectMeasure(toggleIsPercent ? 'percentages' : 'values');
   });
 
+  var explainBRound = _.once(function() {
+    console.log('bRound enabled!');
+    console.log('Now try changing some valuations, eg:');
+    console.log('  > roundActions.changeRoundPreMoneyValuation(bRound, 40000000)');
+    console.log('or see the effects of a down-round:');
+    console.log('  > roundActions.changeRoundPreMoneyValuation(scenario.seriesARound, 5000000)');
+  });
   var toggleBRound = false;
   d3.select('#toggle_b_round').on('click', function() {
     toggleBRound = !toggleBRound;
 
     window.roundActions.setScenario( toggleBRound ? bRound : window.scenario.seriesARound );
+
+    explainBRound();
   });
 
 };

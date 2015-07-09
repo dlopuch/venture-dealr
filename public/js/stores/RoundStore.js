@@ -8,26 +8,36 @@ var ACTIONS = require('actions/actionsEnum');
 var roundActions = require('actions/roundActions');
 var chartActions = require('actions/chartActions');
 
+var latestRound;
 
-var RoundStore = assign({}, EventEmitter.prototype, {
+
+var RoundStore = module.exports = assign({}, EventEmitter.prototype, {
 
   handleAddEquityStake: function(payload) {
     var round = payload.round;
     round.addStake(payload.stake);
   },
 
-  handleAddInvestment: function(payload) {
-    var round = payload.round;
-    round.addInvestment(payload.investment);
-    setTimeout(_.partial(roundActions.updatedMoney, payload.round));
+  handleAddInvestment: function(round, investment) {
+    round.addInvestment(investment);
+    setTimeout(_.partial(roundActions.updatedMoney, round));
+  },
+
+  handleChangeRoundPreMoney: function(round, newValuation) {
+    round.preMoneyValuation = newValuation;
+    setTimeout(_.partial(roundActions.updatedMoney, round));
+  },
+
+  handleUpdatedMoney: function(round) {
+    RoundStore.chartNewData(latestRound);
   },
 
   /**
-   * Change the visualization to a fully-linked round
-   * @param {Object} payload Contains a .round {models.Round} which is the last round to show, fully linked.
+   * Given a round, generates chart series data for everything up to the round
+   * @param {models.Round} round the last round to show, fully linked.
    */
-  handleSetScenario: function(payload) {
-    var roundChartSeries = this._generateChartSeries(payload.round);
+  chartNewData: function(round) {
+    var roundChartSeries = this._generateChartSeries(round);
     setTimeout(_.partial(chartActions.newRoundData, roundChartSeries));
   },
 
@@ -153,20 +163,21 @@ var RoundStore = assign({}, EventEmitter.prototype, {
   dispatchToken: dispatcher.register(function(payload) {
     switch (payload.action) {
       case ACTIONS.ROUND.SET_SCENARIO:
-        RoundStore.handleSetScenario(payload);
+        latestRound = payload.round;
+        RoundStore.chartNewData(latestRound);
+        break;
+
+      case ACTIONS.ROUND.CHANGE_ROUND_PRE_MONEY_VALUATION:
+        RoundStore.handleChangeRoundPreMoney(payload.round, payload.newValuation);
         break;
 
       case ACTIONS.ROUND.ADD_INVESTMENT:
-        RoundStore.handleAddInvestment(payload);
+        RoundStore.handleAddInvestment(payload.round, payload.investment);
         break;
 
       case ACTIONS.ROUND.UPDATED_MONEY:
-        window.round = payload.round;
-        console.log('Round money updated!', payload.round);
+        RoundStore.handleUpdatedMoney(payload.round);
+        break;
     }
   })
 });
-
-
-
-module.exports = RoundStore;
