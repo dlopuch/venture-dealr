@@ -144,6 +144,7 @@ class Chart {
         d => '' + d.xRound.id
       );
 
+    // Initialize all new series
     rects.enter().append('rect')
       .attr({
         'width': barWidth,
@@ -160,20 +161,43 @@ class Chart {
       .on('mousemove', this.positionTooltip)
       .on('mouseout', this.hideTooltip);
 
-    rects.exit().transition()
+
+    // Update position and size of existing rectangles from previous rounds (or new ones created)
+    rects.transition()
+      .duration(DEFAULT_TRANSITION_MS)
+      .style('fill', function(d) {
+        // color is in the parent g's datum
+        return d3.select(this.parentElement).datum().color;
+      })
+      .attr({
+        'width': barWidth,
+        'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
+
+        'height': d => d.y ? this._components.yScale(d.y) : 0,
+        'y': d => this._components.yScale(d.y0)
+      });
+
+
+    // Remove existing series' rectangles from rounds no longer present
+    rects.exit()
+    .transition()
       .duration(DEFAULT_TRANSITION_MS)
       .attr({
-        'y': 0,
-        'height': 0
+        'height': 0,
+        'y': 0
       })
       .remove();
 
-    rects.transition()
+    // But we may have series that exited too (series introduced by new rounds we have removed)
+    // Select those and do same exit animation
+    seriesG.exit().selectAll('rect')
+    .transition()
       .duration(DEFAULT_TRANSITION_MS)
       .attr({
-        'y': d => this._components.yScale(d.y0),
-        'height': d => d.y ? this._components.yScale(d.y) : 0
-      });
+        'height': 0,
+        'y': 0
+      })
+      .remove();
   }
 
   _renderXAxis(xAxis) {
