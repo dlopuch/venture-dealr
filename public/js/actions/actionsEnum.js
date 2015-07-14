@@ -13,6 +13,10 @@ var ACTIONS = {
     CHANGE_ROUND_PRE_MONEY_VALUATION: true,
   },
 
+  INVESTMENT: {
+    CHANGE_MONEY: true
+  },
+
   CHART: {
     NEW_ROUND_DATA: true,
     SELECT_MEASURE: true

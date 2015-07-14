@@ -16,7 +16,8 @@ window.onload = function() {
 
   var dispatcher = require('dispatcher');
   var ACTIONS = require('actions/actionsEnum');
-  var roundActions = window.roundActions = require('actions/roundActions');
+  window.roundActions = require('actions/roundActions');
+  window.investmentActions = require('actions/investmentActions');
   window.chartActions = require('actions/chartActions');
 
 
@@ -27,11 +28,11 @@ window.onload = function() {
 
   window.scenario = require('../../test/unit/_scenarios/foundingSeedSeriesA')();
 
-  roundActions.setScenario(window.scenario.seriesARound);
+  window.roundActions.setScenario(window.scenario.seriesARound);
 
   // Add a demo b round at 30M pre
   var bRound = new Round('B round', window.scenario.seriesARound, 30000000, {type: 'post', percent: 0.05});
-  var bInvestment1 = new Investment(bRound, 20000000, {name: 'b investment 1'});
+  var bInvestment1 = window.bInvestment1 = new Investment(bRound, 20000000, {name: 'b investment 1'});
   window.bRound = bRound;
 
 

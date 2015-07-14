@@ -32,6 +32,12 @@ var RoundStore = module.exports = assign({}, EventEmitter.prototype, {
     RoundStore.chartNewData(latestRound);
   },
 
+  handleInvestmentUpdatedMoney: function(investment, newMoney) {
+    investment.money = newMoney;
+    investment.round.stats = null;
+    setTimeout(_.partial(roundActions.updatedMoney, investment.round));
+  },
+
   /**
    * Given a round, generates chart series data for everything up to the round
    * @param {models.Round} round the last round to show, fully linked.
@@ -177,6 +183,10 @@ var RoundStore = module.exports = assign({}, EventEmitter.prototype, {
 
       case ACTIONS.ROUND.UPDATED_MONEY:
         RoundStore.handleUpdatedMoney(payload.round);
+        break;
+
+      case ACTIONS.INVESTMENT.CHANGE_MONEY:
+        RoundStore.handleInvestmentUpdatedMoney(payload.investment, payload.money);
         break;
     }
   })
