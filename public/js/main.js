@@ -3,8 +3,10 @@ var _ = require('lodash');
 
 window.onload = function() {
   var Chart = require('./Chart');
+  window.chart = new Chart('#round-chart');
 
-  window.chart = new Chart('svg');
+  var PercentValueScatter = require('./PercentValueScatter');
+  window.percentValueScatter = new PercentValueScatter('#percent-equity-scatter');
 
   console.log('heydan success!');
 

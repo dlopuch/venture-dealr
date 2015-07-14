@@ -89,12 +89,13 @@ function colorStakes(chartData) {
 }
 
 /**
- *
- * @param {Object} measureAccessor
+ * Turns a list of stakes into a dataset of timeline series by round.  Used by RoundChart.
+ * @param {string} measureAccessor Which measure in the stakes to use
+ * @returns {Object} Dataset for the measure, with each series being a stacked EquityStake as it progresses
  */
-function processStakesIntoSeries(chartData, measureAccessor) {
+function processStakesIntoMeasureDataset(chartData, measureAccessor) {
   var stakesData = chartData.stakes;
-  var serie = {
+  var measureDataset = {
     series: stakesData.map(function(stakeWrap) {
       return {
         id: stakeWrap.stake.id,
@@ -109,14 +110,14 @@ function processStakesIntoSeries(chartData, measureAccessor) {
   // Each .series[] is a stacked label, but it's already gone through the stack layout calculator.
   // Therefore, min is the min across the first series' y0's,
   // and max is the max across the *last* series' y0 + y (the y0 has already been passed up the stack by the calc)
-  serie.yAxis = {
+  measureDataset.yAxis = {
     domain: [
-      d3.min( _.pluck(serie.series[0].data, 'y0') ),
-      d3.max( serie.series[serie.series.length - 1 ].data.map(d => d.y0 + d.y) )
+      d3.min( _.pluck(measureDataset.series[0].data, 'y0') ),
+      d3.max( measureDataset.series[measureDataset.series.length - 1 ].data.map(d => d.y0 + d.y) )
     ]
   };
 
-  return serie;
+  return measureDataset;
 }
 
 
@@ -168,24 +169,56 @@ class ChartStore extends EventEmitter {
 
     colorStakes(chartData);
 
-    var chartConfig = {
+    var roundChartConfig = {
       xAxis: {
         domain: _.pluck(chartData.rounds, 'round.id'),
         range: _.pluck(chartData.rounds, 'round.name')
       },
 
       datasets: {
-        'percentages': processStakesIntoSeries(chartData, 'percentages'),
+        'percentages': processStakesIntoMeasureDataset(chartData, 'percentages'),
 
-        'values': processStakesIntoSeries(chartData, 'values'),
+        'values': processStakesIntoMeasureDataset(chartData, 'values'),
       },
 
       getMeasure: this.lastGetMeasure
     };
 
-    window.hdConfig = chartConfig;
+    window.hdRoundChartConfig = roundChartConfig;
 
-    this.emit('roundTimelineData', chartConfig);
+    this.emit('roundTimelineData', roundChartConfig);
+
+
+    // Now do the scatter transforms
+    var percentValueConfig = {
+      series: chartData.stakes.map(function(stakeWrap) {
+        return {
+          color: stakeWrap.color,
+          stake: stakeWrap.stake,
+          data: stakeWrap.percentages.map(function(p, i) {
+            return {
+              // percentage axis:
+              percentage: p.n,
+
+              // value axis:
+              value: stakeWrap.values[i].n,
+
+              // meta:
+              round: p.xRound,
+              roundStats: p.xRoundStats
+            };
+          })
+        };
+      })
+    };
+
+    var allDataPoints = _(percentValueConfig.series).pluck('data').flatten().value();
+
+    percentValueConfig.valueAxisMax = _(allDataPoints).pluck('value').max();
+    percentValueConfig.percentageAxisMax = _(allDataPoints).pluck('percentage').max();
+
+    this.emit('percentValueScatterData', percentValueConfig);
+    window.hdPercentValueConfig = percentValueConfig;
   }
 
   handleSelectMeasure(payload) {
