@@ -49,6 +49,8 @@ window.onload = function() {
     console.log('  > roundActions.changeRoundPreMoneyValuation(bRound, 40000000)');
     console.log('or see the effects of a down-round:');
     console.log('  > roundActions.changeRoundPreMoneyValuation(scenario.seriesARound, 5000000)');
+    console.log('or see the effects of more funding:');
+    console.log('  > investmentActions.changeMoney(bInvestment1, 30000000)');
   });
   var toggleBRound = false;
   d3.select('#toggle_b_round').on('click', function() {
