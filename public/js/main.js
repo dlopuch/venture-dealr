@@ -2,8 +2,8 @@ var d3 = require('d3');
 var _ = require('lodash');
 
 window.onload = function() {
-  var Chart = require('./Chart');
-  window.chart = new Chart('#round-chart');
+  var RoundChart = require('./RoundChart');
+  window.roundChart = new RoundChart('#round-chart');
 
   var PercentValueScatter = require('./PercentValueScatter');
   window.percentValueScatter = new PercentValueScatter('#percent-equity-scatter');

@@ -163,8 +163,8 @@ class Chart {
 
 
     // Update position and size of existing rectangles from previous rounds (or new ones created)
-    var positionSelection = function(selection) {
-      selection
+    rects.transition()
+      .duration(DEFAULT_TRANSITION_MS)
       .style('fill', function(d) {
         // color is in the parent g's datum
         return d3.select(this.parentElement).datum().color;
@@ -176,23 +176,6 @@ class Chart {
         'height': d => d.y ? this._components.yScale(d.y) : 0,
         'y': d => this._components.yScale(d.y0)
       });
-    }.bind(this);
-
-    rects
-    .filter(function(d) {
-      return d.yStake.round !== d.xRound;
-    })
-    .transition()
-      .duration(DEFAULT_TRANSITION_MS)
-    .call(positionSelection);
-
-    rects
-    .filter(function(d) {
-      return d.yStake.round === d.xRound;
-    })
-    .transition()
-      .duration(2 * DEFAULT_TRANSITION_MS)
-    .call(positionSelection);
 
 
     // Remove existing series' rectangles from rounds no longer present
