@@ -1,6 +1,8 @@
 var _ = require('lodash');
 var d3 = require('d3');
 
+var ChartStore = require('stores/ChartStore');
+
 var DEFAULT_TRANSITION_MS = 1000;
 
 module.exports = class PercentValueScatter {
@@ -35,7 +37,7 @@ module.exports = class PercentValueScatter {
     });
 
     this._components = {
-      xScale: d3.scale.identity().range([0, opts.chartArea.width]),
+      xScale: d3.scale.linear().range([0, opts.chartArea.width]),
       xAxis: d3.svg.axis().tickSize(3).tickPadding(6).orient('bottom'),
 
       yScale: d3.scale.linear().range([opts.chartArea.height, 0]),
@@ -51,17 +53,50 @@ module.exports = class PercentValueScatter {
       chartArea: svg.append('g').classed('chart-canvas', true)
     };
 
+    ChartStore.on('percentValueScatterData', this.handleData.bind(this));
+
     this.renderAxes();
 
   }
 
-  renderAxes() {
-    this._components.xAxis.scale( this._components.xScale );
-    this._svg.xAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.xAxis );
+  handleData(chartConfig) {
+    this._renderXAxis(chartConfig.axes.percentage);
+    this._renderYAxis(chartConfig.axes.value);
+  }
 
-    this._components.yScale.domain([0, this.opts.chartArea.height]);
-    this._components.yAxis.scale( this._components.yScale );
+  _renderXAxis(xAxisConfig) {
+    this._components.xScale
+    .domain( xAxisConfig.domain )
+    .nice(5);
+
+    this._components.xAxis
+    .scale( this._components.xScale )
+    .tickFormat(xAxisConfig.formatter)
+    .ticks(5);
+
+    this._svg.xAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.xAxis );
+  }
+
+  _renderYAxis(yAxisConfig) {
+    this._components.yScale
+    .domain( yAxisConfig.domain )
+    .nice(5);
+
+    this._components.yAxis
+    .scale( this._components.yScale )
+    .tickFormat(yAxisConfig.formatter)
+    .ticks(5);
+
     this._svg.yAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.yAxis );
+  }
+
+  renderAxes() {
+    // this._components.xAxis.scale( this._components.xScale );
+    // this._svg.xAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.xAxis );
+
+    // this._components.yScale.domain([0, this.opts.chartArea.height]);
+    // this._components.yAxis.scale( this._components.yScale );
+    // this._svg.yAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.yAxis );
   }
 
 

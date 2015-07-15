@@ -235,11 +235,13 @@ class Chart {
     // easier to work with
     this._components.yScale = d3.scale.linear()
       .domain(yAxis.domain)
-      .range([0, this.opts.chartArea.height]);
+      .range([0, this.opts.chartArea.height])
+      .nice();
 
     this._components.yOutputScale = d3.scale.linear()
       .domain(yAxis.domain.slice().reverse())
-      .range([0, this.opts.chartArea.height]);
+      .range([0, this.opts.chartArea.height])
+      .nice();
 
     this._components.yAxis.scale( this._components.yOutputScale );
     this._svg.yAxis.transition().duration(DEFAULT_TRANSITION_MS).call(this._components.yAxis);

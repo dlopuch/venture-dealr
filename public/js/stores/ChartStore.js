@@ -214,8 +214,23 @@ class ChartStore extends EventEmitter {
 
     var allDataPoints = _(percentValueConfig.series).pluck('data').flatten().value();
 
-    percentValueConfig.valueAxisMax = _(allDataPoints).pluck('value').max();
-    percentValueConfig.percentageAxisMax = _(allDataPoints).pluck('percentage').max();
+    percentValueConfig.axes = {
+      value: {
+        formatter: d3.format(','),
+        domain: [
+          0,
+          _(allDataPoints).pluck('value').max()
+        ]
+      },
+
+      percentage: {
+        formatter: d3.format('%'),
+        domain: [
+          0,
+          _(allDataPoints).pluck('percentage').max()
+        ]
+      }
+    };
 
     this.emit('percentValueScatterData', percentValueConfig);
     window.hdPercentValueConfig = percentValueConfig;
