@@ -1,3 +1,9 @@
+/**
+ * Chart showing percentage or value of EquityStakes by Round.
+ *
+ * Grabs data from ChartStore's `roundTimelineData` event
+ */
+
 var _ = require('lodash');
 var d3 = require('d3');
 

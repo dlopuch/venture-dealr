@@ -54,19 +54,71 @@ module.exports = class PercentValueScatter {
     };
 
     ChartStore.on('percentValueScatterData', this.handleData.bind(this));
-
-    this.renderAxes();
-
   }
 
   handleData(chartConfig) {
+    this._data = chartConfig;
     this._renderXAxis(chartConfig.axes.percentage);
     this._renderYAxis(chartConfig.axes.value);
+    this._renderData(chartConfig.series);
+  }
+
+  _renderData(series) {
+
+    var xScale = this._components.xScale;
+    var yScale = this._components.yScale;
+
+    var lineGeneratorActual = window.hdLineGen = d3.svg.line()
+      .x(d => xScale(d.percentage))
+      .y(d => yScale(d.value));
+
+    var lineGenerator = function(serie) {
+      var nonNullPoints = serie.data.filter(tuple => tuple.percentage !== null);
+      return lineGeneratorActual(nonNullPoints);
+    };
+
+
+    var seriesG = this._svg.chartArea.selectAll('g')
+      .data(series, d => '' + d.stake.id);
+
+    seriesG.enter().append('g')
+      .classed('series', true)
+      .attr('data-stake', d => d.stake.name)
+    // for new series, create the paths:
+    .append('path')
+      .attr({
+        'd': d => lineGenerator( d ),
+        'fill': 'none',
+        'stroke': d => d.color,
+        'stroke-width': '2px',
+        'opacity': 0
+      });
+
+
+    // for existing one, just update their positions
+    seriesG.selectAll('path')
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      'd': function(d) {
+        // when updating existing paths, the data is stale (it was copied over from the append).
+        // Grab the latest data from the parent element.
+        return lineGenerator( d3.select(this.parentElement).datum() );
+      },
+      'stroke': d => d.color, // note: color may change as rounds are added
+      'opacity': 1
+    });
+
+    seriesG.exit()
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr('opacity', 0)
+    .remove();
   }
 
   _renderXAxis(xAxisConfig) {
     this._components.xScale
-    .domain( xAxisConfig.domain )
+    .domain( xAxisConfig.domain.slice().reverse() )
     .nice(5);
 
     this._components.xAxis
@@ -89,15 +141,4 @@ module.exports = class PercentValueScatter {
 
     this._svg.yAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.yAxis );
   }
-
-  renderAxes() {
-    // this._components.xAxis.scale( this._components.xScale );
-    // this._svg.xAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.xAxis );
-
-    // this._components.yScale.domain([0, this.opts.chartArea.height]);
-    // this._components.yAxis.scale( this._components.yScale );
-    // this._svg.yAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.yAxis );
-  }
-
-
 };
