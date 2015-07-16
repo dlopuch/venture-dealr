@@ -64,50 +64,14 @@ module.exports = class PercentValueScatter {
   }
 
   _renderData(series) {
-
-    var xScale = this._components.xScale;
-    var yScale = this._components.yScale;
-
-    var lineGeneratorActual = window.hdLineGen = d3.svg.line()
-      .x(d => xScale(d.percentage))
-      .y(d => yScale(d.value));
-
-    var lineGenerator = function(serie) {
-      var nonNullPoints = serie.data.filter(tuple => tuple.percentage !== null);
-      return lineGeneratorActual(nonNullPoints);
-    };
-
-
     var seriesG = this._svg.chartArea.selectAll('g')
       .data(series, d => '' + d.stake.id);
 
-    seriesG.enter().append('g')
+    var seriesGEnter = seriesG.enter().append('g')
       .classed('series', true)
-      .attr('data-stake', d => d.stake.name)
-    // for new series, create the paths:
-    .append('path')
-      .attr({
-        'd': d => lineGenerator( d ),
-        'fill': 'none',
-        'stroke': d => d.color,
-        'stroke-width': '2px',
-        'opacity': 0
-      });
+      .attr('data-stake', d => d.stake.name);
 
-
-    // for existing one, just update their positions
-    seriesG.selectAll('path')
-    .transition()
-      .duration(DEFAULT_TRANSITION_MS)
-    .attr({
-      'd': function(d) {
-        // when updating existing paths, the data is stale (it was copied over from the append).
-        // Grab the latest data from the parent element.
-        return lineGenerator( d3.select(this.parentElement).datum() );
-      },
-      'stroke': d => d.color, // note: color may change as rounds are added
-      'opacity': 1
-    });
+    this._renderPaths(seriesG, seriesGEnter);
 
     seriesG.exit()
     .transition()
@@ -116,7 +80,113 @@ module.exports = class PercentValueScatter {
     .remove();
   }
 
+  /**
+   * Updates and animates paths in the scatter
+   * @param {d3.selection} seriesG selection of G's bound to series data
+   * @param {d3.selection} seriesGEnter the seriesG enter selection (new g's that were just created)
+   */
+  _renderPaths(seriesG, seriesGEnter) {
+    function makeLineGenerator(xScale, yScale) {
+      if (!xScale || !yScale)
+        return null;
+
+      return d3.svg.line()
+        .x(d => xScale(d.percentage))
+        .y(d => yScale(d.value));
+    }
+    var lineGenerator         = makeLineGenerator(this._components.xScale    , this._components.yScale);
+    var prevGridLineGenerator = makeLineGenerator(this._components.prevXScale, this._components.prevYScale);
+
+
+    var serieDToPathD = (serieD => serieD.data);
+
+
+    seriesGEnter
+    // for new series, create the paths:
+    .append('path')
+
+      // make each path's datum the list of x/y points:
+      .datum(serieDToPathD)
+
+      .attr({
+        'd': d => (prevGridLineGenerator || lineGenerator)( d ),
+        'fill': 'none',
+        'stroke': function(d) {
+          return d3.select(this.parentElement).datum().color;
+        },
+        'stroke-width': '2px',
+        'opacity': 0
+      });
+
+    // for existing paths, update their positions to new grid
+    seriesG.selectAll('path')
+    .each(function deriveNewDatum(initialD) {
+      // Because the path was appended from the g, it inherited the g's data.
+      // But data inheritence does not propagate on data update, so the paths' data is stale.
+      // We need to get the new data from the parent element, but we also need to do some padding magic to make
+      // animations smooth (D3 can only animate path segments that have the same number of segments, so we make some
+      // false segments to always have a constant number of segments)
+
+      // First, get the new data:
+      var realNewD = serieDToPathD( d3.select(this.parentElement).datum() );
+
+      var paddedInitialD = initialD;
+      var paddedNewD = _.clone(realNewD);
+
+      // To make the path transition smooth, we need to have the same number of line segements.  Pad appropriately.
+
+      if (initialD.length < realNewD.length) {
+        while (paddedInitialD.length < paddedNewD.length) {
+          // pad with last element
+          paddedInitialD.push( paddedInitialD[paddedInitialD.length - 1] );
+        }
+
+      } else if (realNewD.length < initialD.length) {
+        while (paddedNewD.length < paddedInitialD.length) {
+          paddedNewD.push( paddedNewD[paddedNewD.length - 1] );
+        }
+      }
+
+      // save both new derived datasets as the element's datum
+      d3.select(this).datum({
+        initialD: paddedInitialD,
+        newD    : paddedNewD
+      });
+    })
+    .attr('d', function updateToExistingGrid(d) {
+      // Before we start the animation, we need to update the path to have the number of segments in the
+      // newly padded data.  We do this against the previous grid to initialize the transition into the new grid.
+
+      if (!prevGridLineGenerator)
+        return d3.select(this).attr('d'); // no-op on first-load
+
+      return prevGridLineGenerator( d.initialD );
+    })
+    .each(function updateToNewDatum(d) {
+      // Okay, the transition is initialized.  Change to just the new data.
+      d3.select(this).datum( d.newD );
+    })
+
+    // Now that the existing paths have the same number of segments as the new paths, we can animate
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      'd': d => lineGenerator(d),
+      'stroke': function(d) {
+        // note: color may change as rounds are added, so update
+        return d3.select(this.parentElement).datum().color;
+      },
+      'opacity': 1
+    });
+  } //done with paths
+
   _renderXAxis(xAxisConfig) {
+    if (this._notFirstXScale) {
+      // copy the previous one for pre-transition updates
+      this._components.prevXScale = this._components.xScale.copy();
+    }
+    this._notFirstXScale = true;
+
     this._components.xScale
     .domain( xAxisConfig.domain.slice().reverse() )
     .nice(5);
@@ -130,6 +200,12 @@ module.exports = class PercentValueScatter {
   }
 
   _renderYAxis(yAxisConfig) {
+    if (this._notFirstYScale) {
+      // copy the previous one for pre-transition updates
+      this._components.prevYScale = this._components.yScale.copy();
+    }
+    this._notFirstYScale = true;
+
     this._components.yScale
     .domain( yAxisConfig.domain )
     .nice(5);

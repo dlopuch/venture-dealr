@@ -195,19 +195,22 @@ class ChartStore extends EventEmitter {
         return {
           color: stakeWrap.color,
           stake: stakeWrap.stake,
-          data: stakeWrap.percentages.map(function(p, i) {
-            return {
-              // percentage axis:
-              percentage: p.n,
+          data: stakeWrap.percentages
+            .map(function(p, i) {
+              return {
+                // percentage axis:
+                percentage: p.n,
 
-              // value axis:
-              value: stakeWrap.values[i].n,
+                // value axis:
+                value: stakeWrap.values[i].n,
 
-              // meta:
-              round: p.xRound,
-              roundStats: p.xRoundStats
-            };
-          })
+                // meta:
+                round: p.xRound,
+                roundStats: p.xRoundStats
+              };
+            })
+            // filter out any null points (side-effect of stacked bar chart normalization)
+            .filter(tuple => tuple.percentage !== null)
         };
       })
     };
