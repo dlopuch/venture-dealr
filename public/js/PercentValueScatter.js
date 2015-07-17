@@ -64,7 +64,7 @@ module.exports = class PercentValueScatter {
   }
 
   _renderData(series) {
-    var seriesG = this._svg.chartArea.selectAll('g')
+    var seriesG = this._svg.chartArea.selectAll('g.series')
       .data(series, d => '' + d.stake.id);
 
     var seriesGEnter = seriesG.enter().append('g')
@@ -72,11 +72,62 @@ module.exports = class PercentValueScatter {
       .attr('data-stake', d => d.stake.name);
 
     this._renderPaths(seriesG, seriesGEnter);
+    this._renderMarkers(seriesG, seriesGEnter);
 
     seriesG.exit()
     .transition()
       .duration(DEFAULT_TRANSITION_MS)
     .attr('opacity', 0)
+    .remove();
+  }
+
+  _renderMarkers(seriesG, seriesGEnter) {
+    var markersG = seriesGEnter
+    .append('g')
+      .classed('markers', true);
+
+    var circles = seriesG.selectAll('g.markers')
+    .datum(function(d) {
+      // make sure we get the latest data from parent
+      return d3.select(this.parentElement).datum();
+    })
+    .selectAll('circle')
+    .data(function(d) {
+      return d.data;
+    });
+
+    var self = this;
+
+    circles.enter()
+    .append('circle')
+    .attr({
+      r: 3,
+      cx: d => (self._components.prevXScale || self._components.xScale)(d.percentage),
+      cy: d => (self._components.prevYScale || self._components.yScale)(d.value),
+      fill: function(d) {
+        return d3.select(this.parentElement).datum().color;
+      },
+      opacity: 0
+    });
+
+    circles
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      opacity: 1,
+      cx: d => self._components.xScale(d.percentage),
+      cy: d => self._components.yScale(d.value),
+      fill: function(d) {
+        return d3.select(this.parentElement).datum().color;
+      }
+    });
+
+    circles.exit()
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS/4)
+    .attr({
+      opacity: 0
+    })
     .remove();
   }
 
