@@ -1,6 +1,8 @@
 var d3 = require('d3');
 var _ = require('lodash');
 
+require('less/index.less');
+
 window.onload = function() {
   var RoundChart = require('./RoundChart');
   window.roundChart = new RoundChart('#round-chart');
