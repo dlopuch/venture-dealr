@@ -2,6 +2,8 @@ var _ = require('lodash');
 
 var ACTIONS = {
   ROUND: {
+    NEW_ROUND_DATA: true,
+
     /** Indicates a new 'Latest Round' is present, indicating a new chain of rounds is ready */
     SET_SCENARIO: true,
 
@@ -18,8 +20,9 @@ var ACTIONS = {
   },
 
   CHART: {
-    NEW_ROUND_DATA: true,
-    SELECT_MEASURE: true
+    SELECT_MEASURE: true,
+
+    SELECT_ROUND: true
   }
 
 };

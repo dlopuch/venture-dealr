@@ -1,12 +1,52 @@
+/**
+ * Flux data store to calculate new chart data based on model / data changes.
+ *
+ * Is a EventEmitter.  See EVENTS for how components should be notified of new data.
+ */
+
 var _ = require('lodash');
 var d3 = require('d3');
 var EventEmitter = require('events').EventEmitter;
 
 var dispatcher = require('dispatcher');
 var ACTIONS = require('actions/actionsEnum');
+var chartActions = require('actions/chartActions');
 var roundActions = require('actions/roundActions');
 
 var ShareClass = require('models/ShareClass');
+
+/**
+ * Events that components can listen to to receive new data.
+ *
+ * Exposed as ChartStore.EVENTS.
+ */
+var EVENTS = {
+
+  /**
+   * 'roundTimelineData' ({Object} roundChartConfig)
+   * Indicates a new timeline of rounds is available
+   */
+  ROUND_TIMELINE_DATA: 'roundTimelineData',
+
+  /**
+   * 'measureSelected ({string} measureName)
+   * Indicates a different measure has been selected (primarly for the Round Chart)
+   */
+  MEASURE_SELECTED: 'measureSelected',
+
+  /**
+   * 'percentValueScatterData' ({Object} percentValueScatterConfig)
+   * Indicates new data is available for the percent-value scatterplot
+   */
+  PERCENT_VALUE_SCATTER_DATA: 'percentValueScatterData',
+
+  /**
+   * 'roundSelected' ({Object} round)
+   * User has selected a round for more detail
+   */
+  ROUND_SELECTED: 'roundSelected'
+
+};
 
 
 // Layout calculators
@@ -129,9 +169,21 @@ class ChartStore extends EventEmitter {
     this.lastGetMeasure = _.property('percentages');
   }
 
+  get EVENTS() {
+    return EVENTS;
+  }
+
   handleNewRoundData(payload) {
     var chartData = payload.data;
 
+    // new round data means the round selection needs to be updated as well
+    if (this._lastSelectedRound) {
+      let round = this._lastSelectedRound;
+      this._lastSelectedRound = null;
+      setTimeout(function() {
+        chartActions.selectRound(round);
+      });
+    }
 
     // Sort series
     chartData.stakes = _.sortByAll(
@@ -186,7 +238,7 @@ class ChartStore extends EventEmitter {
 
     window.hdRoundChartConfig = roundChartConfig;
 
-    this.emit('roundTimelineData', roundChartConfig);
+    this.emit(EVENTS.ROUND_TIMELINE_DATA, roundChartConfig);
 
 
     // Now do the scatter transforms
@@ -235,24 +287,38 @@ class ChartStore extends EventEmitter {
       }
     };
 
-    this.emit('percentValueScatterData', percentValueConfig);
+    this.emit(EVENTS.PERCENT_VALUE_SCATTER_DATA, percentValueConfig);
     window.hdPercentValueConfig = percentValueConfig;
   }
 
   handleSelectMeasure(payload) {
     this.lastGetMeasure = _.property(payload.measureName);
 
-    this.emit('selectMeasure', this.lastGetMeasure);
+    this.emit(EVENTS.MEASURE_SELECTED, this.lastGetMeasure);
+  }
+
+  handleSelectRound(payload) {
+    var newRound = payload.round;
+
+    if (this._lastSelectedRound === newRound)
+      return;
+
+    this._lastSelectedRound = newRound;
+    this.emit(EVENTS.ROUND_SELECTED, newRound);
   }
 
   dispatch(payload) {
     switch (payload.action) {
-      case ACTIONS.CHART.NEW_ROUND_DATA:
+      case ACTIONS.ROUND.NEW_ROUND_DATA:
         this.handleNewRoundData(payload);
         break;
 
       case ACTIONS.CHART.SELECT_MEASURE:
         this.handleSelectMeasure(payload);
+        break;
+
+      case ACTIONS.CHART.SELECT_ROUND:
+        this.handleSelectRound(payload);
         break;
 
     }

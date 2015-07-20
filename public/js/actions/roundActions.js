@@ -2,6 +2,10 @@ var ACTIONS = require('./actionsEnum');
 var dispatcher = require('dispatcher');
 
 module.exports = {
+  newRoundData: function(data) {
+    dispatcher.dispatch(ACTIONS.ROUND.NEW_ROUND_DATA, {data: data});
+  },
+
   setScenario: function(round) {
     dispatcher.dispatch(ACTIONS.ROUND.SET_SCENARIO, {round: round});
   },

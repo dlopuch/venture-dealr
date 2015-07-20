@@ -8,6 +8,7 @@ var _ = require('lodash');
 var d3 = require('d3');
 
 var ChartStore = require('stores/ChartStore');
+var chartActions = require('actions/chartActions');
 
 var DEFAULT_TRANSITION_MS = 1000;
 
@@ -46,6 +47,11 @@ class Chart {
     };
 
     this._svg = {
+      chartArea: svg.append('g')
+        .classed('chart-canvas', true)
+        .attr("transform", "translate(" + opts.margin.left + "," + (opts.margin.top + opts.chartArea.height) + ")" +
+              " scale(1, -1)"), // flip y-axis to y-is-up instead of svg's y-is-down
+
       xAxis: svg.append('g')
         .classed('x axis', true)
         .attr("transform", "translate(" + opts.margin.left + "," + (opts.margin.top + opts.chartArea.height) + ")"),
@@ -53,11 +59,6 @@ class Chart {
       yAxis: svg.append('g')
         .classed('y axis', true)
         .attr("transform", "translate( "+ opts.margin.left + "," + opts.margin.top + ")"),
-
-      chartArea: svg.append('g')
-        .classed('chart-canvas', true)
-        .attr("transform", "translate(" + opts.margin.left + "," + (opts.margin.top + opts.chartArea.height) + ")" +
-              " scale(1, -1)"), // flip y-axis to y-is-up instead of svg's y-is-down
 
       tooltipContainer: svg.append('g')
         .classed('chart-tooltip', true)
@@ -70,8 +71,8 @@ class Chart {
     this.hideTooltip     = _.partial(this.hideTooltip, this);
     this._doHideTooltip  = _.partial(this._doHideTooltip, this);
 
-    ChartStore.on('roundTimelineData', this.handleRoundTimelineData.bind(this));
-    ChartStore.on('selectMeasure', this.handleSelectMeasure.bind(this));
+    ChartStore.on(ChartStore.EVENTS.ROUND_TIMELINE_DATA, this.handleRoundTimelineData.bind(this));
+    ChartStore.on(ChartStore.EVENTS.MEASURE_SELECTED   , this.handleSelectMeasure.bind(this));
 
     // Example load
     // this.handleRoundTimelineData({
@@ -165,7 +166,8 @@ class Chart {
       })
       .on('mouseover', this.positionTooltip)
       .on('mousemove', this.positionTooltip)
-      .on('mouseout', this.hideTooltip);
+      .on('mouseout', this.hideTooltip)
+      .on('mouseover', d => chartActions.selectRound(d.xRound));
 
 
     // Update position and size of existing rectangles from previous rounds (or new ones created)

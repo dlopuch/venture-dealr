@@ -65,4 +65,6 @@ window.onload = function() {
     explainBRound();
   });
 
+  require('views/reactApp.jsx');
+
 };

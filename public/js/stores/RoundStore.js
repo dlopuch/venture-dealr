@@ -1,3 +1,9 @@
+/**
+ * Flux data store to handle data model business logic in response to various flux actions.
+ *
+ * Is a EventEmitter.  See EVENTS for how components should be notified of new data.
+ */
+
 var _ = require('lodash');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
@@ -6,7 +12,7 @@ var dispatcher = require('dispatcher');
 
 var ACTIONS = require('actions/actionsEnum');
 var roundActions = require('actions/roundActions');
-var chartActions = require('actions/chartActions');
+
 
 var latestRound;
 
@@ -44,7 +50,7 @@ var RoundStore = module.exports = assign({}, EventEmitter.prototype, {
    */
   chartNewData: function(round) {
     var roundChartSeries = this._generateChartSeries(round);
-    setTimeout(_.partial(chartActions.newRoundData, roundChartSeries));
+    setTimeout(_.partial(roundActions.newRoundData, roundChartSeries));
   },
 
   /**

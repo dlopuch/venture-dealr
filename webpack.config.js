@@ -16,6 +16,7 @@ module.exports = {
     ],
     loaders: [
       { test: /\.js$/  , loader: 'babel-loader', exclude: /node_modules/},
+      { test: /\.jsx$/ , loader: 'jsx-loader?harmony', exclude: /node_modules/},
       { test: /\.less$/, loader: "style!css!less" },
       { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' }
     ]
