@@ -1,7 +1,40 @@
 @import './project-bootstrap.less';
 
+@round-money-color: limegreen;
+@round-money-opacity: 0.5;
+@round-valuation-color: steelblue;
+@round-valuation-opacity: 0.5;
+
+.highlight-round-money {
+  border-bottom: 4px solid fade(@round-money-color, @round-money-opacity * 100);
+}
+
+.highlight-round-valuation {
+  border-bottom: 4px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
+}
+
 svg {
-  shape-rendering: crispEdges;
+
+  &.round-chart {
+    shape-rendering: crispEdges;
+
+    line.round-type {
+      stroke-width: 6px;
+      opacity: 0.50;
+    }
+    line.round-valuation {
+      stroke: @round-valuation-color;
+      opacity: @round-valuation-opacity;
+    }
+    line.round-money {
+      stroke: @round-money-color;
+      opacity: @round-money-opacity;
+    }
+    line.round-options {
+      stroke-dasharray: 3 2;
+      stroke-dashoffset: 2;
+    }
+  }
 
   text {
     font: 10px sans-serif;

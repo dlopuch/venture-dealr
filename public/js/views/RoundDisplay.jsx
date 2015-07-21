@@ -32,10 +32,42 @@ module.exports = React.createClass({
 
     var r = this.state.round;
     var stats = r.stats;
+
+    var summaryText = '';
+    if (stats.preMoney && stats.roundMoney) {
+      summaryText = ": raised " + FORMAT_VALUE(stats.roundMoney) + " at a " + FORMAT_VALUE(stats.preMoney) + " valuation";
+
+    } else if (stats.roundMoney) {
+      summaryText = ": raised " + FORMAT_VALUE(stats.roundMoney);
+
+    } else if (stats.preMoney) {
+      summaryText = ": valued at " + FORMAT_VALUE(stats.preMoney);
+
+    }
+
     return (
       <div>
         <h3>
-          {r.name}: raised {FORMAT_VALUE(stats.roundMoney)} at a {FORMAT_VALUE(stats.preMoney)} valuation
+          {r.name}{stats.preMoney || stats.roundMoney ? ': ' : ''}
+          {stats.preMoney && stats.roundMoney ?
+            <span>
+              raised <span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}</span> at
+              a <span className='highlight-round-valuation'>{FORMAT_VALUE(stats.preMoney)}</span> valuation
+            </span> :
+            ''
+          }
+          {stats.preMoney && !stats.roundMoney ?
+            <span>
+              valued at <span className='highlight-round-valuation'>{FORMAT_VALUE(stats.preMoney)}</span>
+            </span> :
+            ''
+          }
+          {!stats.preMoney && stats.roundMoney ?
+            <span>
+              raised <span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}</span>
+            </span> :
+            ''
+          }
         </h3>
       </div>
     );

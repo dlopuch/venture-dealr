@@ -206,6 +206,58 @@ class Chart {
         'y': 0
       })
       .remove();
+
+
+
+    // Now similar pattern for lines indicating whether each block is a valuation or round money
+    var typeLines = seriesG.selectAll('line')
+      .data(
+        d => d.data,
+        d => '' + d.xRound.id
+      );
+
+    var lineXPositioner = d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2 - 3;
+
+    typeLines.enter().append('line')
+      .attr({
+        'x1': lineXPositioner,
+        'x2': lineXPositioner,
+        'y1': 0,
+        'y2': 0,
+        'class': function(d) {
+          var originRound = d.yStake.round === d.xRound;
+
+          if (originRound && d.yStake.isOptionsPool) {
+            return 'round-type round-valuation round-options';
+          } else if (originRound) {
+            return 'round-type round-money';
+          } else {
+            return 'round-type round-valuation';
+          }
+        },
+
+        // If there's 0-value (eg founding round), don't show the type lines
+        style: d => d.xRoundStats.postMoney ? '' : 'display: none;'
+      });
+
+    typeLines
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      'x1': lineXPositioner,
+      'x2': lineXPositioner,
+      'y1': d => d.y ? this._components.yScale(d.y0) : 0,
+      'y2': d => d.y ? this._components.yScale(d.y0 + d.y) : 0,
+    });
+
+    typeLines.exit()
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      'y1': 0,
+      'y2': 0
+    })
+    .remove();
   }
 
   _renderXAxis(xAxis) {
