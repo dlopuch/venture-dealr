@@ -187,28 +187,26 @@ class Chart {
 
 
     // Remove existing series' rectangles from rounds no longer present
-    rects.exit()
-    .transition()
-      .duration(DEFAULT_TRANSITION_MS)
+    function removeBars(selection) {
+      selection
+      .transition()
+        .duration(DEFAULT_TRANSITION_MS)
       .attr({
         'height': 0,
         'y': 0
       })
       .remove();
+    }
+
+    rects.exit().call(removeBars);
 
     // But we may have series that exited too (series introduced by new rounds we have removed)
     // Select those and do same exit animation
-    seriesG.exit().selectAll('rect')
-    .transition()
-      .duration(DEFAULT_TRANSITION_MS)
-      .attr({
-        'height': 0,
-        'y': 0
-      })
-      .remove();
+    seriesG.exit().selectAll('rect').call(removeBars);
 
 
 
+    // ----------------------
     // Now similar pattern for lines indicating whether each block is a valuation or round money
     var typeLines = seriesG.selectAll('line')
       .data(
@@ -250,14 +248,22 @@ class Chart {
       'y2': d => d.y ? this._components.yScale(d.y0 + d.y) : 0,
     });
 
-    typeLines.exit()
-    .transition()
-      .duration(DEFAULT_TRANSITION_MS)
-    .attr({
-      'y1': 0,
-      'y2': 0
-    })
-    .remove();
+    function removeLines(selection) {
+      selection
+      .transition()
+        .duration(DEFAULT_TRANSITION_MS)
+      .attr({
+        'y1': 0,
+        'y2': 0
+      })
+      .remove();
+    }
+    typeLines.exit().call(removeLines);
+
+    // But we may have series that exited too (series introduced by new rounds we have removed)
+    // Select those and do same exit animation
+    seriesG.exit().selectAll('line').call(removeLines);
+
   }
 
   _renderXAxis(xAxis) {
