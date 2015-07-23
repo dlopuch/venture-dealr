@@ -73,6 +73,7 @@ class Chart {
 
     ChartStore.on(ChartStore.EVENTS.ROUND_TIMELINE_DATA, this.handleRoundTimelineData.bind(this));
     ChartStore.on(ChartStore.EVENTS.MEASURE_SELECTED   , this.handleSelectMeasure.bind(this));
+    ChartStore.on(ChartStore.EVENTS.ROUND_SELECTED     , this.handleRoundSelected.bind(this));
 
     // Example load
     // this.handleRoundTimelineData({
@@ -131,6 +132,10 @@ class Chart {
 
     this._renderYAxis(measure.yAxis);
     this._renderData(measure);
+  }
+
+  handleRoundSelected(round) {
+    // TODO: Highlight x-axis item
   }
 
   _renderData(measure) {

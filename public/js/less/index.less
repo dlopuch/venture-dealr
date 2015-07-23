@@ -5,13 +5,43 @@
 @round-valuation-color: steelblue;
 @round-valuation-opacity: 0.5;
 
+h2, h3, h4 {
+  .highlight-round-money {
+    border-bottom: 4px solid fade(@round-money-color, @round-money-opacity * 100);
+  }
+
+  .highlight-round-valuation {
+    border-bottom: 4px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
+  }
+}
+
+
 .highlight-round-money {
-  border-bottom: 4px solid fade(@round-money-color, @round-money-opacity * 100);
+  border-bottom: 3px solid fade(@round-money-color, @round-money-opacity * 100);
 }
 
 .highlight-round-valuation {
-  border-bottom: 4px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
+  border-bottom: 3px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
 }
+
+.highlight-round-options {
+  border-bottom: 3px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
+  border-bottom-style: dotted;
+}
+
+.round-breakdown {
+  .table {
+    width: auto;
+  }
+
+  .option-pool-shuffle {
+    blockquote {
+      width: 340px;
+      margin-left: 10px
+    }
+  }
+}
+
 
 svg {
 

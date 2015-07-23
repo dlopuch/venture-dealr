@@ -3,6 +3,7 @@ var React = require('react');
 var ChartStore = require('stores/ChartStore');
 
 var FORMAT_VALUE = n => d3.format('$s')( d3.format('.3r')(n) );
+var FORMAT_PERCENT = d3.format('%');
 
 module.exports = React.createClass({
 
@@ -24,6 +25,55 @@ module.exports = React.createClass({
 
   componentWillUnmount: function() {
     ChartStore.removeListener(ChartStore.EVENTS.ROUND_SELECTED, this._onRound);
+  },
+
+  _renderBreakdown: function() {
+    var r = this.state.round;
+    var stats = r.stats;
+    var optionsPool = r.optionsPoolSpec;
+
+    if (!stats.roundMoney) {
+      return (<div>
+        No valuation yet.
+      </div>);
+    }
+
+    return (<div className='round-breakdown'>
+      <table className='table table-condensed'>
+        <tr>
+          <td><div className='pull-right'>Valuation:</div></td>
+          <td><span className='highlight-round-valuation'>{FORMAT_VALUE(stats.realPreMoney)}</span></td>
+        </tr>
+        <tr>
+          <td><div className='pull-right'>New Options:</div></td>
+          <td>
+            <div>
+              <span className='highlight-round-options'>{FORMAT_VALUE(stats.newOptionsMoney)}</span>
+              &nbsp;({FORMAT_PERCENT(optionsPool.percent)} {optionsPool.type === 'post' ? 'post-money' : 'pre-money*'})
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><div className='pull-right'>Round Money: </div></td>
+          <td><span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}</span></td>
+        </tr>
+        <tr>
+          <td><div className='pull-right'><strong>Post Money: </strong></div></td>
+          <td><strong><span className=''>{FORMAT_VALUE(stats.postMoney)}</span></strong></td>
+        </tr>
+
+      </table>
+      <div className='small text-muted option-pool-shuffle'>
+
+        *: HEYDAN TODO: ONLY SHOW THIS ON PRE-MONEY OPTION POOLS See the <a href="http://venturehacks.com/articles/option-pool-shuffle" target="blank">Option Pool Shuffle:</a>
+
+        <blockquote className='small text-muted'>
+          “We think your company is worth {FORMAT_VALUE(stats.realPreMoney)}.
+          But let’s create {FORMAT_VALUE(stats.newOptionsMoney)} worth of new options, add that to the value of
+          your company, and call their sum your {FORMAT_VALUE(stats.preMoney)} ‘pre-money valuation’.”
+        </blockquote>
+      </div>
+    </div>);
   },
 
   render: function() {
@@ -51,8 +101,8 @@ module.exports = React.createClass({
           {r.name}{stats.preMoney || stats.roundMoney ? ': ' : ''}
           {stats.preMoney && stats.roundMoney ?
             <span>
-              raised <span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}</span> at
-              a <span className='highlight-round-valuation'>{FORMAT_VALUE(stats.preMoney)}</span> valuation
+              raised <span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}
+              </span> at <span className='highlight-round-valuation'>{FORMAT_VALUE(stats.preMoney)}</span> pre-money
             </span> :
             ''
           }
@@ -69,6 +119,7 @@ module.exports = React.createClass({
             ''
           }
         </h3>
+        {this._renderBreakdown()}
       </div>
     );
   }

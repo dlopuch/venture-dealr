@@ -101,6 +101,10 @@ module.exports = class Round extends EventEmitter {
     return this._preMoneyValuation + this.getRoundMoney();
   }
 
+  get optionsPoolSpec() {
+    return _.clone(this._roundOptionsPoolSpec);
+  }
+
   /**
    * Called by Investment constructor... Investments self-register with Rounds upon construction.
    * @param {models.Investment}
@@ -279,6 +283,9 @@ module.exports = class Round extends EventEmitter {
         stats.numSharesPostMoney = stakes.reduce(STAKES_TO_NUM_SHARES_REDUCER, 0);
       }
     }
+
+    stats.newOptionsMoney = this.roundOptionsPoolEquity.numShares * stats.sharePrice;
+    stats.realPreMoney = stats.preMoney - stats.newOptionsMoney;
 
 
     // Finally, calculate percentages
