@@ -4,7 +4,7 @@ var RoundDisplay = require('views/RoundDisplay.jsx');
 
 React.render(
   <div className="row">
-    <div className="col-md-12">
+    <div className="col-md-6">
       <RoundDisplay />
     </div>
   </div>,

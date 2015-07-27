@@ -41,15 +41,19 @@ module.exports = React.createClass({
     return (<div className='round-breakdown'>
       <table className='table table-condensed'>
         <tr>
-          <td><div className='pull-right'>Valuation:</div></td>
+          <td><div className='pull-right'>Effective Valuation*:</div></td>
           <td><span className='highlight-round-valuation'>{FORMAT_VALUE(stats.realPreMoney)}</span></td>
         </tr>
         <tr>
           <td><div className='pull-right'>New Options:</div></td>
           <td>
             <div>
-              <span className='highlight-round-options'>{FORMAT_VALUE(stats.newOptionsMoney)}</span>
-              &nbsp;({FORMAT_PERCENT(optionsPool.percent)} {optionsPool.type === 'post' ? 'post-money' : 'pre-money*'})
+              <span className='highlight-round-options'>{FORMAT_VALUE(stats.newOptionsMoney)}</span><br/>
+              <span className="small">({FORMAT_PERCENT(optionsPool.percent)}
+              {optionsPool.type === 'post' ?
+                ' of post-financing' :
+                ' pre-financing*'
+              })</span>
             </div>
           </td>
         </tr>
@@ -65,7 +69,10 @@ module.exports = React.createClass({
       </table>
       <div className='small text-muted option-pool-shuffle'>
 
-        *: HEYDAN TODO: ONLY SHOW THIS ON PRE-MONEY OPTION POOLS See the <a href="http://venturehacks.com/articles/option-pool-shuffle" target="blank">Option Pool Shuffle:</a>
+        *: Generally the pre-money includes any new options created during the round, even though the options are
+        generally defined as a percentage of the post-financing (e.g. <em>"{FORMAT_PERCENT(optionsPool.percent)} of
+        post-financing fully-diluted capitalization"</em>).
+        See the <a href="http://venturehacks.com/articles/option-pool-shuffle" target="blank">Option Pool Shuffle</a>:
 
         <blockquote className='small text-muted'>
           “We think your company is worth {FORMAT_VALUE(stats.realPreMoney)}.
