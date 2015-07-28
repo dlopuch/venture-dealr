@@ -200,6 +200,11 @@ class ChartStore extends EventEmitter {
       // Then common behind preferred
       function(s) {
         return s.stake.shareClass === ShareClass.COMMON ? 1 : 0;
+      },
+
+      // Then liquidation seniority
+      function(s) {
+        return -1 * s.stake.liquidationSeniority || 0;
       }
 
       // Stable sort preserves remaining by round

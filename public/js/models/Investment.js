@@ -8,6 +8,8 @@ module.exports = class Investment {
    * @param {number} money Investment amount (in currency)
    * @param {Object} [opts] like:
    *   [name]: {string} Investment name
+   *   [liquidationPreference]: {number} 1x, 2x, etc
+   *   [liquidationSeniority]: {number} Higher seniority gets money out first
    */
   constructor(round, money, opts={}) {
     if (!round)
@@ -22,6 +24,8 @@ module.exports = class Investment {
     round._registerInvestment(this);
 
     this.name = opts.name || (money + ' investment from ' + round.name + ' round');
+    this.liquidationPreference = opts.liquidationPreference || null;
+    this.liquidationSeniority = opts.liquidationSeniority || null;
 
     this.money = money;
     this.equityStake = null; // to be calculated

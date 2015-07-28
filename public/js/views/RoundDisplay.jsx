@@ -48,7 +48,7 @@ module.exports = React.createClass({
           <td><div className='pull-right'>New Options:</div></td>
           <td>
             <div>
-              <span className='highlight-round-options'>{FORMAT_VALUE(stats.newOptionsMoney)}</span><br/>
+              <span className='highlight-round-options'>{FORMAT_VALUE(stats.newOptionsValue)}</span><br/>
               <span className="small">({FORMAT_PERCENT(optionsPool.percent)}
               {optionsPool.type === 'post' ?
                 ' of post-financing' :
@@ -76,7 +76,7 @@ module.exports = React.createClass({
 
         <blockquote className='small text-muted'>
           “We think your company is worth {FORMAT_VALUE(stats.realPreMoney)}.
-          But let’s create {FORMAT_VALUE(stats.newOptionsMoney)} worth of new options, add that to the value of
+          But let’s create {FORMAT_VALUE(stats.newOptionsValue)} worth of new options, add that to the value of
           your company, and call their sum your {FORMAT_VALUE(stats.preMoney)} ‘pre-money valuation’.”
         </blockquote>
       </div>

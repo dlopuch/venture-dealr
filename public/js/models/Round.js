@@ -57,6 +57,10 @@ module.exports = class Round extends EventEmitter {
     this._stats = null;
   }
 
+  static get EVENT_STATS_CHANGED() {
+    return EVENT_STATS_CHANGED;
+  }
+
 
   // `.stats` getters and setters
   // Note: stats can only be set in calculateStats().  Otherwise, they can only be cleared (set to null).
@@ -284,8 +288,8 @@ module.exports = class Round extends EventEmitter {
       }
     }
 
-    stats.newOptionsMoney = this.roundOptionsPoolEquity.numShares * stats.sharePrice;
-    stats.realPreMoney = stats.preMoney - stats.newOptionsMoney;
+    stats.newOptionsValue = this.roundOptionsPoolEquity.numShares * stats.sharePrice;
+    stats.realPreMoney = stats.preMoney - stats.newOptionsValue;
 
 
     // Finally, calculate percentages
@@ -322,7 +326,12 @@ module.exports = class Round extends EventEmitter {
 
     var stake = investment.equityStake;
     if (!stake) {
-      stake = new EquityStake(this, numShares, {shareClass: ShareClass.PREFERRED, fromInvestment: investment});
+      stake = new EquityStake(this, numShares, {
+        shareClass: ShareClass.PREFERRED,
+        fromInvestment: investment,
+        liquidationSeniority : investment.liquidationSeniority || this.sequenceI,
+        liquidationPreference: investment.liquidationPreference
+      });
       investment.equityStake = stake;
       stakeChanged = true;
 

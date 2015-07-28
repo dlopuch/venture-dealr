@@ -26,8 +26,9 @@ window.onload = function() {
 
 
   var EquityStake = window.EquityStake = require('models/EquityStake');
-  var Round       = window.Round = require('models/Round');
-  var Investment  = window.Investment = require('models/Investment');
+  var Round       = window.Round       = require('models/Round');
+  var Investment  = window.Investment  = require('models/Investment');
+  var Exit        = window.Exit        = require('models/Exit');
 
 
   window.scenario = require('../../test/unit/_scenarios/foundingSeedSeriesA')();

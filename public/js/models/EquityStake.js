@@ -17,6 +17,8 @@ class EquityStake {
    * @param {Object} [opts] Additional options, including:
    *   [name]: {String} Name of the stake
    *   [shareClass]: {models.ShareClass} common or preferred.  Defaults to ShareClass.COMMON
+   *   [liquidationPreference]: {number} Preferred stakes only.  Defaults to 1.
+   *   [liquidationSeniority]: {number} Seniority of liquidation preference. Higher gets money out first.  Defaults to 1
    *   [isOptionsPool]: {boolean} This equity stake is equity represents the round's option pool.
    *   [fromOptionsPool]: {models.EquityStake} This equity stake was assigned out of the option pool.  If so, it
    *     represents a 'sub-equity' -- one that is not counted because it's covered by the option pool
@@ -64,6 +66,11 @@ class EquityStake {
       ('Equity ' + this.id + ' (from ' + round.name + ' round)');
 
     this.opts = opts;
+
+    if (this.shareClass === ShareClass.PREFERRED) {
+      this.liquidationPreference = opts.liquidationPreference || 1;
+      this.liquidationSeniority  = opts.liquidationSeniority  || 1;
+    }
 
     this.round = round;
     round._registerStake(this);
