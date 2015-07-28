@@ -31,13 +31,13 @@ window.onload = function() {
   var Exit        = window.Exit        = require('models/Exit');
 
 
-  window.scenario = require('../../test/unit/_scenarios/foundingSeedSeriesA')();
+  window.scenario = require('../../test/unit/_scenarios/simpleFoundingSeedSeriesA')();
 
   window.roundActions.setScenario(window.scenario.seriesARound);
 
   // Add a demo b round at 30M pre
   var bRound = new Round('B round', window.scenario.seriesARound, 30000000, {type: 'post', percent: 0.05});
-  var bInvestment1 = window.bInvestment1 = new Investment(bRound, 20000000, {name: 'b investment 1'});
+  var bInvestment1 = window.bInvestment1 = new Investment(bRound, 20000000, {name: '20M series B'});
   window.bRound = bRound;
 
 
