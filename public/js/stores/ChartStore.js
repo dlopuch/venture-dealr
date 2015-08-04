@@ -10,6 +10,7 @@ var Reflux = require('reflux');
 
 var actions = require('actions/actionsEnum');
 
+var Exit = require('models/Exit');
 var ShareClass = require('models/ShareClass');
 
 
@@ -38,6 +39,10 @@ var PREF_LAST_LAST     = '#d9f0d3';
 
 function createColorMatrix(chartData) {
   var lastRoundI = chartData.rounds.length - 1;
+
+  if (chartData.rounds[lastRoundI].round instanceof Exit) {
+    lastRoundI--;
+  }
 
   var optionsScale = d3.scale.linear().range([OPTIONS_FIRST, OPTIONS_LAST]).domain([0, lastRoundI]);
 
@@ -120,6 +125,11 @@ function processStakesIntoMeasureDataset(chartData, measureAccessor) {
       d3.max( measureDataset.series[measureDataset.series.length - 1 ].data.map(d => d.y0 + d.y) )
     ]
   };
+
+  // Floating point cludge: if it's 'percentage', force max to be 1, not 1.000000001
+  if (measureAccessor === 'percentages') {
+    measureDataset.yAxis.domain[1] = 1;
+  }
 
   return measureDataset;
 }
@@ -246,7 +256,6 @@ module.exports = Reflux.createStore({
         ]
       }
     };
-
 
     window.hdRoundChartConfig = roundChartConfig;
     this.state.roundChartConfig = roundChartConfig;

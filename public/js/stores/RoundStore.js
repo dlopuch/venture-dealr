@@ -8,6 +8,8 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 
 var actions = require('actions/actionsEnum');
+var Exit = require('models/Exit');
+var Round = require('models/Round');
 
 
 var latestRound;
@@ -61,7 +63,7 @@ module.exports = Reflux.createStore({
   /**
    * Turns a round into a data to be fed into a d3 stack layout.
    *
-   * @param {models.Round} upToRound last round to data-ify
+   * @param {models.Round | models.Exit} upToRound last round to data-ify
    * @returns {Object} like: {
    *   rounds: {Array(model.Round)} List of rounds in order, ie the x-axis
    *   stakes: {Array(Object)} where each object is like:
@@ -84,6 +86,11 @@ module.exports = Reflux.createStore({
    *   .y(o => o.n)
    */
   _generateChartSeries: function(upToRound) {
+    var isExit = upToRound instanceof Exit;
+
+    if (!isExit && !(upToRound instanceof Round))
+      throw new Error('cant generate chart series if not a Round nor an Exit');
+
     var percentagesByStakeIds = {};
     var valuesByStakeIds = {};
 
@@ -93,7 +100,7 @@ module.exports = Reflux.createStore({
     // We assume stakes are never sold -- once it exists, it exists on all subsequent rounds.  The final round,
     // upToRound, therefore contains all the equity stakes.  We will start with them, then work our way backwards
     // through the rounds creating same-length timelines of each stake.
-    var stakeDataById = _(stats.stakesAndPercentages)
+    var stakeDataById = _(stats.stakesAndPercentages || stats.stakesAndPayouts)
     .map(function(snp) {
       return {
         stake: snp.stake,
@@ -109,7 +116,7 @@ module.exports = Reflux.createStore({
     // the x-axis
     var roundData = [];
 
-    var allStakesIdx = _(stats.stakesAndPercentages).pluck('stake').indexBy('id').value();
+    var allStakesIdx = _(stats.stakesAndPercentages || stats.stakesAndPayouts).pluck('stake').indexBy('id').value();
 
     var round = upToRound;
     while (round) {
@@ -127,9 +134,13 @@ module.exports = Reflux.createStore({
       var allStakes = _.clone(allStakesIdx);
 
       /* jshint loopfunc:true */
-      stats.stakesAndPercentages.forEach(function(snp) {
+      (stats.stakesAndPercentages || stats.stakesAndPayouts).forEach(function(snp) {
         stakeDataById[snp.stake.id].percentages.push( snp.percentage );
-        stakeDataById[snp.stake.id].values.push( stats.sharePrice * snp.stake.numShares );
+        stakeDataById[snp.stake.id].values.push(
+          isExit ?
+            snp.value :
+            stats.sharePrice * snp.stake.numShares
+        );
         delete allStakes[snp.stake.id];
       });
 
