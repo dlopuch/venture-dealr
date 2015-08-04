@@ -1,40 +1,63 @@
 var _ = require('lodash');
+var Reflux = require('reflux');
 
-var ACTIONS = {
-  ROUND: {
-    NEW_ROUND_DATA: true,
+module.exports = Reflux.createActions({
+  'round': {
+    children: [
+      /**
+       * Indicates a round model has been converted into a new chart series
+       * @param {Object} chartSeriesData
+       */
+      'newRoundData',
 
-    /** Indicates a new 'Latest Round' is present, indicating a new chain of rounds is ready */
-    SET_SCENARIO: true,
+      /**
+       * Indicates a new 'Latest Round' is present, indicating a new chain of rounds is ready
+       * @param {models.Round} Round
+       */
+      'setScenario',
 
-    ADD_INVESTMENT: true,
+      /**
+       * Adds an investment to a round
+       * @param {models.Round}
+       * @param {models.Investment} The investment to add
+       */
+      'addInvestment',
 
-    /** Indicates the round money has changed (valuation or investments) */
-    UPDATED_MONEY: true,
+      /**
+       * Indicates the round money has changed (valuation or investments)
+       * @param {models.Round} Updated round
+       */
+      'updatedMoney',
 
-    CHANGE_ROUND_PRE_MONEY_VALUATION: true,
+      /**
+       * Update a round's pre-money valuation
+       * @param {models.Round} Round to update
+       * @param {number} New valuation
+       */
+      'changeRoundPreMoneyValuation',
+    ]
   },
 
-  INVESTMENT: {
-    CHANGE_MONEY: true
+  investment: {
+    children: [
+      'changeMoney'
+    ]
   },
 
-  CHART: {
-    SELECT_MEASURE: true,
+  chart: {
+    children: [
+      /**
+       * Changes the active measure on the RoundChart
+       * @param {string} The new active measure
+       */
+      'selectMeasure',
 
-    SELECT_ROUND: true
+      /**
+       * Changes the selected Round for drill-down views, etc
+       * @param {models.Round} The new active Round to focus on
+       */
+      'selectRound'
+    ]
   }
 
-};
-
-(function buildActions(accKey, tree) {
-  _.each(tree, function(value, nextKey) {
-    if (_.isObject(value)) {
-      buildActions(accKey + '.' + nextKey, value);
-    } else {
-      tree[nextKey] = accKey + '.' + nextKey;
-    }
-  });
-})('ACTIONS', ACTIONS);
-
-module.exports = ACTIONS;
+});

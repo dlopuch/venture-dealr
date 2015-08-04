@@ -5,52 +5,57 @@
  */
 
 var _ = require('lodash');
-var assign = require('object-assign');
-var EventEmitter = require('events').EventEmitter;
+var Reflux = require('reflux');
 
-var dispatcher = require('dispatcher');
-
-var ACTIONS = require('actions/actionsEnum');
-var roundActions = require('actions/roundActions');
+var actions = require('actions/actionsEnum');
 
 
 var latestRound;
 
 
-var RoundStore = module.exports = assign({}, EventEmitter.prototype, {
+module.exports = Reflux.createStore({
 
-  handleAddEquityStake: function(payload) {
-    var round = payload.round;
-    round.addStake(payload.stake);
+  init: function() {
+    this.listenToMany({
+      'setScenario': actions.round.setScenario,
+      'changeRoundPreMoneyValuation': actions.round.changeRoundPreMoneyValuation,
+      'addInvestment': actions.round.addInvestment,
+      'updatedMoney': actions.round.updatedMoney,
+      'changeMoney': actions.investment.changeMoney
+    });
   },
 
-  handleAddInvestment: function(round, investment) {
+  onSetScenario: function(round) {
+    latestRound = round;
+    this.chartNewData();
+  },
+
+  onAddInvestment: function(round, investment) {
     round.addInvestment(investment);
-    setTimeout(_.partial(roundActions.updatedMoney, round));
+    actions.round.updatedMoney(round);
   },
 
-  handleChangeRoundPreMoney: function(round, newValuation) {
+  onChangeRoundPreMoneyValuation: function(round, newValuation) {
     round.preMoneyValuation = newValuation;
-    setTimeout(_.partial(roundActions.updatedMoney, round));
+    actions.round.updatedMoney(round);
   },
 
-  handleUpdatedMoney: function(round) {
-    RoundStore.chartNewData(latestRound);
+  onUpdatedMoney: function(round) {
+    this.chartNewData();
   },
 
-  handleInvestmentUpdatedMoney: function(investment, newMoney) {
+  // actions.investment.changeMoney
+  onChangeMoney: function(investment, newMoney) {
     investment.money = newMoney;
     investment.round.stats = null;
-    setTimeout(_.partial(roundActions.updatedMoney, investment.round));
+    actions.round.updatedMoney(investment.round);
   },
 
   /**
    * Given a round, generates chart series data for everything up to the round
-   * @param {models.Round} round the last round to show, fully linked.
    */
-  chartNewData: function(round) {
-    var roundChartSeries = this._generateChartSeries(round);
-    setTimeout(_.partial(roundActions.newRoundData, roundChartSeries));
+  chartNewData: function() {
+    actions.round.newRoundData( this._generateChartSeries( latestRound ) );
   },
 
   /**
@@ -170,30 +175,5 @@ var RoundStore = module.exports = assign({}, EventEmitter.prototype, {
         })
         .value()
     };
-  },
-
-  dispatchToken: dispatcher.register(function(payload) {
-    switch (payload.action) {
-      case ACTIONS.ROUND.SET_SCENARIO:
-        latestRound = payload.round;
-        RoundStore.chartNewData(latestRound);
-        break;
-
-      case ACTIONS.ROUND.CHANGE_ROUND_PRE_MONEY_VALUATION:
-        RoundStore.handleChangeRoundPreMoney(payload.round, payload.newValuation);
-        break;
-
-      case ACTIONS.ROUND.ADD_INVESTMENT:
-        RoundStore.handleAddInvestment(payload.round, payload.investment);
-        break;
-
-      case ACTIONS.ROUND.UPDATED_MONEY:
-        RoundStore.handleUpdatedMoney(payload.round);
-        break;
-
-      case ACTIONS.INVESTMENT.CHANGE_MONEY:
-        RoundStore.handleInvestmentUpdatedMoney(payload.investment, payload.money);
-        break;
-    }
-  })
+  }
 });

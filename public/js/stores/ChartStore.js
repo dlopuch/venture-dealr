@@ -6,47 +6,11 @@
 
 var _ = require('lodash');
 var d3 = require('d3');
-var EventEmitter = require('events').EventEmitter;
+var Reflux = require('reflux');
 
-var dispatcher = require('dispatcher');
-var ACTIONS = require('actions/actionsEnum');
-var chartActions = require('actions/chartActions');
-var roundActions = require('actions/roundActions');
+var actions = require('actions/actionsEnum');
 
 var ShareClass = require('models/ShareClass');
-
-/**
- * Events that components can listen to to receive new data.
- *
- * Exposed as ChartStore.EVENTS.
- */
-var EVENTS = {
-
-  /**
-   * 'roundTimelineData' ({Object} roundChartConfig)
-   * Indicates a new timeline of rounds is available
-   */
-  ROUND_TIMELINE_DATA: 'roundTimelineData',
-
-  /**
-   * 'measureSelected ({string} measureName)
-   * Indicates a different measure has been selected (primarly for the Round Chart)
-   */
-  MEASURE_SELECTED: 'measureSelected',
-
-  /**
-   * 'percentValueScatterData' ({Object} percentValueScatterConfig)
-   * Indicates new data is available for the percent-value scatterplot
-   */
-  PERCENT_VALUE_SCATTER_DATA: 'percentValueScatterData',
-
-  /**
-   * 'roundSelected' ({Object} round)
-   * User has selected a round for more detail
-   */
-  ROUND_SELECTED: 'roundSelected'
-
-};
 
 
 // Layout calculators
@@ -161,29 +125,26 @@ function processStakesIntoMeasureDataset(chartData, measureAccessor) {
 }
 
 
-class ChartStore extends EventEmitter {
-  constructor() {
-    super();
-    this.dispatchToken = dispatcher.register(this.dispatch.bind(this));
+module.exports = Reflux.createStore({
+  init: function() {
+    this.listenToMany({
+      'newRoundData': actions.round.newRoundData,
+      'selectMeasure': actions.chart.selectMeasure,
+      'selectRound': actions.chart.selectRound
+    });
 
-    this.lastGetMeasure = _.property('percentages');
-  }
+    this.state = {
+      roundChartConfig: null,
+      percentValueConfig: null,
+      selectedMeasure: 'percentages',
+      selectedRound: null
+    };
+  },
 
-  get EVENTS() {
-    return EVENTS;
-  }
+  onNewRoundData: function(chartData) {
 
-  handleNewRoundData(payload) {
-    var chartData = payload.data;
-
-    // new round data means the round selection needs to be updated as well
-    if (this._lastSelectedRound) {
-      let round = this._lastSelectedRound;
-      this._lastSelectedRound = null;
-      setTimeout(function() {
-        chartActions.selectRound(round);
-      });
-    }
+    // new round data means the round selection needs to be cleared out
+    this.state.selectedRound = null;
 
     // Sort series
     chartData.stakes = _.sortByAll(
@@ -236,14 +197,8 @@ class ChartStore extends EventEmitter {
         'percentages': processStakesIntoMeasureDataset(chartData, 'percentages'),
 
         'values': processStakesIntoMeasureDataset(chartData, 'values'),
-      },
-
-      getMeasure: this.lastGetMeasure
+      }
     };
-
-    window.hdRoundChartConfig = roundChartConfig;
-
-    this.emit(EVENTS.ROUND_TIMELINE_DATA, roundChartConfig);
 
 
     // Now do the scatter transforms
@@ -292,42 +247,31 @@ class ChartStore extends EventEmitter {
       }
     };
 
-    this.emit(EVENTS.PERCENT_VALUE_SCATTER_DATA, percentValueConfig);
+
+    window.hdRoundChartConfig = roundChartConfig;
+    this.state.roundChartConfig = roundChartConfig;
+
     window.hdPercentValueConfig = percentValueConfig;
-  }
+    this.state.percentValueConfig = percentValueConfig;
 
-  handleSelectMeasure(payload) {
-    this.lastGetMeasure = _.property(payload.measureName);
+    this.emitState();
+  },
 
-    this.emit(EVENTS.MEASURE_SELECTED, this.lastGetMeasure);
-  }
+  onSelectMeasure: function(measureName) {
+    this.state.selectedMeasure = measureName;
 
-  handleSelectRound(payload) {
-    var newRound = payload.round;
+    this.emitState();
+  },
 
-    if (this._lastSelectedRound === newRound)
+  onSelectRound: function(newRound) {
+    if (this.state.selectedRound === newRound)
       return;
 
-    this._lastSelectedRound = newRound;
-    this.emit(EVENTS.ROUND_SELECTED, newRound);
+    this.state.selectedRound = newRound;
+    this.emitState();
+  },
+
+  emitState: function() {
+    this.trigger(_.clone(this.state));
   }
-
-  dispatch(payload) {
-    switch (payload.action) {
-      case ACTIONS.ROUND.NEW_ROUND_DATA:
-        this.handleNewRoundData(payload);
-        break;
-
-      case ACTIONS.CHART.SELECT_MEASURE:
-        this.handleSelectMeasure(payload);
-        break;
-
-      case ACTIONS.CHART.SELECT_ROUND:
-        this.handleSelectRound(payload);
-        break;
-
-    }
-  }
-}
-
-module.exports = new ChartStore();
+});

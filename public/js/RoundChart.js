@@ -7,8 +7,8 @@
 var _ = require('lodash');
 var d3 = require('d3');
 
+var actions = require('actions/actionsEnum');
 var ChartStore = require('stores/ChartStore');
-var chartActions = require('actions/chartActions');
 
 var DEFAULT_TRANSITION_MS = 1000;
 
@@ -71,9 +71,11 @@ class Chart {
     this.hideTooltip     = _.partial(this.hideTooltip, this);
     this._doHideTooltip  = _.partial(this._doHideTooltip, this);
 
-    ChartStore.on(ChartStore.EVENTS.ROUND_TIMELINE_DATA, this.handleRoundTimelineData.bind(this));
-    ChartStore.on(ChartStore.EVENTS.MEASURE_SELECTED   , this.handleSelectMeasure.bind(this));
-    ChartStore.on(ChartStore.EVENTS.ROUND_SELECTED     , this.handleRoundSelected.bind(this));
+    // ChartStore.on(ChartStore.EVENTS.ROUND_TIMELINE_DATA, this.handleRoundTimelineData.bind(this));
+    // ChartStore.on(ChartStore.EVENTS.MEASURE_SELECTED   , this.handleSelectMeasure.bind(this));
+    // ChartStore.on(ChartStore.EVENTS.ROUND_SELECTED     , this.handleRoundSelected.bind(this));
+
+    ChartStore.listen(this.onNewChartData.bind(this));
 
     // Example load
     // this.handleRoundTimelineData({
@@ -119,24 +121,33 @@ class Chart {
     .style('opacity', 0);
   }
 
-  handleRoundTimelineData(data) {
-    this._data = data;
+  onNewChartData(chartStoreState) {
+    var newData = chartStoreState.roundChartConfig;
 
-    this._renderXAxis(data.xAxis);
+    var hasNewData = false;
+    if (newData && this._data !== newData) {
+      this._data = newData;
+      hasNewData = true;
+    }
 
-    this.handleSelectMeasure(data.getMeasure);
+    var hasNewMeasure = false;
+    if (this._measure !== chartStoreState.selectedMeasure) {
+      this._measure = chartStoreState.selectedMeasure;
+      hasNewMeasure = true;
+    }
+
+    if (!hasNewData && !hasNewMeasure)
+      return; // nothing to update, ignore
+
+    if (hasNewData) {
+      this._renderXAxis(newData.xAxis);
+    }
+
+    var measureData = this._data.datasets[ chartStoreState.selectedMeasure ];
+    this._renderYAxis(measureData.yAxis);
+    this._renderData(measureData);
   }
 
-  handleSelectMeasure(getMeasure) {
-    var measure = getMeasure(this._data.datasets);
-
-    this._renderYAxis(measure.yAxis);
-    this._renderData(measure);
-  }
-
-  handleRoundSelected(round) {
-    // TODO: Highlight x-axis item
-  }
 
   _renderData(measure) {
     var seriesG = this._svg.chartArea.selectAll('g')
@@ -172,7 +183,7 @@ class Chart {
       .on('mouseover', this.positionTooltip)
       .on('mousemove', this.positionTooltip)
       .on('mouseout', this.hideTooltip)
-      .on('mouseover', d => chartActions.selectRound(d.xRound));
+      .on('mouseover', d => actions.chart.selectRound(d.xRound));
 
 
     // Update position and size of existing rectangles from previous rounds (or new ones created)

@@ -1,4 +1,5 @@
 var React = require('react');
+var Reflux = require('reflux');
 
 var ChartStore = require('stores/ChartStore');
 
@@ -6,6 +7,7 @@ var FORMAT_VALUE = n => d3.format('$s')( d3.format('.3r')(n) );
 var FORMAT_PERCENT = d3.format('%');
 
 module.exports = React.createClass({
+  mixins: [Reflux.listenTo(ChartStore, '_onChartStoreChange')],
 
   getInitialState: function() {
     return {
@@ -13,18 +15,12 @@ module.exports = React.createClass({
     };
   },
 
-  _onRound: function(round) {
-    this.setState({
-      round: round
-    });
-  },
-
-  componentDidMount: function() {
-    ChartStore.on(ChartStore.EVENTS.ROUND_SELECTED, this._onRound);
-  },
-
-  componentWillUnmount: function() {
-    ChartStore.removeListener(ChartStore.EVENTS.ROUND_SELECTED, this._onRound);
+  _onChartStoreChange: function(chartStoreState) {
+    if (this.state.round !== chartStoreState.selectedRound) {
+      this.setState({
+        round: chartStoreState.selectedRound
+      });
+    }
   },
 
   _renderBreakdown: function() {

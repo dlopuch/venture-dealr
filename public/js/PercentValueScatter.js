@@ -53,10 +53,15 @@ module.exports = class PercentValueScatter {
       chartArea: svg.append('g').classed('chart-canvas', true)
     };
 
-    ChartStore.on(ChartStore.EVENTS.PERCENT_VALUE_SCATTER_DATA, this.handleData.bind(this));
+    ChartStore.listen(this._onChartStoreChange.bind(this));
   }
 
-  handleData(chartConfig) {
+  _onChartStoreChange(chartStoreState) {
+    if (this._data === chartStoreState.percentValueConfig)
+      return;
+
+    var chartConfig = chartStoreState.percentValueConfig;
+
     this._data = chartConfig;
     this._renderXAxis(chartConfig.axes.percentage);
     this._renderYAxis(chartConfig.axes.value);
