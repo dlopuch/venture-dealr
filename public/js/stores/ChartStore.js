@@ -16,7 +16,7 @@ var ShareClass = require('models/ShareClass');
 
 // Layout calculators
 var PERCENTAGE_STACK_CALC = d3.layout.stack().values(stake => stake.percentages).y(o => o.n);
-var VALUE_STACK_CALC = d3.layout.stack().values(stake => stake.values).y(o => o.n);
+var VALUE_STACK_CALC      = d3.layout.stack().values(stake => stake.values     ).y(o => o.n);
 
 
 var OPTIONS_FIRST = '#666';

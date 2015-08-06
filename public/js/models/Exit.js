@@ -174,6 +174,12 @@ module.exports = class Exit extends EventEmitter {
 
       // For value stack, we want to show either the payout or what the payout needs to be.  So take the greater-of.
       payoutStat.value = Math.max(payoutStat.payout, payoutStat.breakevenValue);
+      // TODO: This makes the round chart stack correctly, but makes the value-percent-scatter show the full potential
+      //       rather than the take-home amount in case of being underwater.  Need to do something like:
+      //         payoutStat.value = payoutStat.payout;  (breaks roundchart stacking)
+      //       or make the scatter read the payout for exit rounds.
+
+      payoutStat.isUnderwater = payoutStat.payout < payoutStat.breakevenValue;
     });
 
 

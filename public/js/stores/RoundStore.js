@@ -171,7 +171,7 @@ module.exports = Reflux.createStore({
       // (ie stakes[i].percentages and stakes[i].values)
       stakes: _(stakeDataById)
         .values()
-        .forEach(function(s) {
+        .forEach(function(s, stakeI) {
 
           // correct for 'backwards' iteration-from-last-round
           s.percentages.reverse();
@@ -179,16 +179,29 @@ module.exports = Reflux.createStore({
 
           // transform into d3 stack layout format, and for convenience link to all other entities
           function xyify(number, i) {
-            return {
-              x: roundData[i].round.id,
+            var round = roundData[i].round;
+
+            var exitMeta = {};
+
+            // For exits: grab all the exit metadata and attach it to this stake-round instance
+            if (round instanceof Exit) {
+              if (roundData[i].stats.stakesAndPayouts[stakeI].id !== s.id) {
+                throw new Error('Deep internal error!  Stake not at expected place!');
+              }
+
+              exitMeta.exitStats = roundData[i].stats.stakesAndPayouts[stakeI];
+            }
+
+            return _.extend(exitMeta, {
+              x: round.id,
               n: number,
 
-              xRound: roundData[i].round,
+              xRound: round,
               xRoundStats: roundData[i].stats,
               yStake: s.stake
 
               // .y and .y0 added in by the stack layout
-            };
+            });
           }
           s.percentages = s.percentages.map(xyify);
           s.values      = s.values.map(xyify);

@@ -159,6 +159,16 @@ class Chart {
 
     var barWidth = this._components.xScale.rangeBand() * 0.8;
 
+    var colorBar = function(d) {
+      // color is in the parent g's datum
+      return d3.select(this.parentElement).datum().color; //jshint:ignore line
+    };
+
+    var underwaterify = function(selection) {
+      selection
+      .classed('is-underwater', d => d.exitStats && d.exitStats.isUnderwater);
+    };
+
     // each seriesG now has a list of values at each round.  Make a subselection to turn those into chart glyphs, keying
     // each subselection node to it's round ID
     var rects = seriesG.selectAll('rect')
@@ -176,10 +186,8 @@ class Chart {
         'height': 0,
         'y': 0
       })
-      .style('fill', function(d) {
-        // color is in the parent g's datum
-        return d3.select(this.parentElement).datum().color;
-      })
+      .style('fill', colorBar)
+      .call(underwaterify)
       .on('mouseover', this.positionTooltip)
       .on('mousemove', this.positionTooltip)
       .on('mouseout', this.hideTooltip)
@@ -187,12 +195,11 @@ class Chart {
 
 
     // Update position and size of existing rectangles from previous rounds (or new ones created)
-    rects.transition()
+    rects
+    .call(underwaterify)
+    .transition()
       .duration(DEFAULT_TRANSITION_MS)
-      .style('fill', function(d) {
-        // color is in the parent g's datum
-        return d3.select(this.parentElement).datum().color;
-      })
+      .style('fill', colorBar)
       .attr({
         'width': barWidth,
         'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
