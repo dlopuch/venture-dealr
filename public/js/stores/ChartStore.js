@@ -138,9 +138,9 @@ function processStakesIntoMeasureDataset(chartData, measureAccessor) {
 module.exports = Reflux.createStore({
   init: function() {
     this.listenToMany({
-      'newRoundData': actions.round.newRoundData,
+      'newRoundData' : actions.round.newRoundData,
       'selectMeasure': actions.chart.selectMeasure,
-      'selectRound': actions.chart.selectRound
+      'selectRound'  : actions.chart.selectRound
     });
 
     this.state = {

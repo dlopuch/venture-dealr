@@ -19,11 +19,12 @@ module.exports = Reflux.createStore({
 
   init: function() {
     this.listenToMany({
-      'setScenario': actions.round.setScenario,
-      'changeRoundPreMoneyValuation': actions.round.changeRoundPreMoneyValuation,
-      'addInvestment': actions.round.addInvestment,
-      'updatedMoney': actions.round.updatedMoney,
-      'changeMoney': actions.investment.changeMoney
+      'setScenario'                  : actions.round.setScenario,
+      'changeRoundPreMoneyValuation' : actions.round.changeRoundPreMoneyValuation,
+      'addInvestment'                : actions.round.addInvestment,
+      'updatedMoney'                 : actions.round.updatedMoney,
+      'changeMoney'                  : actions.investment.changeMoney,
+      'exitChangeValuation'          : actions.exit.changeValuation
     });
   },
 
@@ -42,7 +43,15 @@ module.exports = Reflux.createStore({
     actions.round.updatedMoney(round);
   },
 
-  onUpdatedMoney: function(round) {
+  onExitChangeValuation: function(exit, newValuation) {
+    if (!(exit instanceof Exit))
+      throw new Error('Exit model expected!');
+
+    exit.valuation = newValuation;
+    actions.round.updatedMoney(exit);
+  },
+
+  onUpdatedMoney: function(roundOrExit) {
     this.chartNewData();
   },
 
@@ -86,9 +95,7 @@ module.exports = Reflux.createStore({
    *   .y(o => o.n)
    */
   _generateChartSeries: function(upToRound) {
-    var isExit = upToRound instanceof Exit;
-
-    if (!isExit && !(upToRound instanceof Round))
+    if (!(upToRound instanceof Exit) && !(upToRound instanceof Round))
       throw new Error('cant generate chart series if not a Round nor an Exit');
 
     var percentagesByStakeIds = {};
@@ -120,6 +127,7 @@ module.exports = Reflux.createStore({
 
     var round = upToRound;
     while (round) {
+
       stats = round.calculateStats();
 
       roundData.push({
@@ -131,6 +139,7 @@ module.exports = Reflux.createStore({
       // Process the round's stakes, then any that are left-over add nulls for all the timelines so that all timelines
       // are the same length
 
+      var isExit = round instanceof Exit;
       var allStakes = _.clone(allStakesIdx);
 
       /* jshint loopfunc:true */
