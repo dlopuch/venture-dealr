@@ -37,6 +37,10 @@ window.onload = function() {
   window.bRound = bRound;
 
 
+  // Add a demo exit at 50M
+  var exit = window.exit = new Exit(bRound, 50000000);
+
+
   var toggleIsPercent = true;
   d3.select('#toggle_measure').on('click', function() {
     toggleIsPercent = !toggleIsPercent;
@@ -52,6 +56,10 @@ window.onload = function() {
     console.log('  > actions.round.changeRoundPreMoneyValuation(scenario.seriesARound, 5000000)');
     console.log('or see the effects of more funding:');
     console.log('  > actions.investment.changeMoney(bInvestment1, 30000000)');
+    console.log('or add an exit:');
+    console.log('  > actions.round.setScenario(exit);');
+    console.log('or change exit amount:');
+    console.log('  > actions.exit.changeValuation(exit, 60000000);');
   });
   var toggleBRound = false;
   d3.select('#toggle_b_round').on('click', function() {

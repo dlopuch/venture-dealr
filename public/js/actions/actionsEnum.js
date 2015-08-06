@@ -11,8 +11,8 @@ module.exports = Reflux.createActions({
       'newRoundData',
 
       /**
-       * Indicates a new 'Latest Round' is present, indicating a new chain of rounds is ready
-       * @param {models.Round} Round
+       * Indicates a new 'Latest Round' is present, indicating a new chain of rounds is ready (or an exit event)
+       * @param {models.Round | models.Exit} round or exit
        */
       'setScenario',
 
