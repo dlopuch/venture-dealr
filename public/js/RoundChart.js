@@ -204,7 +204,9 @@ class Chart {
         'width': barWidth,
         'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
 
-        'height': d => d.y ? this._components.yScale(d.y) : 0,
+        'height': d => !d.y ? 0 : this._components.yScale(
+          d.exitStats && d.exitStats.isUnderwater ? d.exitStats.payout : d.y
+        ),
         'y': d => this._components.yScale(d.y0)
       });
 
