@@ -228,7 +228,8 @@ module.exports = Reflux.createStore({
 
                 // meta:
                 round: p.xRound,
-                roundStats: p.xRoundStats
+                roundStats: p.xRoundStats,
+                exitStats: p.exitStats || null
               };
             })
             // filter out any null points (side-effect of stacked bar chart normalization)

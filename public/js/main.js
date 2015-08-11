@@ -70,6 +70,13 @@ window.onload = function() {
     explainBRound();
   });
 
+
+  // TEMP WHILE EXPERIMENTING WITH EXIT
+  setTimeout(function() {
+    actions.chart.selectMeasure('values');
+    actions.round.setScenario(exit);
+  }, 100);
+
   require('views/reactApp.jsx');
 
 };
