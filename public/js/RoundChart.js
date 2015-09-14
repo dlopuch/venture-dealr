@@ -148,30 +148,117 @@ class Chart {
     this._renderData(measureData);
   }
 
+  _getBarWidth() {
+    return this._components.xScale.rangeBand() * 0.8;
+  }
+
+  /**
+   * For stacks' rectangle segments, sets their initial zero-position when they enter the stage
+   * @param {d3.selection.enter} The enter selection for rectangles
+   */
+  _setRectEnterPosition(selection) {
+    selection
+    .attr({
+      'width': this._getBarWidth(),
+      'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - this._getBarWidth()/2,
+
+      'height': 0,
+      'y': 0
+    });
+  }
+
 
   _renderData(measure) {
-    var seriesG = this._svg.chartArea.selectAll('g')
-      .data(measure.series, d => '' + d.id);
+    var seriesG = this._svg.chartArea.selectAll('g.series')
+      .data(measure.series, d => 'series_' + d.id);
 
-    seriesG.enter().append('g');
+    var seriesGEnter = seriesG.enter().append('g').classed('series', true);
+
+    // Create groupings for chart elements in appropriate z-index order because this is svg
+    seriesGEnter.append('g').classed('underwater-exits', true);
+    var underwaterExitsG = seriesG.selectAll('g.underwater-exits')
+    .datum(function(d) {
+      return d3.select(this.parentElement).datum();
+    });
+
+    // TODO: same g for stack rects?
 
     var self = this;
+    var barWidth = this._getBarWidth();
 
-    var barWidth = this._components.xScale.rangeBand() * 0.8;
 
-    var colorBar = function(d) {
+    // Make underwater indicators ------------------------------------------------------------------
+    function seriesDatumIsUnderwaterExit(seriesDatum) {
+      return seriesDatum.exitStats && seriesDatum.exitStats.isUnderwater;
+    }
+    function seriesHasUnderwaterExit(seriesD) {
+      return _.any(seriesD.data, seriesDatumIsUnderwaterExit);
+    }
+
+    var underwaterExits = underwaterExitsG
+    //.filter(seriesHasUnderwaterExit)
+    .selectAll('rect.underwater-exit')
+    .data(
+      seriesD => seriesD.data.filter(seriesDatumIsUnderwaterExit),
+      tuple => tuple.yStake.id + '__' + tuple.xRound.id
+    );
+
+    underwaterExits.enter().append('rect')
+      .classed('underwater-exit', true)
+      .call(this._setRectEnterPosition.bind(this))
+      .attr({
+        'opacity': 0,
+        'height': d => !d.y ? 0 : this._components.yScale(d.y),
+        'y': d => this._components.yScale(d.y0)
+      })
+      .on('mouseover', this.positionTooltip)
+      .on('mousemove', this.positionTooltip)
+      .on('mouseout', this.hideTooltip)
+      .on('mouseover', d => actions.chart.selectRound(d.xRound));
+
+    underwaterExits
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+      .attr({
+        'opacity': 0.5,
+        'width': barWidth,
+        'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
+
+        'height': d => !d.y ? 0 : this._components.yScale(d.y),
+        'y': d => this._components.yScale(d.y0)
+      });
+
+    underwaterExits.exit()
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      'opacity': 0,
+      'height': d => !d.y ? 0 : this._components.yScale(d.y),
+      'y': d => this._components.yScale(d.y0)
+    });
+
+
+    // ------------------------------------------------------------------
+
+
+    function colorBar(d) {
       // color is in the parent g's datum
-      return d3.select(this.parentElement).datum().color; //jshint:ignore line
-    };
+      return d3.select(this.parentElement).datum().color; //jshint ignore:line
+    }
 
     var underwaterify = function(selection) {
       selection
-      .classed('is-underwater', d => d.exitStats && d.exitStats.isUnderwater);
+      .attr('width', function(d) {
+        if (!d.exitStats || !d.exitStats.isUnderwater)
+          return barWidth;
+
+        return 5 + (barWidth - 5) * (d.exitStats.payout / d.exitStats.breakevenValue);
+      });
     };
 
     // each seriesG now has a list of values at each round.  Make a subselection to turn those into chart glyphs, keying
     // each subselection node to it's round ID
-    var rects = seriesG.selectAll('rect')
+    var rects = seriesG.selectAll('rect.round-stake')
       .data(
         d => d.data,
         d => '' + d.xRound.id
@@ -179,13 +266,8 @@ class Chart {
 
     // Initialize all new series
     rects.enter().append('rect')
-      .attr({
-        'width': barWidth,
-        'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
-
-        'height': 0,
-        'y': 0
-      })
+      .classed('round-stake', true)
+      .call(this._setRectEnterPosition.bind(this))
       .style('fill', colorBar)
       .call(underwaterify)
       .on('mouseover', this.positionTooltip)
@@ -196,16 +278,17 @@ class Chart {
 
     // Update position and size of existing rectangles from previous rounds (or new ones created)
     rects
-    .call(underwaterify)
     .transition()
       .duration(DEFAULT_TRANSITION_MS)
       .style('fill', colorBar)
+      .call(underwaterify) // changes width if underwater
       .attr({
-        'width': barWidth,
+        //'width': barWidth,
         'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
 
         'height': d => !d.y ? 0 : this._components.yScale(
-          d.exitStats && d.exitStats.isUnderwater ? d.exitStats.payout : d.y
+          //d.exitStats && d.exitStats.isUnderwater ? d.exitStats.payout : d.y
+          d.y
         ),
         'y': d => this._components.yScale(d.y0)
       });
