@@ -8,6 +8,8 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 
 var actions = require('actions/actionsEnum');
+var Exit = require('models/Exit');
+var Round = require('models/Round');
 
 
 var latestRound;
@@ -17,11 +19,12 @@ module.exports = Reflux.createStore({
 
   init: function() {
     this.listenToMany({
-      'setScenario': actions.round.setScenario,
-      'changeRoundPreMoneyValuation': actions.round.changeRoundPreMoneyValuation,
-      'addInvestment': actions.round.addInvestment,
-      'updatedMoney': actions.round.updatedMoney,
-      'changeMoney': actions.investment.changeMoney
+      'setScenario'                  : actions.round.setScenario,
+      'changeRoundPreMoneyValuation' : actions.round.changeRoundPreMoneyValuation,
+      'addInvestment'                : actions.round.addInvestment,
+      'updatedMoney'                 : actions.round.updatedMoney,
+      'changeMoney'                  : actions.investment.changeMoney,
+      'exitChangeValuation'          : actions.exit.changeValuation
     });
   },
 
@@ -40,7 +43,15 @@ module.exports = Reflux.createStore({
     actions.round.updatedMoney(round);
   },
 
-  onUpdatedMoney: function(round) {
+  onExitChangeValuation: function(exit, newValuation) {
+    if (!(exit instanceof Exit))
+      throw new Error('Exit model expected!');
+
+    exit.valuation = newValuation;
+    actions.round.updatedMoney(exit);
+  },
+
+  onUpdatedMoney: function(roundOrExit) {
     this.chartNewData();
   },
 
@@ -61,7 +72,7 @@ module.exports = Reflux.createStore({
   /**
    * Turns a round into a data to be fed into a d3 stack layout.
    *
-   * @param {models.Round} upToRound last round to data-ify
+   * @param {models.Round | models.Exit} upToRound last round to data-ify
    * @returns {Object} like: {
    *   rounds: {Array(model.Round)} List of rounds in order, ie the x-axis
    *   stakes: {Array(Object)} where each object is like:
@@ -84,6 +95,9 @@ module.exports = Reflux.createStore({
    *   .y(o => o.n)
    */
   _generateChartSeries: function(upToRound) {
+    if (!(upToRound instanceof Exit) && !(upToRound instanceof Round))
+      throw new Error('cant generate chart series if not a Round nor an Exit');
+
     var percentagesByStakeIds = {};
     var valuesByStakeIds = {};
 
@@ -93,7 +107,7 @@ module.exports = Reflux.createStore({
     // We assume stakes are never sold -- once it exists, it exists on all subsequent rounds.  The final round,
     // upToRound, therefore contains all the equity stakes.  We will start with them, then work our way backwards
     // through the rounds creating same-length timelines of each stake.
-    var stakeDataById = _(stats.stakesAndPercentages)
+    var stakeDataById = _(stats.stakesAndPercentages || stats.stakesAndPayouts)
     .map(function(snp) {
       return {
         stake: snp.stake,
@@ -109,10 +123,11 @@ module.exports = Reflux.createStore({
     // the x-axis
     var roundData = [];
 
-    var allStakesIdx = _(stats.stakesAndPercentages).pluck('stake').indexBy('id').value();
+    var allStakesIdx = _(stats.stakesAndPercentages || stats.stakesAndPayouts).pluck('stake').indexBy('id').value();
 
     var round = upToRound;
     while (round) {
+
       stats = round.calculateStats();
 
       roundData.push({
@@ -124,12 +139,17 @@ module.exports = Reflux.createStore({
       // Process the round's stakes, then any that are left-over add nulls for all the timelines so that all timelines
       // are the same length
 
+      var isExit = round instanceof Exit;
       var allStakes = _.clone(allStakesIdx);
 
       /* jshint loopfunc:true */
-      stats.stakesAndPercentages.forEach(function(snp) {
+      (stats.stakesAndPercentages || stats.stakesAndPayouts).forEach(function(snp) {
         stakeDataById[snp.stake.id].percentages.push( snp.percentage );
-        stakeDataById[snp.stake.id].values.push( stats.sharePrice * snp.stake.numShares );
+        stakeDataById[snp.stake.id].values.push(
+          isExit ?
+            snp.value :
+            stats.sharePrice * snp.stake.numShares
+        );
         delete allStakes[snp.stake.id];
       });
 
@@ -151,7 +171,7 @@ module.exports = Reflux.createStore({
       // (ie stakes[i].percentages and stakes[i].values)
       stakes: _(stakeDataById)
         .values()
-        .forEach(function(s) {
+        .forEach(function(s, stakeI) {
 
           // correct for 'backwards' iteration-from-last-round
           s.percentages.reverse();
@@ -159,16 +179,29 @@ module.exports = Reflux.createStore({
 
           // transform into d3 stack layout format, and for convenience link to all other entities
           function xyify(number, i) {
-            return {
-              x: roundData[i].round.id,
+            var round = roundData[i].round;
+
+            var exitMeta = {};
+
+            // For exits: grab all the exit metadata and attach it to this stake-round instance
+            if (round instanceof Exit) {
+              if (roundData[i].stats.stakesAndPayouts[stakeI].id !== s.id) {
+                throw new Error('Deep internal error!  Stake not at expected place!');
+              }
+
+              exitMeta.exitStats = roundData[i].stats.stakesAndPayouts[stakeI];
+            }
+
+            return _.extend(exitMeta, {
+              x: round.id,
               n: number,
 
-              xRound: roundData[i].round,
+              xRound: round,
               xRoundStats: roundData[i].stats,
               yStake: s.stake
 
               // .y and .y0 added in by the stack layout
-            };
+            });
           }
           s.percentages = s.percentages.map(xyify);
           s.values      = s.values.map(xyify);

@@ -148,20 +148,119 @@ class Chart {
     this._renderData(measureData);
   }
 
+  _getBarWidth() {
+    return this._components.xScale.rangeBand() * 0.8;
+  }
+
+  /**
+   * For stacks' rectangle segments, sets their initial zero-position when they enter the stage
+   * @param {d3.selection.enter} The enter selection for rectangles
+   */
+  _setRectEnterPosition(selection) {
+    selection
+    .attr({
+      'width': this._getBarWidth(),
+      'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - this._getBarWidth()/2,
+
+      'height': 0,
+      'y': 0
+    });
+  }
+
+  /**
+   * When there is an exit, and some of the stakes are underwater (worth less than amount paid for them), the bars are
+   * only partial width.  The rest of the width is a red bar, indicating how much more value needs to be created before
+   * that stake is made whole.  This function renders the underwater bar
+   */
+  _renderUnderwaterExitBG(measure) {
+    // Only one underwater exit grouping.  To maintain selections, bind to a data array of len 1
+    var underwaterExitG = this._svg.chartArea.selectAll('g.underwater-exit')
+    .data( [measure] );
+
+    // create it for first time
+    underwaterExitG.enter().append('g').classed('underwater-exit', true);
+
+    // Each Exit stack gets its own underwater highlight
+    // (written with d3 declarative syntax for n-Exits, but note that for now, always only one Exit stack)
+    var underwaterExitStackBg = underwaterExitG.selectAll('rect.underwater-exit-stack')
+    .data(function(measureD) {
+      // check if any have exit
+      var aSeriesD = measureD.series[0] && measureD.series[0].data;
+
+      if (!aSeriesD) return [];
+
+      return _.filter(aSeriesD, d => d.exitStats); // someday maybe multiple exits on one chart??
+    });
+
+    underwaterExitStackBg.enter().append('rect')
+    .classed('underwater-exit-stack', true)
+    .call(this._setRectEnterPosition.bind(this))
+    .style({'fill': 'red', 'opacity': 0.5})
+    .on('mouseover', this.positionTooltip)
+    .on('mousemove', this.positionTooltip)
+    .on('mouseout', this.hideTooltip)
+    .on('mouseover', d => actions.chart.selectRound(d.xRound));
+
+    var barWidth = this._getBarWidth();
+
+    // The stack scales height and position with the data stacks
+    underwaterExitStackBg
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      'width': barWidth,
+      'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
+
+      // The height however is the sum of all the exit stakes' values.  We can get this from xRoundStats
+      'height': d => !d.y ? 0 : this._components.yScale(
+        d.xRoundStats.stakesAndPayouts.reduce( (sum, snp) => sum + snp.value, 0 )
+      ),
+    });
+
+    underwaterExitStackBg.exit()
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      'height': 0
+    })
+    .remove();
+  }
+
 
   _renderData(measure) {
-    var seriesG = this._svg.chartArea.selectAll('g')
-      .data(measure.series, d => '' + d.id);
 
-    seriesG.enter().append('g');
+    // First, render the underwater exit stack background (incase there is an exit)
+    this._renderUnderwaterExitBG(measure);
+
+
 
     var self = this;
+    var barWidth = this._getBarWidth();
 
-    var barWidth = this._components.xScale.rangeBand() * 0.8;
+    var seriesG = this._svg.chartArea.selectAll('g.series')
+      .data(measure.series, d => 'series_' + d.id);
+    seriesG.enter().append('g').classed('series', true);
+
+    function colorBar(d) {
+      // color is in the parent g's datum
+      return d3.select(this.parentElement).datum().color; //jshint ignore:line
+    }
+
+    function setBarWidth(selection) {
+      selection
+      .attr('width', function(d) {
+        if (!d.exitStats || !d.exitStats.isUnderwater)
+          return barWidth;
+
+        // An underwater exit stake has partial width -- the % of the breakeven value that its payout value is
+        // (with min width 5 so you can see its color)
+        return 5 + (barWidth - 5) * (d.exitStats.payout / d.exitStats.breakevenValue);
+      });
+    }
 
     // each seriesG now has a list of values at each round.  Make a subselection to turn those into chart glyphs, keying
     // each subselection node to it's round ID
-    var rects = seriesG.selectAll('rect')
+    var rects = seriesG.selectAll('rect.round-stake')
       .data(
         d => d.data,
         d => '' + d.xRound.id
@@ -169,17 +268,10 @@ class Chart {
 
     // Initialize all new series
     rects.enter().append('rect')
-      .attr({
-        'width': barWidth,
-        'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
-
-        'height': 0,
-        'y': 0
-      })
-      .style('fill', function(d) {
-        // color is in the parent g's datum
-        return d3.select(this.parentElement).datum().color;
-      })
+      .classed('round-stake', true)
+      .call(this._setRectEnterPosition.bind(this))
+      .style('fill', colorBar)
+      .call(setBarWidth)
       .on('mouseover', this.positionTooltip)
       .on('mousemove', this.positionTooltip)
       .on('mouseout', this.hideTooltip)
@@ -187,17 +279,16 @@ class Chart {
 
 
     // Update position and size of existing rectangles from previous rounds (or new ones created)
-    rects.transition()
+    rects
+    .transition()
       .duration(DEFAULT_TRANSITION_MS)
-      .style('fill', function(d) {
-        // color is in the parent g's datum
-        return d3.select(this.parentElement).datum().color;
-      })
+      .style('fill', colorBar)
+      .call(setBarWidth) // changes width if underwater
       .attr({
-        'width': barWidth,
         'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
+        // (width set by underwaterify())
 
-        'height': d => d.y ? this._components.yScale(d.y) : 0,
+        'height': d => !d.y ? 0 : this._components.yScale(d.y),
         'y': d => this._components.yScale(d.y0)
       });
 

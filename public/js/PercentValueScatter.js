@@ -108,7 +108,15 @@ module.exports = class PercentValueScatter {
     .attr({
       r: 3,
       cx: d => (self._components.prevXScale || self._components.xScale)(d.percentage),
-      cy: d => (self._components.prevYScale || self._components.yScale)(d.value),
+      cy: function(d) {
+        return (self._components.prevYScale || self._components.yScale)(
+          // The value we send to the scale is different if this is an Exit.
+          // For Exits, we chart the exit payout, b/c the .value is the break-even if the point is underwater
+          d.exitStats && d.exitStats.isUnderwater ?
+            d.exitStats.payout :
+            d.value
+        );
+      },
       fill: function(d) {
         return d3.select(this.parentElement).datum().color;
       },
@@ -116,12 +124,21 @@ module.exports = class PercentValueScatter {
     });
 
     circles
+    .classed('is-underwater', d => !!d.exitStats && d.exitStats.isUnderwater)
     .transition()
       .duration(DEFAULT_TRANSITION_MS)
     .attr({
       opacity: 1,
       cx: d => self._components.xScale(d.percentage),
-      cy: d => self._components.yScale(d.value),
+      cy: function(d) {
+        // The value we send to the scale is different if this is an Exit.
+        // For Exits, we chart the exit payout, b/c the .value is the break-even if the point is underwater
+        return self._components.yScale(
+          d.exitStats && d.exitStats.isUnderwater ?
+            d.exitStats.payout :
+            d.value
+        );
+      },
       fill: function(d) {
         return d3.select(this.parentElement).datum().color;
       }
@@ -148,7 +165,7 @@ module.exports = class PercentValueScatter {
 
       return d3.svg.line()
         .x(d => xScale(d.percentage))
-        .y(d => yScale(d.value));
+        .y(d => yScale(d.exitStats && d.exitStats.isUnderwater ? d.exitStats.payout : d.value));
     }
     var lineGenerator         = makeLineGenerator(this._components.xScale    , this._components.yScale);
     var prevGridLineGenerator = makeLineGenerator(this._components.prevXScale, this._components.prevYScale);

@@ -10,12 +10,13 @@ var Reflux = require('reflux');
 
 var actions = require('actions/actionsEnum');
 
+var Exit = require('models/Exit');
 var ShareClass = require('models/ShareClass');
 
 
 // Layout calculators
 var PERCENTAGE_STACK_CALC = d3.layout.stack().values(stake => stake.percentages).y(o => o.n);
-var VALUE_STACK_CALC = d3.layout.stack().values(stake => stake.values).y(o => o.n);
+var VALUE_STACK_CALC      = d3.layout.stack().values(stake => stake.values     ).y(o => o.n);
 
 
 var OPTIONS_FIRST = '#666';
@@ -38,6 +39,10 @@ var PREF_LAST_LAST     = '#d9f0d3';
 
 function createColorMatrix(chartData) {
   var lastRoundI = chartData.rounds.length - 1;
+
+  if (chartData.rounds[lastRoundI].round instanceof Exit) {
+    lastRoundI--;
+  }
 
   var optionsScale = d3.scale.linear().range([OPTIONS_FIRST, OPTIONS_LAST]).domain([0, lastRoundI]);
 
@@ -121,6 +126,11 @@ function processStakesIntoMeasureDataset(chartData, measureAccessor) {
     ]
   };
 
+  // Floating point cludge: if it's 'percentage', force max to be 1, not 1.000000001
+  if (measureAccessor === 'percentages') {
+    measureDataset.yAxis.domain[1] = 1;
+  }
+
   return measureDataset;
 }
 
@@ -128,9 +138,9 @@ function processStakesIntoMeasureDataset(chartData, measureAccessor) {
 module.exports = Reflux.createStore({
   init: function() {
     this.listenToMany({
-      'newRoundData': actions.round.newRoundData,
+      'newRoundData' : actions.round.newRoundData,
       'selectMeasure': actions.chart.selectMeasure,
-      'selectRound': actions.chart.selectRound
+      'selectRound'  : actions.chart.selectRound
     });
 
     this.state = {
@@ -218,7 +228,8 @@ module.exports = Reflux.createStore({
 
                 // meta:
                 round: p.xRound,
-                roundStats: p.xRoundStats
+                roundStats: p.xRoundStats,
+                exitStats: p.exitStats || null
               };
             })
             // filter out any null points (side-effect of stacked bar chart normalization)
@@ -246,7 +257,6 @@ module.exports = Reflux.createStore({
         ]
       }
     };
-
 
     window.hdRoundChartConfig = roundChartConfig;
     this.state.roundChartConfig = roundChartConfig;

@@ -11,8 +11,8 @@ module.exports = Reflux.createActions({
       'newRoundData',
 
       /**
-       * Indicates a new 'Latest Round' is present, indicating a new chain of rounds is ready
-       * @param {models.Round} Round
+       * Indicates a new 'Latest Round' is present, indicating a new chain of rounds is ready (or an exit event)
+       * @param {models.Round | models.Exit} round or exit
        */
       'setScenario',
 
@@ -25,7 +25,7 @@ module.exports = Reflux.createActions({
 
       /**
        * Indicates the round money has changed (valuation or investments)
-       * @param {models.Round} Updated round
+       * @param {models.Round | models.Exit} Updated round
        */
       'updatedMoney',
 
@@ -35,6 +35,17 @@ module.exports = Reflux.createActions({
        * @param {number} New valuation
        */
       'changeRoundPreMoneyValuation',
+    ]
+  },
+
+  'exit': {
+    children: [
+      /**
+       * Changes the valuation of an Exit event
+       * @param {models.Exit} Exit event
+       * @param {number} New valuation
+       */
+      'changeValuation'
     ]
   },
 

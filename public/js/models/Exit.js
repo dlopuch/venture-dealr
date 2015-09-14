@@ -3,7 +3,7 @@ var EventEmitter = require('events').EventEmitter;
 
 var Round = require('./Round');
 
-var id = 0;
+var id = 10000;
 
 function SNP_TO_NUM_SHARES_REDUCER(sum, snp) {
   return sum + snp.stake.numShares;
@@ -46,6 +46,8 @@ module.exports = class Exit extends EventEmitter {
     this._handlePrevRoundChange = this._handlePrevRoundChange.bind(this);
 
     this.sequenceI = prevRound ? prevRound.sequenceI + 1 : 0;
+
+    this.name = 'Exit';
   }
 
   set prevRound(prevRound) {
@@ -74,6 +76,10 @@ module.exports = class Exit extends EventEmitter {
   _handlePrevRoundChange() {
     // If a previous round changed its stats, invalidate this Exit's changed stats
     this.stats = null;
+  }
+
+  getAllStakes(opts) {
+    return this.prevRound.getAllStakes(opts);
   }
 
   calculateStats() {
@@ -157,13 +163,19 @@ module.exports = class Exit extends EventEmitter {
     // Money has been disbursed.  Now lets do some post-processing.
     var self = this;
     stakesAndPayouts.forEach(function(payoutStat) {
+
       payoutStat.roi = payoutStat.payout / payoutStat.breakevenValue;
 
-      // Liquidation preferences are interesting because they amplify percentage stake.  Take a looksie.
+      payoutStat.stake = payoutStat.stakeAndPercentage.stake;
+
+      // Liquidation preferences are interesting because they amplify percentage stake, even when everyone gets paid.
+      // Take a looksie.
       payoutStat.percentage = payoutStat.payout / self.valuation;
 
       // For value stack, we want to show either the payout or what the payout needs to be.  So take the greater-of.
       payoutStat.value = Math.max(payoutStat.payout, payoutStat.breakevenValue);
+
+      payoutStat.isUnderwater = payoutStat.payout < payoutStat.breakevenValue;
     });
 
 
