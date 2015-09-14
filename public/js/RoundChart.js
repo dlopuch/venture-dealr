@@ -167,94 +167,96 @@ class Chart {
     });
   }
 
+  /**
+   * When there is an exit, and some of the stakes are underwater (worth less than amount paid for them), the bars are
+   * only partial width.  The rest of the width is a red bar, indicating how much more value needs to be created before
+   * that stake is made whole.  This function renders the underwater bar
+   */
+  _renderUnderwaterExitBG(measure) {
+    // Only one underwater exit grouping.  To maintain selections, bind to a data array of len 1
+    var underwaterExitG = this._svg.chartArea.selectAll('g.underwater-exit')
+    .data( [measure] );
 
-  _renderData(measure) {
-    var seriesG = this._svg.chartArea.selectAll('g.series')
-      .data(measure.series, d => 'series_' + d.id);
+    // create it for first time
+    underwaterExitG.enter().append('g').classed('underwater-exit', true);
 
-    var seriesGEnter = seriesG.enter().append('g').classed('series', true);
+    // Each Exit stack gets its own underwater highlight
+    // (written with d3 declarative syntax for n-Exits, but note that for now, always only one Exit stack)
+    var underwaterExitStackBg = underwaterExitG.selectAll('rect.underwater-exit-stack')
+    .data(function(measureD) {
+      // check if any have exit
+      var aSeriesD = measureD.series[0] && measureD.series[0].data;
 
-    // Create groupings for chart elements in appropriate z-index order because this is svg
-    seriesGEnter.append('g').classed('underwater-exits', true);
-    var underwaterExitsG = seriesG.selectAll('g.underwater-exits')
-    .datum(function(d) {
-      return d3.select(this.parentElement).datum();
+      if (!aSeriesD) return [];
+
+      return _.filter(aSeriesD, d => d.exitStats); // someday maybe multiple exits on one chart??
     });
 
-    // TODO: same g for stack rects?
+    underwaterExitStackBg.enter().append('rect')
+    .classed('underwater-exit-stack', true)
+    .call(this._setRectEnterPosition.bind(this))
+    .style({'fill': 'red', 'opacity': 0.5})
+    .on('mouseover', this.positionTooltip)
+    .on('mousemove', this.positionTooltip)
+    .on('mouseout', this.hideTooltip)
+    .on('mouseover', d => actions.chart.selectRound(d.xRound));
+
+    var barWidth = this._getBarWidth();
+
+    // The stack scales height and position with the data stacks
+    underwaterExitStackBg
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      'width': barWidth,
+      'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
+
+      // The height however is the sum of all the exit stakes' values.  We can get this from xRoundStats
+      'height': d => !d.y ? 0 : this._components.yScale(
+        d.xRoundStats.stakesAndPayouts.reduce( (sum, snp) => sum + snp.value, 0 )
+      ),
+    });
+
+    underwaterExitStackBg.exit()
+    .transition()
+      .duration(DEFAULT_TRANSITION_MS)
+    .attr({
+      'height': 0
+    })
+    .remove();
+  }
+
+
+  _renderData(measure) {
+
+    // First, render the underwater exit stack background (incase there is an exit)
+    this._renderUnderwaterExitBG(measure);
+
+
 
     var self = this;
     var barWidth = this._getBarWidth();
 
-
-    // Make underwater indicators ------------------------------------------------------------------
-    function seriesDatumIsUnderwaterExit(seriesDatum) {
-      return seriesDatum.exitStats && seriesDatum.exitStats.isUnderwater;
-    }
-    function seriesHasUnderwaterExit(seriesD) {
-      return _.any(seriesD.data, seriesDatumIsUnderwaterExit);
-    }
-
-    var underwaterExits = underwaterExitsG
-    //.filter(seriesHasUnderwaterExit)
-    .selectAll('rect.underwater-exit')
-    .data(
-      seriesD => seriesD.data.filter(seriesDatumIsUnderwaterExit),
-      tuple => tuple.yStake.id + '__' + tuple.xRound.id
-    );
-
-    underwaterExits.enter().append('rect')
-      .classed('underwater-exit', true)
-      .call(this._setRectEnterPosition.bind(this))
-      .attr({
-        'opacity': 0,
-        'height': d => !d.y ? 0 : this._components.yScale(d.y),
-        'y': d => this._components.yScale(d.y0)
-      })
-      .on('mouseover', this.positionTooltip)
-      .on('mousemove', this.positionTooltip)
-      .on('mouseout', this.hideTooltip)
-      .on('mouseover', d => actions.chart.selectRound(d.xRound));
-
-    underwaterExits
-    .transition()
-      .duration(DEFAULT_TRANSITION_MS)
-      .attr({
-        'opacity': 0.5,
-        'width': barWidth,
-        'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
-
-        'height': d => !d.y ? 0 : this._components.yScale(d.y),
-        'y': d => this._components.yScale(d.y0)
-      });
-
-    underwaterExits.exit()
-    .transition()
-      .duration(DEFAULT_TRANSITION_MS)
-    .attr({
-      'opacity': 0,
-      'height': d => !d.y ? 0 : this._components.yScale(d.y),
-      'y': d => this._components.yScale(d.y0)
-    });
-
-
-    // ------------------------------------------------------------------
-
+    var seriesG = this._svg.chartArea.selectAll('g.series')
+      .data(measure.series, d => 'series_' + d.id);
+    seriesG.enter().append('g').classed('series', true);
 
     function colorBar(d) {
       // color is in the parent g's datum
       return d3.select(this.parentElement).datum().color; //jshint ignore:line
     }
 
-    var underwaterify = function(selection) {
+    function setBarWidth(selection) {
       selection
       .attr('width', function(d) {
         if (!d.exitStats || !d.exitStats.isUnderwater)
           return barWidth;
 
+        // An underwater exit stake has partial width -- the % of the breakeven value that its payout value is
+        // (with min width 5 so you can see its color)
         return 5 + (barWidth - 5) * (d.exitStats.payout / d.exitStats.breakevenValue);
       });
-    };
+    }
 
     // each seriesG now has a list of values at each round.  Make a subselection to turn those into chart glyphs, keying
     // each subselection node to it's round ID
@@ -269,7 +271,7 @@ class Chart {
       .classed('round-stake', true)
       .call(this._setRectEnterPosition.bind(this))
       .style('fill', colorBar)
-      .call(underwaterify)
+      .call(setBarWidth)
       .on('mouseover', this.positionTooltip)
       .on('mousemove', this.positionTooltip)
       .on('mouseout', this.hideTooltip)
@@ -281,15 +283,12 @@ class Chart {
     .transition()
       .duration(DEFAULT_TRANSITION_MS)
       .style('fill', colorBar)
-      .call(underwaterify) // changes width if underwater
+      .call(setBarWidth) // changes width if underwater
       .attr({
-        //'width': barWidth,
         'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
+        // (width set by underwaterify())
 
-        'height': d => !d.y ? 0 : this._components.yScale(
-          //d.exitStats && d.exitStats.isUnderwater ? d.exitStats.payout : d.y
-          d.y
-        ),
+        'height': d => !d.y ? 0 : this._components.yScale(d.y),
         'y': d => this._components.yScale(d.y0)
       });
 
