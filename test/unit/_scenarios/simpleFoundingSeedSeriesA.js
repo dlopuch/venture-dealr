@@ -7,7 +7,7 @@ var ShareClass = require('models/ShareClass');
 // do the scenario:
 module.exports = function doIt() {
 
-  var foundingRound  = new Round('Founding', null, 0, {type: 'post', percent: 0.25});
+  var foundingRound  = new Round('Founding', null, 0, {type: 'post', percent: 0});
   var founder1Equity = new EquityStake(foundingRound, 750, {name: 'founder stakes'});
 
   // Seed Round (w/ 'option pool shuffle')
