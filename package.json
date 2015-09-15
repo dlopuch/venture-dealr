@@ -24,6 +24,7 @@
     "chai": "^2.3.0",
     "css-loader": "^0.15.5",
     "file-loader": "^0.8.4",
+    "jquery": "^2.1.4",
     "jsx-loader": "^0.13.2",
     "less-loader": "^2.2.0",
     "react": "^0.13.3",

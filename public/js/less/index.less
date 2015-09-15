@@ -1,5 +1,21 @@
 @import './project-bootstrap.less';
 
+body > header {
+
+  #gradient > .radial(@brand-primary; darken(@brand-primary, 10%));
+  padding: 15px;
+  margin-bottom: 20px;
+
+  h1 {
+    color: white;
+  }
+
+  .subtitle {
+    color: lighten(@brand-primary, 40%);
+    max-width: 605px;
+  }
+}
+
 @round-money-color: limegreen;
 @round-money-opacity: 0.5;
 @round-valuation-color: steelblue;
@@ -14,6 +30,23 @@ h2, h3, h4 {
     border-bottom: 4px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
   }
 }
+
+
+
+#charts-container {
+  background-color: white;
+  padding: 5px;
+
+  &.affix {
+    top: 0px;
+    z-index: 100;
+  }
+
+  .charts {
+    white-space: nowrap;
+  }
+}
+
 
 
 .highlight-round-money {

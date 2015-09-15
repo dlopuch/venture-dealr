@@ -1,6 +1,11 @@
 var d3 = require('d3');
 var _ = require('lodash');
 
+// Various subcomponents require bootstrap js, but bootstrap needs jquery on global scope.
+// Bring it all in before anything starts up.
+window.jQuery = window.$ = require('jquery/dist/jquery.min');
+var bootstrap = require('bootstrap');
+
 require('less/index.less');
 
 window.onload = function() {
@@ -78,5 +83,6 @@ window.onload = function() {
   }, 100);
 
   require('views/reactApp.jsx');
+  require('views/chartsAffixSpy');
 
 };
