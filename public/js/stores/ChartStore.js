@@ -163,9 +163,9 @@ module.exports = Reflux.createStore({
 
       // Now sorts:
 
-      // First, all Option Pools go to the end
+      // First, all Option Pools go to the end (latest option pools go last)
       function(s) {
-        return s.stake.isOptionsPool ? 1 : 0;
+        return s.stake.isOptionsPool ? 1 + s.stake.round.sequenceI : 0;
       },
 
       // Then common behind preferred
