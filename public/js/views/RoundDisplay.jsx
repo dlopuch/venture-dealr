@@ -99,7 +99,7 @@ module.exports = React.createClass({
     }
 
     return (
-      <div>
+      <div className='round-details'>
         <h3>
           {r.name}{stats.preMoney || stats.roundMoney ? ': ' : ''}
           {stats.preMoney && stats.roundMoney ?

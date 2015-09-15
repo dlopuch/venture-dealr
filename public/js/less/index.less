@@ -1,5 +1,21 @@
 @import './project-bootstrap.less';
 
+@round-money-color: limegreen;
+@round-money-opacity: 0.5;
+@round-valuation-color: steelblue;
+@round-valuation-opacity: 0.5;
+
+@import './round-details.less';
+@import './svg-charts.less';
+
+body {
+  position: relative; // needed for scrollspy, allegedly
+}
+html {
+  height: 100%; // some hack that also makes scrollspy work. nooooo idea on this one.... https://github.com/twbs/bootstrap/issues/5007
+}
+
+
 body > header {
 
   #gradient > .radial(@brand-primary; darken(@brand-primary, 10%));
@@ -16,117 +32,16 @@ body > header {
   }
 }
 
-@round-money-color: limegreen;
-@round-money-opacity: 0.5;
-@round-valuation-color: steelblue;
-@round-valuation-opacity: 0.5;
-
-h2, h3, h4 {
-  .highlight-round-money {
-    border-bottom: 4px solid fade(@round-money-color, @round-money-opacity * 100);
-  }
-
-  .highlight-round-valuation {
-    border-bottom: 4px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
-  }
-}
-
-
-
-#charts-container {
-  background-color: white;
-  padding: 5px;
-
-  &.affix {
-    top: 0px;
-    z-index: 100;
-  }
-
-  .charts {
-    white-space: nowrap;
-  }
-}
-
-
-
-.highlight-round-money {
-  border-bottom: 3px solid fade(@round-money-color, @round-money-opacity * 100);
-}
-
-.highlight-round-valuation {
-  border-bottom: 3px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
-}
-
-.highlight-round-options {
-  border-bottom: 3px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
-  border-bottom-style: dotted;
-}
-
-.round-breakdown {
-  .table {
-    width: auto;
-  }
-
-  .option-pool-shuffle {
-    blockquote {
-      width: 340px;
-      margin-left: 10px
-    }
-  }
-}
-
-
-svg {
-
-  &.round-chart {
-    shape-rendering: crispEdges;
-
-    line.round-type {
-      stroke-width: 6px;
-      opacity: 0.50;
-    }
-    line.round-valuation {
-      stroke: @round-valuation-color;
-      opacity: @round-valuation-opacity;
-    }
-    line.round-money {
-      stroke: @round-money-color;
-      opacity: @round-money-opacity;
-    }
-    line.round-options {
-      stroke-dasharray: 3 2;
-      stroke-dashoffset: 2;
-    }
-
-    .is-underwater {
-      // stroke: red;
-      // stroke-width: 1px;
-    }
-
-    .underwater-exit {
-      fill: red;
-    }
-  }
-
-  &.percent-equity-scatter {
-    .is-underwater {
-      stroke: red;
-      stroke-width: 1px;
-    }
-  }
-
-  text {
-    font: 10px sans-serif;
-  }
-
-  .axis path,
-  .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-  }
-}
-
-h1 {
+h1, h2, h3, h4 {
   color: @brand-primary;
+}
+
+#scenarios {
+  h1 {
+    margin-top: 300px;
+  }
+
+  p:last-child {
+    margin-bottom: 400px;
+  }
 }

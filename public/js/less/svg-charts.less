@@ -1,0 +1,64 @@
+#charts-container {
+  background-color: white;
+  padding: 5px;
+
+  &.affix {
+    top: 0px;
+    z-index: 100;
+  }
+
+  .charts {
+    white-space: nowrap;
+  }
+}
+
+svg {
+
+  &.round-chart {
+    shape-rendering: crispEdges;
+
+    line.round-type {
+      stroke-width: 6px;
+      opacity: 0.50;
+    }
+    line.round-valuation {
+      stroke: @round-valuation-color;
+      opacity: @round-valuation-opacity;
+    }
+    line.round-money {
+      stroke: @round-money-color;
+      opacity: @round-money-opacity;
+    }
+    line.round-options {
+      stroke-dasharray: 3 2;
+      stroke-dashoffset: 2;
+    }
+
+    .is-underwater {
+      // stroke: red;
+      // stroke-width: 1px;
+    }
+
+    .underwater-exit {
+      fill: red;
+    }
+  }
+
+  &.percent-equity-scatter {
+    .is-underwater {
+      stroke: red;
+      stroke-width: 1px;
+    }
+  }
+
+  text {
+    font: 10px sans-serif;
+  }
+
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+}

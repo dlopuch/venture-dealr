@@ -15,8 +15,6 @@ window.onload = function() {
   var PercentValueScatter = require('./PercentValueScatter');
   window.percentValueScatter = new PercentValueScatter('#percent-equity-scatter');
 
-  console.log('heydan success!');
-
 
   // flux
   var RoundStore = window.RoundStore = require('stores/RoundStore');
