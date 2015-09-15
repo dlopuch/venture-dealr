@@ -195,11 +195,7 @@ class Chart {
     underwaterExitStackBg.enter().append('rect')
     .classed('underwater-exit-stack', true)
     .call(this._setRectEnterPosition.bind(this))
-    .style({'fill': 'red', 'opacity': 0.5})
-    .on('mouseover', this.positionTooltip)
-    .on('mousemove', this.positionTooltip)
-    .on('mouseout', this.hideTooltip)
-    .on('mouseover', d => actions.chart.selectRound(d.xRound));
+    .style({'fill': 'red', 'opacity': 0.5});
 
     var barWidth = this._getBarWidth();
 
