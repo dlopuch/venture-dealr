@@ -1,6 +1,11 @@
 var d3 = require('d3');
 var _ = require('lodash');
 
+// Various subcomponents require bootstrap js, but bootstrap needs jquery on global scope.
+// Bring it all in before anything starts up.
+window.jQuery = window.$ = require('jquery/dist/jquery.min');
+var bootstrap = require('bootstrap');
+
 require('less/index.less');
 
 window.onload = function() {
@@ -10,12 +15,11 @@ window.onload = function() {
   var PercentValueScatter = require('./PercentValueScatter');
   window.percentValueScatter = new PercentValueScatter('#percent-equity-scatter');
 
-  console.log('heydan success!');
-
 
   // flux
   var RoundStore = window.RoundStore = require('stores/RoundStore');
   var ChartStore = window.ChartStore = require('stores/ChartStore');
+  var scrollSpyStore = window.scrollSpyStore = require('stores/scrollSpyStore');
 
 
   var actions = window.actions = require('actions/actionsEnum');
@@ -78,5 +82,6 @@ window.onload = function() {
   }, 100);
 
   require('views/reactApp.jsx');
+  require('views/chartsAffixSpy');
 
 };

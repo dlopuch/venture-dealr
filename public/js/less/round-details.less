@@ -1,0 +1,46 @@
+.round-details {
+  h2, h3, h4 {
+    color: black;
+
+    .highlight-round-money {
+      border-bottom: 4px solid fade(@round-money-color, @round-money-opacity * 100);
+    }
+
+    .highlight-round-valuation {
+      border-bottom: 4px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
+    }
+  }
+
+  &.affix {
+    top: 347px; // height of charts container
+  }
+}
+
+.highlight-round-money {
+  display: inline-block;
+  border-bottom: 3px solid fade(@round-money-color, @round-money-opacity * 100);
+}
+
+.highlight-round-valuation {
+  display: inline-block;
+  border-bottom: 3px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
+}
+
+.highlight-round-options {
+  display: inline-block;
+  border-bottom: 3px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
+  border-bottom-style: dotted;
+}
+
+.round-breakdown {
+  .table {
+    width: auto;
+  }
+
+  .option-pool-shuffle {
+    blockquote {
+      width: 340px;
+      margin-left: 10px
+    }
+  }
+}

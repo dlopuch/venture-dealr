@@ -5,95 +5,54 @@
 @round-valuation-color: steelblue;
 @round-valuation-opacity: 0.5;
 
-h2, h3, h4 {
-  .highlight-round-money {
-    border-bottom: 4px solid fade(@round-money-color, @round-money-opacity * 100);
-  }
+@import './round-details.less';
+@import './svg-charts.less';
 
-  .highlight-round-valuation {
-    border-bottom: 4px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
-  }
+body {
+  position: relative; // needed for scrollspy, allegedly
+}
+html {
+  height: 100%; // some hack that also makes scrollspy work. nooooo idea on this one.... https://github.com/twbs/bootstrap/issues/5007
 }
 
 
-.highlight-round-money {
-  border-bottom: 3px solid fade(@round-money-color, @round-money-opacity * 100);
-}
+body > header {
 
-.highlight-round-valuation {
-  border-bottom: 3px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
-}
+  #gradient > .radial(@brand-primary; darken(@brand-primary, 10%));
+  padding: 15px;
+  margin-bottom: 20px;
 
-.highlight-round-options {
-  border-bottom: 3px solid fade(@round-valuation-color, @round-valuation-opacity * 100);;
-  border-bottom-style: dotted;
-}
-
-.round-breakdown {
-  .table {
-    width: auto;
+  h1 {
+    color: white;
   }
 
-  .option-pool-shuffle {
-    blockquote {
-      width: 340px;
-      margin-left: 10px
-    }
+  .subtitle {
+    color: lighten(@brand-primary, 40%);
+    max-width: 605px;
   }
 }
 
-
-svg {
-
-  &.round-chart {
-    shape-rendering: crispEdges;
-
-    line.round-type {
-      stroke-width: 6px;
-      opacity: 0.50;
-    }
-    line.round-valuation {
-      stroke: @round-valuation-color;
-      opacity: @round-valuation-opacity;
-    }
-    line.round-money {
-      stroke: @round-money-color;
-      opacity: @round-money-opacity;
-    }
-    line.round-options {
-      stroke-dasharray: 3 2;
-      stroke-dashoffset: 2;
-    }
-
-    .is-underwater {
-      // stroke: red;
-      // stroke-width: 1px;
-    }
-
-    .underwater-exit {
-      fill: red;
-    }
-  }
-
-  &.percent-equity-scatter {
-    .is-underwater {
-      stroke: red;
-      stroke-width: 1px;
-    }
-  }
-
-  text {
-    font: 10px sans-serif;
-  }
-
-  .axis path,
-  .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-  }
-}
-
-h1 {
+h1, h2, h3, h4 {
   color: @brand-primary;
+}
+
+#scenarios {
+  h1, h2, h3, h4 {
+    color: lighten(@brand-primary, 20%);
+
+    &.focus {
+      color: @brand-primary
+    }
+  }
+
+  h1 {
+    margin-top: 300px;
+  }
+
+  h2 {
+    margin-top: 150px;
+  }
+
+  margin-bottom: 300px;
+
 }
