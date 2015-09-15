@@ -19,6 +19,7 @@ window.onload = function() {
   // flux
   var RoundStore = window.RoundStore = require('stores/RoundStore');
   var ChartStore = window.ChartStore = require('stores/ChartStore');
+  var scrollSpyStore = window.scrollSpyStore = require('stores/scrollSpyStore');
 
 
   var actions = window.actions = require('actions/actionsEnum');

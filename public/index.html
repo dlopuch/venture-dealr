@@ -6,133 +6,33 @@
     <!-- needed to get hotloading to work: <script src="http://localhost:8080/webpack-dev-server.js"></script> -->
     <script type="text/javascript" src="bundle.js" charset="utf-8"></script>
 
-<header>
-  <h1>Venture Dealr</h1>
-  <h4 class="subtitle">
-    Visualize and turn the knobs on venture financing concepts such as dilution, option pools,
-    liquidation preferences, down-rounds, and more!
-  </h4>
-</header>
+    <header>
+      <h1>Venture Dealr</h1>
+      <h4 class="subtitle">
+        Visualize and turn the knobs on venture financing concepts such as dilution, option pools,
+        liquidation preferences, down-rounds, and more!
+      </h4>
+    </header>
 
 
-<div id="charts-container">
-  <div>
-    <p>
-      <button id="toggle_measure" class="btn btn-xs btn-primary">Toggle Measure</button>
+    <div id="charts-container">
+      <div>
+        <p>
+          <button id="toggle_measure" class="btn btn-xs btn-primary">Toggle Measure</button>
 
-      <button id="toggle_b_round" class="btn btn-xs btn-primary">Toggle B-round</button>
-    </p>
-  </div>
+          <button id="toggle_b_round" class="btn btn-xs btn-primary">Toggle B-round</button>
+        </p>
+      </div>
 
-  <div class="charts">
-    <svg id="round-chart" class="round-chart" width="700" height="300"></svg>
-    <svg id="percent-equity-scatter" class="percent-equity-scatter" width="300" height="300"></svg>
-  </div>
-</div>
-<div id="charts-container-affix-spacer" style="display:none;"></div>
-
-<div class="container-fluid">
-  <div id="react-app"></div>
-</div>
-
-<div class="container-fluid">
-  <div class="row">
-    <div id="scenarios" class="col-md-6" style="/*position: relative; height: 300px; overflow-y: scroll;*/">
-      <h4>(scroll down to begin our journey)</h4>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-
-      <h1 id="scenario-start-a-venture">Lets start a venture</h1>
-      <p>lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum </p>
-
-      <h1 id="scenario-seed-dilute">Investors Dilute</h1>
-      <p>You've convinced investors to give you seed money.  Investment dilutes.</p>
-      <p>
-        Your investors assign a value to your company (the <span class="highlight-round-valuation"><strong>pre-money</strong></span>),
-        and <span class="highlight-round-money">their percentage stake</span>
-        is how much they put in relative to your pre-money.
-      </p>
-      <p>However, you also created an <span class="highlight-round-options"><strong>options pool</strong></span>
-        to give equity to new hires.  This is counted as part of the pre-money.</p>
-
-      <h1 id="scenario-seed-value">...but Assign Value</h1>
-      <p>Instead of looking at percentage, we can look at the <strong>value</strong> of your equity.</p>
-      <p>Note that your company had no value until your first valuation event.  In percentage terms you were diluted,
-        but in value terms you have something instead of nothing!</p>
-
-      <h1 id="scenario-series-a">Series A: On To Something</h1>
-      <p>lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum </p>
-
-      <h1 id="scenario-series-b">Series B: Keep Growing the Pie</h1>
-      <p>lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum </p>
-
-      <h1 id="scenario-down-round">Down Round</h1>
-      <p>lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum </p>
-
-      <h1 id="scenario-exit">The Exit (Success)</h1>
-      <p>lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum </p>
-
-      <h1 id="scenario-exit-bad">The (Empty Handed) Exit</h1>
-      <p>Liquidation preferences reduce risk for later investors.</p>
-      <p>
-        Investors with seniority get their money out first, and only if there's anything left do others get a piece.
-        If you're near the back, your claim may even be <strong>underwater</strong> -- it may be worth less than you
-        initially put in.
-      </p>
-      <p>
-        If you're in the back of the line (such as common stock), you may even walk away with nothing if there's not
-        enough to satisfy the claims in front of you.
-      </p>
-
-      <h2 id="scenario-exit-bad-options">A Positive Exit With Nothing</h2>
-      <p>Even a positive exit can still leave you with nothing.</p>
-      <p>
-        Because the exit amount is subject to preferences, this pie is not split evenly.  Some investors may make their
-        money back (plus an extra profit), but the extra profit may not be enough to match the value of common-stock
-        holders.
-      </p>
-      <p>
-        In fact, if the common stock is in the form of options, <strong>the holder would have to pay more than their
-        stakes were worth</strong> in order to exercise the options.  The holder would instead just walk away
-        with nothing.
-      </p>
+      <div class="charts">
+        <svg id="round-chart" class="round-chart" width="700" height="300"></svg>
+        <svg id="percent-equity-scatter" class="percent-equity-scatter" width="300" height="300"></svg>
+      </div>
     </div>
-  </div>
+    <div id="charts-container-affix-spacer" style="display:none;"></div>
 
 
-  <div id="scenario-nav" style="position: fixed; right: 0px; top: 350px; width: 400px;">
-    <ul class="nav nav-tabs" role="tablist">
-      <li>
-        <a href="#scenario-start-a-venture">Start a Venture</a>
-      </li>
-      <li>
-        <a href="#scenario-seed-dilute">Investors Dilute</a>
-      </li>
-      <li>
-        <a href="#scenario-seed-value">Investors Assign Value</a>
-      </li>
-      <li>
-        <a href="#scenario-series-a">Series A</a>
-      </li>
-      <li>
-        <a href="#scenario-series-b">Series B</a>
-      </li>
-      <li>
-        <a href="#scenario-down-round">Down Round</a>
-      </li>
-      <li>
-        <a href="#scenario-exit">Exit</a>
-      </li>
-      <li>
-        <a href="#scenario-exit-bad">Empty Handed Exit</a>
-      </li>
-      <li>
-        <a href="#scenario-exit-bad-options">Empty Handed Exit - Options</a>
-      </li>
-    </ul>
-  </div>
-</div>
-
+    <div id="react-app"></div>
 
   </body>
 </html>
