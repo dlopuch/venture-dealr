@@ -18,14 +18,14 @@ module.exports = React.createClass({
     };
   },
 
-  onScrollSpyTriggered: function(target) {
+  onScrollSpyFocus: function(target) {
     actions.round.setScenario(window.bRound);
   },
 
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h1>Series B: Keep Growing the Pie</h1>
+        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Series B: Keep Growing the Pie</h1>
         <p>lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum </p>
       </div>
     );

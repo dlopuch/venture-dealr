@@ -12,7 +12,7 @@ var SCROLLSPY_PROPS = {
 module.exports = React.createClass({
   mixins: [ScrollSpyContentsMixin],
 
-  onScrollSpyTriggered: function(target) {
+  onScrollSpyFocus: function() {
     actions.chart.selectMeasure('percentages');
     actions.round.setScenario(window.scenario.seedRound);
   },
@@ -26,7 +26,7 @@ module.exports = React.createClass({
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h1>Investors Dilute</h1>
+        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Investors Dilute</h1>
         <p>You've convinced investors to give you seed money.  Investment dilutes.</p>
         <p>
           Your investors assign a value to your company

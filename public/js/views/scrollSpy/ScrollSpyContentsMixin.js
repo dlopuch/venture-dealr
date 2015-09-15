@@ -6,8 +6,12 @@
  *     id: {string} DOM ID of the spy target (no #)
  *     name: {string} friendly display name of the spy target
  *
- * Components may also implement an optional implementation hook:
- *   this.onScrollSpyTriggered(): called when the spy is triggered
+ * As the scroll-spied elements comes in and out of focus, this mixin sets and clears `state.scrollSpy.isFocused`.
+ * Use the state to render focus.
+ *
+ * Components may also implement optional implementation hooks:
+ *   this.onScrollSpyFocus(): called when the spy is focused
+ *   this.onScrollSpyUnfocus(): called when the spy is no longer in focus
  */
 
 var Reflux = require('reflux');
@@ -29,11 +33,30 @@ module.exports = {
   },
 
   _onScrollSpyTargetTriggered: function(targetId) {
-    if (targetId !== this.state.scrollSpy.id)
-      return;
+    if (targetId !== this.state.scrollSpy.id) {
 
-    if (this.onScrollSpyTriggered)
-      this.onScrollSpyTriggered();
+      if (this.state.scrollSpy.isFocused) {
+        this.state.scrollSpy.isFocused = false;
+        this.setState({
+          scrollSpy: this.state.scrollSpy
+        });
+      }
+
+      if (this.onScrollSpyUnfocus)
+        this.onScrollSpyUnfocus();
+
+      return;
+    }
+
+    if (!this.state.scrollSpy.isFocused) {
+      this.state.scrollSpy.isFocused = true;
+      this.setState({
+        scrollSpy: this.state.scrollSpy
+      });
+    }
+
+    if (this.onScrollSpyFocus)
+      this.onScrollSpyFocus();
   }
 
 };

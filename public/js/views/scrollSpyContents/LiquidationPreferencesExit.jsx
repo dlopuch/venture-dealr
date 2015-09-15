@@ -18,7 +18,7 @@ module.exports = React.createClass({
     };
   },
 
-  onScrollSpyTriggered: function(target) {
+  onScrollSpyFocus: function(target) {
     actions.round.setScenario(window.exit);
     actions.exit.changeValuation(window.exit, 31000000);
   },
@@ -26,7 +26,7 @@ module.exports = React.createClass({
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h1>Liquidation Preferences and the Empty-Handed Exit</h1>
+        <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Liquidation Preferences and the Empty-Handed Exit</h2>
         <p>Liquidation preferences reduce risk for later investors at the expense of earlier investors and common-stock holders.</p>
         <p>
           Investors with seniority get their money out first, and only if there's anything left do others get a piece.

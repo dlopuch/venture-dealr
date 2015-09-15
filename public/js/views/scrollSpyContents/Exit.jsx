@@ -18,7 +18,7 @@ module.exports = React.createClass({
     };
   },
 
-  onScrollSpyTriggered: function(target) {
+  onScrollSpyFocus: function(target) {
     actions.exit.changeValuation(window.exit, 95000000);
     actions.round.setScenario(window.exit);
   },
@@ -26,7 +26,7 @@ module.exports = React.createClass({
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h1>The Exit (Success)</h1>
+        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>The Exit (Success)</h1>
         <p>lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum </p>
       </div>
     );

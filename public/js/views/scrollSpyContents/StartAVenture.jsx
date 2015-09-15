@@ -15,7 +15,7 @@ module.exports = React.createClass({
     //Reflux.listenTo(actions.scrollSpy.targetTriggered, '_onTargetTriggered')
   ],
 
-  onScrollSpyTriggered: function(target) {
+  onScrollSpyFocus: function(target) {
     actions.chart.selectMeasure('percentages');
     actions.round.setScenario(window.scenario.foundingRound);
   },
@@ -29,7 +29,7 @@ module.exports = React.createClass({
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h1>Lets start a venture</h1>
+        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Lets start a venture</h1>
         <p>lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum </p>
       </div>
     );

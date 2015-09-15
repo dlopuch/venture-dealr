@@ -37,11 +37,22 @@ h1, h2, h3, h4 {
 }
 
 #scenarios {
+  h1, h2, h3, h4 {
+    color: lighten(@brand-primary, 20%);
+
+    &.focus {
+      color: @brand-primary
+    }
+  }
+
   h1 {
     margin-top: 300px;
   }
 
-  p:last-child {
-    margin-bottom: 400px;
+  h2 {
+    margin-top: 150px;
   }
+
+  margin-bottom: 300px;
+
 }

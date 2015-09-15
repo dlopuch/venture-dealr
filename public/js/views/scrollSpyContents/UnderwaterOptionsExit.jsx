@@ -18,7 +18,7 @@ module.exports = React.createClass({
     };
   },
 
-  onScrollSpyTriggered: function(target) {
+  onScrollSpyFocus: function(target) {
     actions.round.setScenario(window.exit);
     actions.exit.changeValuation(window.exit, 60000000);
   },
@@ -26,7 +26,7 @@ module.exports = React.createClass({
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h2>Underwater Options: A Positive Exit With Nothing</h2>
+        <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Underwater Options: A Positive Exit With Nothing</h2>
         <p>Even a positive exit can still leave you with nothing.</p>
         <p>
           Because the exit amount is subject to preferences, this pie is not split evenly.  Some investors may make their
