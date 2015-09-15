@@ -15,6 +15,32 @@ module.exports = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    var self = this;
+    $('#round-details-display')
+    .affix({
+      offset: {
+        top: $('#round-details-display').offset().top - $('#charts-container').height()
+      }
+    })
+    .on('affixed.bs.affix', function() {
+      self.setState({
+        affixClass: 'affix'
+      });
+    })
+    .on('affixed-top.bs.affix', function() {
+      self.setState({
+        affixClass: 'affix-top'
+      });
+    })
+    .on('affixed-bottom.bs.affix', function() {
+      self.setState({
+        affixClass: 'affix-bottom'
+      });
+    })
+    console.log('affixed');
+  },
+
   _onChartStoreChange: function(chartStoreState) {
     if (this.state.round !== chartStoreState.selectedRound) {
       this.setState({
@@ -81,7 +107,7 @@ module.exports = React.createClass({
 
   render: function() {
     if (!this.state.round)
-      return (<div></div>);
+      return (<div id="round-details-display" className={'round-details ' + (this.state.affixClass || '')}></div>);
 
     var r = this.state.round;
     var stats = r.stats;
@@ -99,7 +125,7 @@ module.exports = React.createClass({
     }
 
     return (
-      <div className='round-details'>
+      <div id="round-details-display" className={'round-details ' + (this.state.affixClass || '')}>
         <h3>
           {r.name}{stats.preMoney || stats.roundMoney ? ': ' : ''}
           {stats.preMoney && stats.roundMoney ?

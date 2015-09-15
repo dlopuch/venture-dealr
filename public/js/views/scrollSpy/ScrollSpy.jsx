@@ -41,9 +41,16 @@ module.exports = React.createClass({
       <div id={this.props.domId} className='scroll-spy-navtarget'
         style={{
           position: 'fixed',
-          right: 0,
-          top: 350,
-          width: 400
+          // These put it in about the right gutter
+          // right: 0,
+          // top: 350,
+          // width: 400
+
+          // Make it out of sight
+          left: -1000,
+          top: -1000,
+          width: 10
+
         }}
       >
         <ul className='nav nav-pills'>
