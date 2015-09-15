@@ -6,6 +6,7 @@
 
 var _ = require('lodash');
 var d3 = require('d3');
+var numeral = require('numeral');
 var Reflux = require('reflux');
 
 var actions = require('actions/actionsEnum');
@@ -17,6 +18,30 @@ var ShareClass = require('models/ShareClass');
 // Layout calculators
 var PERCENTAGE_STACK_CALC = d3.layout.stack().values(stake => stake.percentages).y(o => o.n);
 var VALUE_STACK_CALC      = d3.layout.stack().values(stake => stake.values     ).y(o => o.n);
+
+
+var PERCENTAGE_FORMATTER = d3.format('%');
+
+numeral.language('en', {
+  delimiters: {
+    thousands: ' ',
+    decimal: ','
+  },
+  abbreviations: {
+    thousand: 'k',
+    million: 'M',
+    billion: 'B',
+    trillion: 'T'
+  },
+  currency: {
+    symbol: '$'
+  }
+});
+var currencyFormatterO = numeral(0);
+var CURRENCY_FORMATTER = function(n) {
+  return currencyFormatterO.set(n).format('$ 00[.]0a');
+};
+
 
 
 var OPTIONS_FIRST = '#666';
@@ -129,6 +154,9 @@ function processStakesIntoMeasureDataset(chartData, measureAccessor) {
   // Floating point cludge: if it's 'percentage', force max to be 1, not 1.000000001
   if (measureAccessor === 'percentages') {
     measureDataset.yAxis.domain[1] = 1;
+    measureDataset.yAxis.formatter = PERCENTAGE_FORMATTER;
+  } else {
+    measureDataset.yAxis.formatter = CURRENCY_FORMATTER;
   }
 
   return measureDataset;
@@ -242,7 +270,7 @@ module.exports = Reflux.createStore({
 
     percentValueConfig.axes = {
       value: {
-        formatter: d3.format(','),
+        formatter: CURRENCY_FORMATTER,
         domain: [
           0,
           _(allDataPoints).pluck('value').max()
@@ -250,7 +278,7 @@ module.exports = Reflux.createStore({
       },
 
       percentage: {
-        formatter: d3.format('%'),
+        formatter: PERCENTAGE_FORMATTER,
         domain: [
           0,
           _(allDataPoints).pluck('percentage').max()

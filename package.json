@@ -27,6 +27,7 @@
     "jquery": "^2.1.4",
     "jsx-loader": "^0.13.2",
     "less-loader": "^2.2.0",
+    "numeral": "^1.5.3",
     "react": "^0.13.3",
     "reflux": "^0.2.11",
     "style-loader": "^0.12.3",

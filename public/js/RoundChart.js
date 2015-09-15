@@ -395,7 +395,9 @@ class Chart {
       .range([0, this.opts.chartArea.height])
       .nice();
 
-    this._components.yAxis.scale( this._components.yOutputScale );
+    this._components.yAxis
+    .scale( this._components.yOutputScale )
+    .tickFormat( yAxis.formatter );
     this._svg.yAxis.transition().duration(DEFAULT_TRANSITION_MS).call(this._components.yAxis);
   }
 
