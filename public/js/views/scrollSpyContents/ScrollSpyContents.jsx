@@ -7,6 +7,7 @@ var SeedDiluteWithOptions = require('jsx!views/scrollSpyContents/SeedDiluteWithO
 var SeedValue  = require('jsx!views/scrollSpyContents/SeedValue.jsx');
 var SeriesA    = require('jsx!views/scrollSpyContents/SeriesA.jsx');
 var SeriesB    = require('jsx!views/scrollSpyContents/SeriesB.jsx');
+var SeriesC    = require('jsx!views/scrollSpyContents/SeriesC.jsx');
 var DownRound  = require('jsx!views/scrollSpyContents/DownRound.jsx');
 var Exit       = require('jsx!views/scrollSpyContents/Exit.jsx');
 var LiquidationPreferencesExit = require('jsx!views/scrollSpyContents/LiquidationPreferencesExit.jsx');
@@ -31,6 +32,8 @@ module.exports = React.createClass({
         <SeriesA />
 
         <SeriesB />
+
+        <SeriesC />
 
         <DownRound />
 

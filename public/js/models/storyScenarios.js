@@ -15,11 +15,23 @@ var founder1Equity = new EquityStake(foundingRound, 600, {name: 'Founder 1'});
 var seedRound = new Round('Seed', foundingRound, 8000000, {type: 'post', percent: 0.0}); // actions to make 15%
 var investmentS1 = new Investment(seedRound, 2000000, {name: '2M Seed'});
 
+var seriesARound = new Round('Series A', seedRound, 20000000, {type: 'post', percent: 0.15});
+var investmentSeriesA = new Investment(seriesARound, 5000000, {name: '5M Series A'});
+
+var seriesBRound = new Round('Series B', seriesARound, 30000000, {type: 'post', percent: 0.10});
+var investmentSeriesB = new Investment(seriesBRound, 6000000, {name: '6M Series B'});
+
+var seriesCRound = new Round('Series C', seriesBRound, 75000000, {type: 'post', percent: 0.05});
+var investmentSeriesC = new Investment(seriesCRound, 25000000, {name: '25M Series C'});
+
 
 module.exports = window.storyScenarios = {
   rounds: {
-    founding: foundingRound,
-    seed: seedRound
+    founding : foundingRound,
+    seed     : seedRound,
+    seriesA  : seriesARound,
+    seriesB  : seriesBRound,
+    seriesC  : seriesCRound
   },
 
   actions: {
