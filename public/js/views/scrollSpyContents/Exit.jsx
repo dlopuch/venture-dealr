@@ -28,6 +28,7 @@ module.exports = React.createClass({
     actions.chart.selectMeasure('values');
     actions.exit.changeValuation(storyScenarios.rounds.exit, this._origExitValuation);
     actions.round.setScenario(storyScenarios.rounds.exit);
+    actions.chart.selectRound(storyScenarios.rounds.exit);
   },
 
   render() {

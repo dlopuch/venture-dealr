@@ -113,6 +113,11 @@ module.exports = class Round extends EventEmitter {
     if (!optionsPool.type || optionsPool.type !== 'post')
       throw new Error('Pre-money options pool not yet supported');
 
+    // Removing options pool / no options pool
+    if (!optionsPool.percent && this.roundOptionsPoolEquity) {
+      this.removeStake(this.roundOptionsPoolEquity);
+    }
+
     this._roundOptionsPoolSpec = optionsPool;
     this.stats = null; // stats are now dirty, clear them
   }
@@ -175,7 +180,19 @@ module.exports = class Round extends EventEmitter {
   }
 
   removeStake(toDeleteStake) {
-    this._equityStakes = this._equityStakes.filter(function(stake) { return stake !== toDeleteStake; });
+    var didRemove = false;
+    this._equityStakes = this._equityStakes.filter(function(stake) {
+      if (stake === toDeleteStake) {
+        didRemove = true;
+        return false;
+      }
+
+      return true;
+    });
+
+    if (didRemove && toDeleteStake.isOptionsPool) {
+      this.roundOptionsPoolEquity = null;
+    }
 
     this.stats = null;
 
@@ -296,7 +313,7 @@ module.exports = class Round extends EventEmitter {
       }
     }
 
-    stats.newOptionsValue = this.roundOptionsPoolEquity.numShares * stats.sharePrice;
+    stats.newOptionsValue = !this.roundOptionsPoolEquity ? 0 : this.roundOptionsPoolEquity.numShares * stats.sharePrice;
     stats.realPreMoney = stats.preMoney - stats.newOptionsValue;
 
 
@@ -369,6 +386,9 @@ module.exports = class Round extends EventEmitter {
     if (this._roundOptionsPoolSpec.type !== 'post')
       throw new Error('pre-round option pool spec not supported');
 
+    if (!this._roundOptionsPoolSpec.percent)
+      return false;
+
     var numShares = roundStats.postMoney * this._roundOptionsPoolSpec.percent / roundStats.sharePrice;
 
     var stakeChanged = false;
@@ -399,6 +419,9 @@ module.exports = class Round extends EventEmitter {
   _calculateOptionsPoolFromPercentage() {
     if (this._roundOptionsPoolSpec.type !== 'post')
       throw new Error('pre-round option pool spec not supported');
+
+    if (!this._roundOptionsPoolSpec.percent)
+      return false;
 
     var stakes = this.getAllStakes();
 

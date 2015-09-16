@@ -4,6 +4,7 @@ var React = require('react');
 var Reflux = require('reflux');
 var Slider = require('bootstrap-slider');
 
+var ChartStore = require('stores/ChartStore');
 var ScrollSpyContentsMixin = require('views/scrollSpy/ScrollSpyContentsMixin');
 
 var SCROLLSPY_PROPS = {
@@ -35,15 +36,14 @@ module.exports = React.createClass({
       min: 1000000,
       max: 110000000,
       step: 1000000,
-      formatter: function(n) {
-        return numeral(n).format('$ 00a');
-      }
+      formatter: ChartStore.CURRENCY_FORMATTER
     })
     .on('change', this._onSliderChange);
   },
 
   _onSliderChange: function(sliderVals) {
     actions.exit.changeValuation(storyScenarios.rounds.exit, sliderVals.newValue);
+    actions.chart.selectRound(storyScenarios.rounds.exit);
   },
 
   _onChangeExitValuation: function(exit, value) {
@@ -69,6 +69,7 @@ module.exports = React.createClass({
 
     actions.exit.changeValuation(storyScenarios.rounds.exit, 75000000);
     actions.round.setScenario(storyScenarios.rounds.exit);
+    actions.chart.selectRound(storyScenarios.rounds.exit);
   },
 
   onScrollSpyUnfocus: function(target) {
@@ -96,18 +97,24 @@ module.exports = React.createClass({
         <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Underwater Options: A Positive Exit With Nothing</h2>
         <p>Even a positive exit can still leave some shareholders with nothing.</p>
         <p>
-          Because the exit amount is subject to preferences, the pie is not split evenly.  Some investors may make their
-          money back (plus an extra profit once they've met their initial investment), but the remaining extra profit
-          may not be enough to match the value of common-stock holders.
+          Because the exit amount is subject to preferences, the pie is not split evenly.  For example, common-stock
+          holders see nothing until all preferred-stock holders get their money out.  Only then is the remainder split
+          equally (however, it is split between both the common <em>and</em> preferred holders, so the preferred holders
+          get an additional bonus).
         </p>
         <p>
-          If the common stock is in the form of options, <strong>the options holder would have to pay more than their
-          stakes were worth</strong> in order to exercise the options.  The holder would instead just walk away
-          with nothing.
+          This remainder may not be enough to cover all claims.  To the preferred holders, it is an additional
+          bonus on top of their already-satisfied liquidation preference.  To the common holders, it may not be enough
+          to match the value of their claims.
         </p>
         <p>
-          Oftentimes a positive exit is not enough to make all stakeholders whole.  How big do you think our exit needs
-          to be before no one is underwater?
+          If the underwater common stock is in the form of options, <strong>the options holder would have to pay more
+          than their stakes were worth</strong> in order to exercise the options.  The holder would instead just walk
+          away with nothing.
+        </p>
+        <p>
+          Our Series C had a post-money valuation of <strong>$ 65M</strong>.
+          How big do you think our exit needs to be before no one is underwater?
         </p>
         <div>
           Exit valuation: <span ref='roundSlider'></span><br/>
