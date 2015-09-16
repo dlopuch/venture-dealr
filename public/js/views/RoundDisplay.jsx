@@ -101,6 +101,7 @@ module.exports = React.createClass({
     var r = this.state.round;
     var stats = r.stats;
     var optionsPool = r.optionsPoolSpec;
+    var hasOptionsPool = !!optionsPool.percent;
 
     if (!stats.roundMoney) {
       return (<div>
@@ -108,12 +109,18 @@ module.exports = React.createClass({
       </div>);
     }
 
+
     return (<div className='round-breakdown'>
       <table key='roundBreakdown' className='table table-condensed'>
         <tr>
-          <td><div className='pull-right'>Effective Valuation*:</div></td>
+          <td>
+            <div className='pull-right'>
+              {hasOptionsPool ? 'Effective Valuation*:' : 'Valuation:'}
+            </div>
+          </td>
           <td><span className='highlight-round-valuation'>{FORMAT_VALUE(stats.realPreMoney)}</span></td>
         </tr>
+        { !hasOptionsPool ? (<tr></tr>) : (
         <tr>
           <td><div className='pull-right'>New Options:</div></td>
           <td>
@@ -127,6 +134,7 @@ module.exports = React.createClass({
             </div>
           </td>
         </tr>
+        )}
         <tr>
           <td><div className='pull-right'>Round Money: </div></td>
           <td><span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}</span></td>
@@ -137,6 +145,7 @@ module.exports = React.createClass({
         </tr>
 
       </table>
+      { !hasOptionsPool ? '' : (
       <div className='small text-muted option-pool-shuffle'>
 
         *: Generally the pre-money includes any new options created during the round, even though the options are
@@ -150,6 +159,7 @@ module.exports = React.createClass({
           your company, and call their sum your {FORMAT_VALUE(stats.preMoney)} ‘pre-money valuation’.”
         </blockquote>
       </div>
+      )}
     </div>);
   },
 
