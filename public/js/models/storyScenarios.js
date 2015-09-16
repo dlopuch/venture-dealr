@@ -3,6 +3,7 @@ var actions = require('actions/actionsEnum');
 var Round = require('models/Round');
 var EquityStake = require('models/EquityStake');
 var Investment = require('models/Investment');
+var Exit = require('models/Exit');
 
 // We need to do some complex naming here for readability, shhhh jshint....
 /* jshint camelcase:false */
@@ -24,6 +25,8 @@ var investmentSeriesB = new Investment(seriesBRound, 6000000, {name: '6M Series 
 var seriesCRound = new Round('Series C', seriesBRound, 75000000, {type: 'post', percent: 0.05});
 var investmentSeriesC = new Investment(seriesCRound, 25000000, {name: '25M Series C'});
 
+var exit = new Exit(seriesCRound, 200000000);
+
 
 module.exports = window.storyScenarios = {
   rounds: {
@@ -31,7 +34,8 @@ module.exports = window.storyScenarios = {
     seed     : seedRound,
     seriesA  : seriesARound,
     seriesB  : seriesBRound,
-    seriesC  : seriesCRound
+    seriesC  : seriesCRound,
+    exit     : exit
   },
 
   actions: {
