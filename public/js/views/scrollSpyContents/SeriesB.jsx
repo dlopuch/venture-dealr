@@ -30,7 +30,7 @@ module.exports = React.createClass({
       <div id={SCROLLSPY_PROPS.id}>
         <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Series B: Keep Growing the Pie</h2>
         <p>
-          More months have gone by, and this time you got an additional <strong>$ 6M</strong>!
+          More months have gone by, and this time you got an additional <span className="highlight-round-money"><strong>$ 6M</strong></span>!
           You're making this look easy!
         </p>
       </div>

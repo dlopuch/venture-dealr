@@ -46,6 +46,14 @@ module.exports = React.createClass({
     actions.chart.selectRound(storyScenarios.rounds.exit);
   },
 
+  _select20M: function() {
+    actions.exit.changeValuation(storyScenarios.rounds.exit, 20000000);
+  },
+
+  selectSeriesC() {
+    actions.chart.selectRound(storyScenarios.rounds.seriesC);
+  },
+
   _onChangeExitValuation: function(exit, value) {
     if (exit !== storyScenarios.rounds.exit)
       return; // then we don't care about it
@@ -113,12 +121,13 @@ module.exports = React.createClass({
           away with nothing.
         </p>
         <p>
-          Our Series C had a post-money valuation of <strong>$ 65M</strong>.
+          Our last round, the Series C, had a post-money valuation
+          of <strong onMouseOver={this.selectSeriesC}><span className="highlight-round-valuation">$ 6</span><span className="highlight-round-money">5M</span></strong>.
           How big do you think our exit needs to be before no one is underwater?
         </p>
         <div>
           Exit valuation: <span ref='roundSlider'></span><br/>
-          <small>(Note the Last-In-First-Out dynamics in the $20M - $35M range)</small>
+          <small>(Note the Last-In-First-Out dynamics in the <a onClick={this._select20M}>$20M - $35M</a> range)</small>
         </div>
       </div>
     );

@@ -49,16 +49,12 @@ module.exports = React.createClass({
       <div id={SCROLLSPY_PROPS.id}>
         <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Investors Dilute but Assign Value</h1>
         <p>
-          Instead of looking at {
-            this.state.lastMeasure === 'percentages' ?
-              'percentages' :
-              (<a onClick={this.switchToPercentage}>percentages</a>)
-          }, we can look
-          at the {
-            this.state.lastMeasure === 'values' ?
-              'value' :
-              (<a onClick={this.switchToValue}>value</a>)
-          } of your equity.
+          Instead of looking at <a onClick={this.switchToPercentage} className={'btn btn-xs ' + (this.state.lastMeasure === 'percentages' ? 'btn-primary' : 'btn-default')}>
+            percentages
+          </a>, we can look
+          at the <a onClick={this.switchToValue} className={'btn btn-xs ' + (this.state.lastMeasure === 'percentages' ? 'btn-default' : 'btn-primary')}>
+            value
+          </a> of your equity.
         </p>
         <p>
           Note that your company had no value until your first valuation event.  In <i>percentage</i> terms you were

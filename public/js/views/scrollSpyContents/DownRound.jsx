@@ -123,16 +123,18 @@ module.exports = React.createClass({
           investors) and towards the new investors.</strong>
         </p>
         <p>
-          Viewed this way, <strong>your pre-money valuation is merely a knob your investors spin to determine what level
+          A valuation is merely a number pulled out of thin air that all participants agree is appropriate. Viewed this
+          way, <strong>your pre-money valuation is merely a knob your investors spin to determine what level
           of dilution results from a set investment amount</strong>.  Lets see that in action.
         </p>
         <p>
           Lets look at your Series B.
         </p>
         <p>
-          Your Series B investors are willing to give you a fixed $6M.  How much you get diluted depends on your
-          pre-money valuation.  Tweak it and note the relative composition of your Series B.  <strong>More importantly,
-          note how differently the future Series C growth gets distributed with a down round.</strong>
+          Your Series B investors are willing to give you a
+          fixed <span className="highlight-round-money"><strong>$ 6M</strong></span>.  How much you get diluted depends
+          on your pre-money valuation.  Tweak it and note the relative composition of your Series B.  <strong>More
+          importantly, note how differently the future Series C growth gets distributed with a down round.</strong>
         </p>
         <p>
           Series B Pre-Money Valuation: &nbsp; &nbsp;<span ref='roundSlider'></span> <small>(Left for down round)</small>

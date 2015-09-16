@@ -32,7 +32,7 @@ module.exports = React.createClass({
         <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Series A: On To Something</h1>
         <p>
           18 months have gone by and you've executed well enough to get additional investors to put in
-          another <strong>$ 5M</strong>.  Awesome!
+          another <span className="highlight-round-money"><strong>$ 5M</strong></span>.  Awesome!
         </p>
       </div>
     );
