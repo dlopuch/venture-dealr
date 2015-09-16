@@ -1,9 +1,11 @@
 var React = require('react');
 var Reflux = require('reflux');
 
+var Exit = require('models/Exit');
+
 var ChartStore = require('stores/ChartStore');
 
-var FORMAT_VALUE = n => d3.format('$s')( d3.format('.3r')(n) );
+var FORMAT_VALUE = n => d3.format('$s')( n === 0 ? 0 : d3.format('.3r')(n) );
 var FORMAT_PERCENT = d3.format('%');
 
 module.exports = React.createClass({
@@ -42,17 +44,73 @@ module.exports = React.createClass({
   },
 
   _onChartStoreChange: function(chartStoreState) {
-    if (this.state.round !== chartStoreState.selectedRound) {
+    //if (this.state.round !== chartStoreState.selectedRound) {
       this.setState({
         round: chartStoreState.selectedRound
       });
-    }
+    //}
   },
 
   _renderBreakdown: function() {
+    if (this.state.round instanceof Exit) {
+      return this._renderExitBreakdown();
+    } else {
+      return this._renderRoundBreakdown();
+    }
+  },
+
+  _renderExitBreakdown: function() {
+    var r = this.state.round;
+    var stats = r.stats;
+
+    return (
+      <div key='exitBreakdown' className='round-breakdown'>
+        <table className='table table-condensed exit-table'>
+          <thead>
+            <tr>
+              <th>Equity Stake</th>
+              <th>Share Class</th>
+              <th>Money In <br/>(or Strike Price)</th>
+              <th>Money Out</th>
+              <th>ROI</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stats.orderedStakesAndPayouts.map(function(snp) {
+              var isUnderwater = snp.roi !== Infinity && !_.isNaN(snp.roi) && snp.roi < 1;
+
+              return (
+                <tr key={snp.stake.id}>
+                  <td>{snp.stake.name}</td>
+                  <td>{snp.stake.shareClass === 'common' ? 'Common' : 'Preferred'}</td>
+                  <td>{snp.breakevenValue === 0 ? '-' : ChartStore.CURRENCY_FORMATTER(snp.breakevenValue)}</td>
+                  <td className={isUnderwater ? 'underwater' : ''}>{ChartStore.CURRENCY_FORMATTER(snp.payout)}</td>
+                  <td className={isUnderwater ? 'underwater' : ''}>
+                    {snp.roi === Infinity || _.isNaN(snp.roi) ? '' : FORMAT_PERCENT(snp.roi) }
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            <tr>
+              <th></th>
+              <th></th>
+              <th className="text-right">Total Exit:</th>
+              <th>{ChartStore.CURRENCY_FORMATTER(r.valuation)}</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    );
+  },
+
+  _renderRoundBreakdown: function() {
     var r = this.state.round;
     var stats = r.stats;
     var optionsPool = r.optionsPoolSpec;
+    var hasOptionsPool = !!optionsPool.percent;
 
     if (!stats.roundMoney) {
       return (<div>
@@ -60,12 +118,18 @@ module.exports = React.createClass({
       </div>);
     }
 
+
     return (<div className='round-breakdown'>
-      <table className='table table-condensed'>
+      <table key='roundBreakdown' className='table table-condensed'>
         <tr>
-          <td><div className='pull-right'>Effective Valuation*:</div></td>
+          <td>
+            <div className='pull-right'>
+              {hasOptionsPool ? 'Effective Valuation*:' : 'Valuation:'}
+            </div>
+          </td>
           <td><span className='highlight-round-valuation'>{FORMAT_VALUE(stats.realPreMoney)}</span></td>
         </tr>
+        { !hasOptionsPool ? (<tr></tr>) : (
         <tr>
           <td><div className='pull-right'>New Options:</div></td>
           <td>
@@ -79,6 +143,7 @@ module.exports = React.createClass({
             </div>
           </td>
         </tr>
+        )}
         <tr>
           <td><div className='pull-right'>Round Money: </div></td>
           <td><span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}</span></td>
@@ -89,6 +154,7 @@ module.exports = React.createClass({
         </tr>
 
       </table>
+      { !hasOptionsPool ? '' : (
       <div className='small text-muted option-pool-shuffle'>
 
         *: Generally the pre-money includes any new options created during the round, even though the options are
@@ -102,53 +168,56 @@ module.exports = React.createClass({
           your company, and call their sum your {FORMAT_VALUE(stats.preMoney)} ‘pre-money valuation’.”
         </blockquote>
       </div>
+      )}
     </div>);
   },
 
-  render: function() {
-    if (!this.state.round)
-      return (<div id="round-details-display" className={'round-details ' + (this.state.affixClass || '')}></div>);
-
+  _renderHeader() {
     var r = this.state.round;
     var stats = r.stats;
 
-    var summaryText = '';
-    if (stats.preMoney && stats.roundMoney) {
-      summaryText = ": raised " + FORMAT_VALUE(stats.roundMoney) + " at a " + FORMAT_VALUE(stats.preMoney) + " valuation";
+    return (
+      <h3>
+        {r.name}{stats.preMoney || stats.roundMoney ? ': ' : ''}
 
-    } else if (stats.roundMoney) {
-      summaryText = ": raised " + FORMAT_VALUE(stats.roundMoney);
+        {stats.preMoney && stats.roundMoney ?
+          <span>
+            raised <span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}
+            </span> at <span className='highlight-round-valuation'>{FORMAT_VALUE(stats.preMoney)}</span> pre-money
+          </span> :
+          ''
+        }
 
-    } else if (stats.preMoney) {
-      summaryText = ": valued at " + FORMAT_VALUE(stats.preMoney);
+        {stats.preMoney && !stats.roundMoney ?
+          <span>
+            valued at <span className='highlight-round-valuation'>{FORMAT_VALUE(stats.preMoney)}</span>
+          </span> :
+          ''
+        }
 
+        {!stats.preMoney && stats.roundMoney ?
+          <span>
+            raised <span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}</span>
+          </span> :
+          ''
+        }
+      </h3>
+    );
+  },
+
+  render: function() {
+    var header = '';
+    var breakdown = '';
+
+    if (this.state.round && this.state.round.stats) {
+      header = this._renderHeader();
+      breakdown = this._renderBreakdown();
     }
 
     return (
       <div id="round-details-display" className={'round-details ' + (this.state.affixClass || '')}>
-        <h3>
-          {r.name}{stats.preMoney || stats.roundMoney ? ': ' : ''}
-          {stats.preMoney && stats.roundMoney ?
-            <span>
-              raised <span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}
-              </span> at <span className='highlight-round-valuation'>{FORMAT_VALUE(stats.preMoney)}</span> pre-money
-            </span> :
-            ''
-          }
-          {stats.preMoney && !stats.roundMoney ?
-            <span>
-              valued at <span className='highlight-round-valuation'>{FORMAT_VALUE(stats.preMoney)}</span>
-            </span> :
-            ''
-          }
-          {!stats.preMoney && stats.roundMoney ?
-            <span>
-              raised <span className='highlight-round-money'>{FORMAT_VALUE(stats.roundMoney)}</span>
-            </span> :
-            ''
-          }
-        </h3>
-        {this._renderBreakdown()}
+        {header}
+        {breakdown}
       </div>
     );
   }

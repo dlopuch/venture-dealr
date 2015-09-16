@@ -1,6 +1,8 @@
 var d3 = require('d3');
 var _ = require('lodash');
 
+var storyScenarios = require('models/storyScenarios');
+
 // Various subcomponents require bootstrap js, but bootstrap needs jquery on global scope.
 // Bring it all in before anything starts up.
 window.jQuery = window.$ = require('jquery/dist/jquery.min');
@@ -31,55 +33,23 @@ window.onload = function() {
   var Exit        = window.Exit        = require('models/Exit');
 
 
-  window.scenario = require('../../test/unit/_scenarios/simpleFoundingSeedSeriesA')();
 
-  actions.round.setScenario(window.scenario.seriesARound);
+  window.scenario = require('../../test/unit/_scenarios/simpleFoundingSeedSeriesA')();
 
   // Add a demo b round at 30M pre
   var bRound = new Round('B round', window.scenario.seriesARound, 30000000, {type: 'post', percent: 0.05});
   var bInvestment1 = window.bInvestment1 = new Investment(bRound, 20000000, {name: '20M series B'});
   window.bRound = bRound;
 
-
   // Add a demo exit at 50M
   var exit = window.exit = new Exit(bRound, 50000000);
 
 
-  var toggleIsPercent = true;
-  d3.select('#toggle_measure').on('click', function() {
-    toggleIsPercent = !toggleIsPercent;
 
-    actions.chart.selectMeasure(toggleIsPercent ? 'percentages' : 'values');
-  });
-
-  var explainBRound = _.once(function() {
-    console.log('bRound enabled!');
-    console.log('Now try changing some valuations, eg:');
-    console.log('  > actions.round.changeRoundPreMoneyValuation(bRound, 40000000)');
-    console.log('or see the effects of a down-round:');
-    console.log('  > actions.round.changeRoundPreMoneyValuation(scenario.seriesARound, 5000000)');
-    console.log('or see the effects of more funding:');
-    console.log('  > actions.investment.changeMoney(bInvestment1, 30000000)');
-    console.log('or add an exit:');
-    console.log('  > actions.round.setScenario(exit);');
-    console.log('or change exit amount:');
-    console.log('  > actions.exit.changeValuation(exit, 60000000);');
-  });
-  var toggleBRound = false;
-  d3.select('#toggle_b_round').on('click', function() {
-    toggleBRound = !toggleBRound;
-
-    actions.round.setScenario( toggleBRound ? bRound : window.scenario.seriesARound );
-
-    explainBRound();
-  });
+  actions.round.setScenario(storyScenarios.rounds.demoExit);
+  //actions.chart.selectMeasure('values');
 
 
-  // TEMP WHILE EXPERIMENTING WITH EXIT
-  setTimeout(function() {
-    actions.chart.selectMeasure('values');
-    actions.round.setScenario(exit);
-  }, 100);
 
   require('views/reactApp.jsx');
   require('views/chartsAffixSpy');

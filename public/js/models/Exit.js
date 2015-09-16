@@ -100,10 +100,12 @@ module.exports = class Exit extends EventEmitter {
     // ...but we need to figure out preferred owners' claims based on liquidation preference and seniority (traunche)
     var traunches = _(lastStakesAndPercentages)
       .groupBy(s => s.stake.liquidationSeniority || 'none')
-      .map(function mapToTraunche(snp, key) {
+      .map(function mapToTraunche(snps, key) {
+        var seniority = parseInt(key, 10) || -Infinity;
+        snps.forEach(snp => snp.stake.exitTraunche = seniority);
         return {
-          seniority: parseInt(key, 10) || -Infinity,
-          stakesAndPercentages: snp
+          seniority: seniority,
+          stakesAndPercentages: snps
         };
       })
 
@@ -180,7 +182,17 @@ module.exports = class Exit extends EventEmitter {
 
 
     this.stats = {
+      // This one needs to be series order to make chart series generation work
       stakesAndPayouts: stakesAndPayouts,
+
+      // This ordering should be about the order in which the stack appears
+      orderedStakesAndPayouts: _.sortByAll(stakesAndPayouts,
+        // Make the most senior claims at the bottom (end)
+        function(snp) { return -1 * snp.stake.exitTraunche; },
+
+        // make sure options pools are ordered correctly
+        function(snp) { return snp.stake.isOptionsPool ? 1 + snp.stake.round.sequenceI : 0; }
+      ).reverse()
     };
 
 

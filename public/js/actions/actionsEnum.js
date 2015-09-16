@@ -36,6 +36,16 @@ module.exports = {
      * @param {number} New valuation
      */
     'changeRoundPreMoneyValuation',
+
+    /**
+     * Update a round's option pool spec
+     * @param {models.Round} Round to update
+     * @param {Object} newOptionsPoolSpec Object like:
+     *   type: {'post'} Option pool shuffle: is rounds option pool specified pre-money or post-money
+     *     (TODO: only post-money supported for now, always 'post')
+     *   percent: {number} Number between 0 and 1.
+     */
+    'changeOptionsPoolSpec'
   ]),
 
   'exit': Reflux.createActions([

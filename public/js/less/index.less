@@ -1,5 +1,7 @@
 @import './project-bootstrap.less';
 
+@import '../../../node_modules/bootstrap-slider/css/bootstrap-slider.css';
+
 @round-money-color: limegreen;
 @round-money-opacity: 0.5;
 @round-valuation-color: steelblue;
@@ -49,10 +51,33 @@ h1, h2, h3, h4 {
     margin-top: 300px;
   }
 
+  > div:first-child {
+    h1 {
+      margin-top: 0px;
+    }
+  }
+
   h2 {
     margin-top: 150px;
   }
 
+  a {
+    cursor: pointer;
+    font-weight: 800;
+  }
+
+  .slider {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
   margin-bottom: 300px;
 
+}
+
+.poor-mans-toggle {
+  .btn-primary.disabled {
+    opacity: 1;
+    cursor: pointer;
+  }
 }

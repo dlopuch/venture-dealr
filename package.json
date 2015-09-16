@@ -21,6 +21,7 @@
     "babel-core": "^5.2.15",
     "babel-loader": "^5.0.0",
     "bootstrap": "^3.3.5",
+    "bootstrap-slider": "^5.1.0",
     "chai": "^2.3.0",
     "css-loader": "^0.15.5",
     "file-loader": "^0.8.4",

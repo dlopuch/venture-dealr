@@ -2,6 +2,8 @@ var _ = require('lodash');
 var React = require('react');
 var Reflux = require('reflux');
 
+var storyScenarios = require('models/storyScenarios');
+
 var ScrollSpyContentsMixin = require('views/scrollSpy/ScrollSpyContentsMixin');
 
 var SCROLLSPY_PROPS = {
@@ -19,14 +21,18 @@ module.exports = React.createClass({
   },
 
   onScrollSpyFocus: function(target) {
-    actions.round.setScenario(window.bRound);
+    actions.round.setScenario(storyScenarios.rounds.seriesB);
+    actions.chart.selectRound(storyScenarios.rounds.seriesB);
   },
 
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Series B: Keep Growing the Pie</h1>
-        <p>lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum </p>
+        <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Series B: Keep Growing the Pie</h2>
+        <p>
+          More months have gone by, and this time you got an additional <span className="highlight-round-money"><strong>$ 6M</strong></span>!
+          You're making this look easy!
+        </p>
       </div>
     );
   }

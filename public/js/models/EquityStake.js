@@ -60,7 +60,7 @@ class EquityStake {
     }
 
     this.name = opts.name ||
-      (opts.fromInvestment && ('Stake from investment "' + opts.fromInvestment.name + '"')) ||
+      (opts.fromInvestment && (opts.fromInvestment.name + ' investment')) ||
       (opts.isOptionsPool && ('Options Pool for ' + round.name + ' round')) ||
       (opts.fromOptionsPool && ('Round ' + round.name + ' options pool assignment')) ||
       ('Equity ' + this.id + ' (from ' + round.name + ' round)');

@@ -7,19 +7,18 @@ var storyScenarios = require('models/storyScenarios');
 var ScrollSpyContentsMixin = require('views/scrollSpy/ScrollSpyContentsMixin');
 
 var SCROLLSPY_PROPS = {
-  id: 'scenario-start-a-venture',
-  name: 'Start a Venture'
+  id: 'scenario-begin',
+  name: 'Lets Begin'
 }
 
 module.exports = React.createClass({
   mixins: [
     ScrollSpyContentsMixin,
-    //Reflux.listenTo(actions.scrollSpy.targetTriggered, '_onTargetTriggered')
   ],
 
   onScrollSpyFocus: function(target) {
-    actions.chart.selectMeasure('percentages');
-    actions.round.setScenario(storyScenarios.rounds.founding);
+    actions.chart.selectMeasure('values');
+    actions.round.setScenario(storyScenarios.rounds.demoExit);
     actions.chart.selectRound(null);
   },
 
@@ -32,13 +31,9 @@ module.exports = React.createClass({
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Lets start a venture!</h1>
+        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Lets Learn Venture Capital Finance!</h1>
         <p>
-          You have an idea and a co-founder.  Lets go start our venture!
-        </p>
-        <p>
-          You and your co-founder agree to a 60-40 equity split, then go start building the prototype that will woo
-          investors onboard.
+          Scroll down to begin.
         </p>
       </div>
     );
