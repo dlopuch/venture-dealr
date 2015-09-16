@@ -138,7 +138,7 @@ module.exports = React.createClass({
           Series B Pre-Money Valuation: &nbsp; &nbsp;<span ref='roundSlider'></span> <small>(Left for down round)</small>
         </p>
 
-        <div className="btn-group">
+        <div className="btn-group poor-mans-toggle">
           <div
             className={'btn ' + (this.state.lastMeasure === 'values' ? 'btn-default' : 'btn-primary disabled')}
             onClick={this.switchToPercentages}
