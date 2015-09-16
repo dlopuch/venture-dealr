@@ -92,6 +92,15 @@ module.exports = React.createClass({
               );
             })}
           </tbody>
+          <tfoot>
+            <tr>
+              <th></th>
+              <th></th>
+              <th className="text-right">Total Exit:</th>
+              <th>{ChartStore.CURRENCY_FORMATTER(r.valuation)}</th>
+              <th></th>
+            </tr>
+          </tfoot>
         </table>
       </div>
     );

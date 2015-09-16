@@ -46,7 +46,8 @@ window.onload = function() {
 
 
 
-  actions.round.setScenario(storyScenarios.rounds.founding);
+  actions.round.setScenario(storyScenarios.rounds.demoExit);
+  //actions.chart.selectMeasure('values');
 
 
 

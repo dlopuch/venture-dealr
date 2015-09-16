@@ -176,7 +176,7 @@ module.exports = Reflux.createStore({
     this.state = {
       roundChartConfig: null,
       percentValueConfig: null,
-      selectedMeasure: 'percentages',
+      selectedMeasure: 'values',
       selectedRound: null
     };
   },

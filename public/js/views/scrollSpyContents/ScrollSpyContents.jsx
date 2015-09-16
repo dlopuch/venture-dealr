@@ -1,6 +1,7 @@
 var React = require('react');
 var Reflux = require('reflux');
 
+var Begin = require('jsx!views/scrollSpyContents/Begin.jsx');
 var StartAVenture = require('jsx!views/scrollSpyContents/StartAVenture.jsx');
 var SeedDilute = require('jsx!views/scrollSpyContents/SeedDilute.jsx');
 var SeedDiluteWithOptions = require('jsx!views/scrollSpyContents/SeedDiluteWithOptions.jsx');
@@ -17,9 +18,7 @@ module.exports = React.createClass({
   render() {
     return (
       <div id="scenarios">
-        <h4>(scroll down to begin our journey)</h4>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
+        <Begin />
 
         <StartAVenture />
 

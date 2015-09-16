@@ -28,6 +28,12 @@ var investmentSeriesC = new Investment(seriesCRound, 25000000, {name: '25M Serie
 var exit = new Exit(seriesCRound, 200000000);
 
 
+var demoSeriesCRound = new Round('Series C', seriesBRound, 40000000, {type: 'post', percent: 0.05});
+var demoInvestmentSeriesC = new Investment(demoSeriesCRound, 25000000, {name: '25M Series C'});
+
+var demoExit = new Exit(demoSeriesCRound, 75000000);
+
+
 module.exports = window.storyScenarios = {
   rounds: {
     founding : foundingRound,
@@ -35,13 +41,15 @@ module.exports = window.storyScenarios = {
     seriesA  : seriesARound,
     seriesB  : seriesBRound,
     seriesC  : seriesCRound,
-    exit     : exit
+    exit     : exit,
+
+    demoSeriesC : demoSeriesCRound,
+    demoExit    : demoExit
   },
 
   actions: {
     makeSeedNoOptions  : function() { actions.round.changeOptionsPoolSpec(seedRound, {type: 'post', percent: 0}); },
-    makeSeedHaveOptions: function() { actions.round.changeOptionsPoolSpec(seedRound, {type: 'post', percent: 0.15});
-    }
+    makeSeedHaveOptions: function() { actions.round.changeOptionsPoolSpec(seedRound, {type: 'post', percent: 0.15}); }
   }
 };
 
