@@ -185,8 +185,14 @@ module.exports = class Exit extends EventEmitter {
       // This one needs to be series order to make chart series generation work
       stakesAndPayouts: stakesAndPayouts,
 
-      // This ordering should be the order in which the stack appears
-      orderedStakesAndPayouts: _.sortBy(stakesAndPayouts, snp => -1 * snp.stake.exitTraunche).reverse()
+      // This ordering should be about the order in which the stack appears
+      orderedStakesAndPayouts: _.sortByAll(stakesAndPayouts,
+        // Make the most senior claims at the bottom (end)
+        function(snp) { return -1 * snp.stake.exitTraunche; },
+
+        // make sure options pools are ordered correctly
+        function(snp) { return snp.stake.isOptionsPool ? 1 + snp.stake.round.sequenceI : 0; }
+      ).reverse()
     };
 
 
