@@ -3,6 +3,7 @@ var Reflux = require('reflux');
 
 var StartAVenture = require('jsx!views/scrollSpyContents/StartAVenture.jsx');
 var SeedDilute = require('jsx!views/scrollSpyContents/SeedDilute.jsx');
+var SeedDiluteWithOptions = require('jsx!views/scrollSpyContents/SeedDiluteWithOptions.jsx');
 var SeedValue  = require('jsx!views/scrollSpyContents/SeedValue.jsx');
 var SeriesA    = require('jsx!views/scrollSpyContents/SeriesA.jsx');
 var SeriesB    = require('jsx!views/scrollSpyContents/SeriesB.jsx');
@@ -22,6 +23,8 @@ module.exports = React.createClass({
         <StartAVenture />
 
         <SeedDilute />
+
+        <SeedDiluteWithOptions />
 
         <SeedValue />
 

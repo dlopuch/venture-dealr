@@ -1,6 +1,8 @@
 var d3 = require('d3');
 var _ = require('lodash');
 
+var storyScenarios = require('models/storyScenarios');
+
 // Various subcomponents require bootstrap js, but bootstrap needs jquery on global scope.
 // Bring it all in before anything starts up.
 window.jQuery = window.$ = require('jquery/dist/jquery.min');
@@ -33,7 +35,7 @@ window.onload = function() {
 
   window.scenario = require('../../test/unit/_scenarios/simpleFoundingSeedSeriesA')();
 
-  actions.round.setScenario(window.scenario.seriesARound);
+  actions.round.setScenario(storyScenarios.rounds.founding);
 
   // Add a demo b round at 30M pre
   var bRound = new Round('B round', window.scenario.seriesARound, 30000000, {type: 'post', percent: 0.05});
@@ -74,12 +76,6 @@ window.onload = function() {
     explainBRound();
   });
 
-
-  // TEMP WHILE EXPERIMENTING WITH EXIT
-  setTimeout(function() {
-    actions.chart.selectMeasure('values');
-    actions.round.setScenario(exit);
-  }, 100);
 
   require('views/reactApp.jsx');
   require('views/chartsAffixSpy');

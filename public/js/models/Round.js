@@ -27,8 +27,7 @@ module.exports = class Round extends EventEmitter {
     if (prevRound && !(prevRound instanceof Round))
       throw new Error('Invalid round!');
 
-    if (!_.isNumber(optionsPool.percent) || optionsPool.percent < 0 || 1 < optionsPool.percent)
-      throw new Error('Options pool percent must be specified as number between 0-1');
+
 
     super();
 
@@ -49,9 +48,7 @@ module.exports = class Round extends EventEmitter {
     this._investments = [];
     this._equityStakes = [];
 
-    if (optionsPool.type !== 'post')
-      throw new Error('Pre-money options pool not yet supported');
-    this._roundOptionsPoolSpec = optionsPool;
+    this.changeOptionsPoolSpec(optionsPool);
     this.roundOptionsPoolEquity = null;
 
     this._stats = null;
@@ -107,6 +104,17 @@ module.exports = class Round extends EventEmitter {
 
   get optionsPoolSpec() {
     return _.clone(this._roundOptionsPoolSpec);
+  }
+
+  changeOptionsPoolSpec(optionsPool) {
+    if (!_.isNumber(optionsPool.percent) || optionsPool.percent < 0 || 1 < optionsPool.percent)
+      throw new Error('Options pool percent must be specified as number between 0-1');
+
+    if (!optionsPool.type || optionsPool.type !== 'post')
+      throw new Error('Pre-money options pool not yet supported');
+
+    this._roundOptionsPoolSpec = optionsPool;
+    this.stats = null; // stats are now dirty, clear them
   }
 
   /**

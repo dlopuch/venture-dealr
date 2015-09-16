@@ -19,12 +19,13 @@ module.exports = Reflux.createStore({
 
   init: function() {
     this.listenToMany({
-      'setScenario'                  : actions.round.setScenario,
-      'changeRoundPreMoneyValuation' : actions.round.changeRoundPreMoneyValuation,
-      'addInvestment'                : actions.round.addInvestment,
-      'updatedMoney'                 : actions.round.updatedMoney,
-      'changeMoney'                  : actions.investment.changeMoney,
-      'exitChangeValuation'          : actions.exit.changeValuation
+      'onSetScenario'                  : actions.round.setScenario,
+      'onChangeRoundPreMoneyValuation' : actions.round.changeRoundPreMoneyValuation,
+      'onChangeOptionsPoolSpec'        : actions.round.changeOptionsPoolSpec,
+      'onAddInvestment'                : actions.round.addInvestment,
+      'onUpdatedMoney'                 : actions.round.updatedMoney,
+      'onChangeMoney'                  : actions.investment.changeMoney,
+      'onExitChangeValuation'          : actions.exit.changeValuation
     });
   },
 
@@ -40,6 +41,11 @@ module.exports = Reflux.createStore({
 
   onChangeRoundPreMoneyValuation: function(round, newValuation) {
     round.preMoneyValuation = newValuation;
+    actions.round.updatedMoney(round);
+  },
+
+  onChangeOptionsPoolSpec: function(round, newOptionsPoolSpec) {
+    round.changeOptionsPoolSpec(newOptionsPoolSpec);
     actions.round.updatedMoney(round);
   },
 
