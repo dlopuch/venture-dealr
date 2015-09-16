@@ -18,6 +18,7 @@ module.exports = React.createClass({
     actions.chart.selectMeasure('percentages');
     storyScenarios.actions.makeSeedNoOptions();
     actions.round.setScenario(storyScenarios.rounds.seed);
+    actions.chart.selectRound(storyScenarios.rounds.seed);
   },
 
   getInitialState() {

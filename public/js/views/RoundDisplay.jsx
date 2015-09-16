@@ -42,11 +42,11 @@ module.exports = React.createClass({
   },
 
   _onChartStoreChange: function(chartStoreState) {
-    if (this.state.round !== chartStoreState.selectedRound) {
+    //if (this.state.round !== chartStoreState.selectedRound) {
       this.setState({
         round: chartStoreState.selectedRound
       });
-    }
+    //}
   },
 
   _renderBreakdown: function() {
@@ -106,7 +106,7 @@ module.exports = React.createClass({
   },
 
   render: function() {
-    if (!this.state.round)
+    if (!this.state.round || !this.state.round.stats)
       return (<div id="round-details-display" className={'round-details ' + (this.state.affixClass || '')}></div>);
 
     var r = this.state.round;

@@ -23,6 +23,7 @@ module.exports = React.createClass({
   onScrollSpyFocus: function(target) {
     actions.chart.selectMeasure('values');
     actions.round.setScenario(storyScenarios.rounds.seriesA);
+    actions.chart.selectRound(storyScenarios.rounds.seriesA);
   },
 
   render() {

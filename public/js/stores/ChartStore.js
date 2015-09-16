@@ -24,8 +24,8 @@ var PERCENTAGE_FORMATTER = d3.format('%');
 
 numeral.language('en', {
   delimiters: {
-    thousands: ' ',
-    decimal: ','
+    thousands: ',',
+    decimal: '.'
   },
   abbreviations: {
     thousand: 'k',
@@ -147,7 +147,7 @@ function processStakesIntoMeasureDataset(chartData, measureAccessor) {
   measureDataset.yAxis = {
     domain: [
       d3.min( _.pluck(measureDataset.series[0].data, 'y0') ),
-      d3.max( measureDataset.series[measureDataset.series.length - 1 ].data.map(d => d.y0 + d.y) )
+      Math.floor( d3.max( measureDataset.series[measureDataset.series.length - 1 ].data.map(d => d.y0 + d.y) ) )
     ]
   };
 
@@ -164,6 +164,8 @@ function processStakesIntoMeasureDataset(chartData, measureAccessor) {
 
 
 module.exports = Reflux.createStore({
+  CURRENCY_FORMATTER: CURRENCY_FORMATTER,
+
   init: function() {
     this.listenToMany({
       'newRoundData' : actions.round.newRoundData,
@@ -182,7 +184,7 @@ module.exports = Reflux.createStore({
   onNewRoundData: function(chartData) {
 
     // new round data means the round selection needs to be cleared out
-    this.state.selectedRound = null;
+    //this.state.selectedRound = null;
 
     // Sort series
     chartData.stakes = _.sortByAll(
@@ -273,7 +275,7 @@ module.exports = Reflux.createStore({
         formatter: CURRENCY_FORMATTER,
         domain: [
           0,
-          _(allDataPoints).pluck('value').max()
+          Math.floor( _(allDataPoints).pluck('value').max() ) // floor to get rid of .00000001 floating point glitches
         ]
       },
 
