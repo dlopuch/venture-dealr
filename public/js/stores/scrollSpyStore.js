@@ -53,9 +53,11 @@ module.exports = Reflux.createStore({
     if (!scenario)
       throw new Error('Couldnt find scenario on scrollspy activation!');
 
-    actions.scrollSpy.targetTriggered(
-      scenario.substring(1) // bootstrap needs this to be '#target-id'.  We want to lose the #
-    );
+    scenario = scenario.substring(1); // bootstrap makes this '#target-id'.  We want to lose the #
+
+    actions.scrollSpy.targetTriggered(scenario);
+
+    window.mixpanel.track("Scroll Spy Target Triggered", {scenario: scenario});
   },
 
   _onRefreshed: function(domId) {

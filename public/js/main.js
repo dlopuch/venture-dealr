@@ -11,6 +11,13 @@ var bootstrap = require('bootstrap');
 require('less/index.less');
 
 window.onload = function() {
+
+  // Analytics (available only on gh-pages branch)
+  window.mixpanel = window.mixpanel || {
+    track: function() {}
+  };
+
+
   var RoundChart = require('./RoundChart');
   window.roundChart = new RoundChart('#round-chart');
 
