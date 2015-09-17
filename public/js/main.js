@@ -17,6 +17,7 @@ window.onload = function() {
     track: function() {},
     identify: function() {}
   };
+  window.ga = window.ga || function() {};
   window.mixpanel.identify('Rando ' + Math.random());
 
 
