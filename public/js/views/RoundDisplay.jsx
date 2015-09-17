@@ -218,6 +218,7 @@ module.exports = React.createClass({
       <div id="round-details-display" className={'round-details ' + (this.state.affixClass || '')}>
         {header}
         {breakdown}
+        &nbsp;
       </div>
     );
   }

@@ -32,6 +32,29 @@ body > header {
     color: lighten(@brand-primary, 40%);
     max-width: 605px;
   }
+
+  p {
+    color: lighten(@brand-primary, 20%);
+  }
+
+  a {
+    color: lighten(@brand-primary, 30%);
+
+    &:active, &:visited {
+      color: lighten(@brand-primary, 30%);
+    }
+
+    &:hover {
+      color: lighten(@brand-primary, 60%);
+    }
+  }
+
+  .draft-header {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    z-index: 200;
+  }
 }
 
 h1, h2, h3, h4 {
