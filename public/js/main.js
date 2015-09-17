@@ -14,8 +14,10 @@ window.onload = function() {
 
   // Analytics (available only on gh-pages branch)
   window.mixpanel = window.mixpanel || {
-    track: function() {}
+    track: function() {},
+    identify: function() {}
   };
+  window.mixpanel.identify('Rando ' + Math.random());
 
 
   var RoundChart = require('./RoundChart');
