@@ -137,7 +137,7 @@ module.exports = React.createClass({
           importantly, note how differently the future Series C growth gets distributed with a down round.</strong>
         </p>
         <p>
-          Series B Pre-Money Valuation: &nbsp; &nbsp;<span ref='roundSlider'></span> <br/>
+          <span className="highlight-round-options">Ser</span><span className="highlight-round-valuation">ies B Pre-Money Valuation</span>: &nbsp; &nbsp;<span ref='roundSlider'></span> <br/>
           <small>(Left for down round)</small>
         </p>
 

@@ -46,7 +46,7 @@ module.exports = React.createClass({
         <div className="panel panel-info side-note">
           <div className="panel-body">
             Not all shares are created equal. Investors are generally given <strong>preferred stock</strong> (shown here
-            with green bars), while employees and founders are generally given <strong>common stock</strong> (shown here
+            with teal bars), while employees and founders are generally given <strong>common stock</strong> (shown here
             with red/brown bars). The distinction becomes important in exit events -- as we will see at the end of our
             journey, the pie will not be split evenly.
           </div>
