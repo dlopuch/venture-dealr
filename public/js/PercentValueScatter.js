@@ -206,12 +206,20 @@ module.exports = class PercentValueScatter {
       var paddedInitialD = initialD;
       var paddedNewD = _.clone(realNewD);
 
+      var tempData = {
+        initialD: paddedInitialD,
+        newD    : paddedNewD,
+
+        initialDChanged: false
+      };
+
       // To make the path transition smooth, we need to have the same number of line segements.  Pad appropriately.
 
       if (initialD.length < realNewD.length) {
         while (paddedInitialD.length < paddedNewD.length) {
           // pad with last element
           paddedInitialD.push( paddedInitialD[paddedInitialD.length - 1] );
+          tempData.initialDChanged = true;
         }
 
       } else if (realNewD.length < initialD.length) {
@@ -221,17 +229,14 @@ module.exports = class PercentValueScatter {
       }
 
       // save both new derived datasets as the element's datum
-      d3.select(this).datum({
-        initialD: paddedInitialD,
-        newD    : paddedNewD
-      });
+      d3.select(this).datum(tempData);
     })
     .attr('d', function updateToExistingGrid(d) {
       // Before we start the animation, we need to update the path to have the number of segments in the
       // newly padded data.  We do this against the previous grid to initialize the transition into the new grid.
 
-      if (!prevGridLineGenerator)
-        return d3.select(this).attr('d'); // no-op on first-load
+      if (!prevGridLineGenerator || !d.initialDChanged)
+        return d3.select(this).attr('d'); // no-op on first-load or if already right length
 
       return prevGridLineGenerator( d.initialD );
     })
