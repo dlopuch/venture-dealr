@@ -40,7 +40,7 @@ module.exports = React.createClass({
         affixClass: 'affix-bottom'
       });
     })
-    console.log('affixed');
+    console.log('affixed', $('#round-details-display').offset().top - $('#charts-container').height());
   },
 
   _onChartStoreChange: function(chartStoreState) {

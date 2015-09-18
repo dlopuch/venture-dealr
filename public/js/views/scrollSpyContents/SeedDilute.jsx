@@ -31,24 +31,26 @@ module.exports = React.createClass({
     return (
       <div id={SCROLLSPY_PROPS.id}>
         <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Investors Dilute</h1>
-        <p>The prototype was a hit and you've convinced investors to give you seed money.  Lets learn about dilution.</p>
         <p>
-          Your investors assign a value to your company
-          (the <span className="highlight-round-valuation"><strong>pre-money</strong></span>),
-          and <span className="highlight-round-money">their percentage stake</span> is
+          The prototype was a hit and you've convinced investors to give you seed money.  Here is our first encounter
+          with <b>dilution</b>.</p>
+        <p>
+          Your investors assign a value to your company:
+          the <span className="highlight-round-valuation"><strong>pre-money</strong></span> valuation. <span className="highlight-round-money">Their percentage stake</span> is
           how much they put in relative to the pre-money valuation.
         </p>
         <p>
-          Investors get shares created out of thin air and added to the company books.
+          Dilution happens because investors get shares created out of thin air.
           They increase the size of the pie, making your original shares a smaller piece of a larger pie.
-          This is how <strong>dilution</strong> works.
         </p>
-        <p>
-          Note: investors are generally given <strong>preferred stock</strong> (shown here with green bars), while
-          employees and founders are generally given <strong>common stock</strong> (shown here with red/brown bars).
-          The distinction is important in exit events -- as we will see at the end of our journey, it determines how
-          the pie gets split and who gets their money out first.
-        </p>
+        <div className="panel panel-info side-note">
+          <div className="panel-body">
+            Not all shares are created equal. Investors are generally given <strong>preferred stock</strong> (shown here
+            with green bars), while employees and founders are generally given <strong>common stock</strong> (shown here
+            with red/brown bars). The distinction becomes important in exit events -- as we will see at the end of our
+            journey, the pie will not be split evenly.
+          </div>
+        </div>
       </div>
     );
   }

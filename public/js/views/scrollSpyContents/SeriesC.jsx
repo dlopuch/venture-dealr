@@ -47,12 +47,12 @@ module.exports = React.createClass({
       <div id={SCROLLSPY_PROPS.id}>
         <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Series C: Next Stop, the Moon!</h2>
         <p>
-          Not only did we raise <span className="highlight-round-money"><strong>$ 25M</strong></span>, we increased our
-          valuation up to <span className="highlight-round-valuation"><strong>$ 75M</strong></span>. Check
+          Welcome to the minors. Not only did we raise <span className="highlight-round-money"><strong>$ 25M</strong></span>,
+          we increased our valuation up to <span className="highlight-round-valuation"><strong>$ 75M</strong></span>. Check
           out the bump in the value of our stakes!
         </p>
         <p>
-          Since times are good, now is a good time to check out dilution again.  Switch over
+          Since times are good, let's revisit dilution.  Switch over
           to <a onClick={this.switchToPercentage} className={'btn btn-xs ' + (this.state.lastMeasure === 'percentages' ? 'btn-primary' : 'btn-default')}>
             percentage view
           </a>.  Note how our stakes are becoming a smaller and smaller percentage of the whole.  We're giving away parts
@@ -66,12 +66,13 @@ module.exports = React.createClass({
         </p>
         <p>
           You can see this playing out in the percentage-value scatter plot on the right.  Each equity stake keeps
-          moving to the right and up -- the ownership percentage gets diluted, but the value of the stake keeps going
+          moving to the right and up: the ownership percentage gets diluted, but the value of the stake keeps going
           higher.
         </p>
         <p>
-          Things don't always work out this way.  Could those scatterplot series turn into an inverted-U shape?  Or
-          could you play the game so that your series twists back on itself like a mirrored 'C'?  Lets find out!
+          Things don't always work out this way.  Could the scatterplot series twist down into a &cap; shape?  Or
+          could you play the game so that your series twists back on itself like a &sup;, <em>increasing</em> your
+          percentage of the whole while still being more valuable?  Lets find out!
         </p>
       </div>
     );

@@ -119,8 +119,8 @@ module.exports = React.createClass({
         <p>
           A down round happens when your valuation decreases relative to the previous round.  Investors will still
           give you money, but on terms that value your company less than before.  <strong>Down rounds are dangerous
-          because they can severely dilute your shares, shifting future value gains away from you (and existing
-          investors) and towards the new investors.</strong>
+          because they can dilute your shares in a way that shifts future value gains away from you (and existing
+          investors) towards the new investors.</strong>
         </p>
         <p>
           A valuation is merely a number pulled out of thin air that all participants agree is appropriate. Viewed this
@@ -137,7 +137,8 @@ module.exports = React.createClass({
           importantly, note how differently the future Series C growth gets distributed with a down round.</strong>
         </p>
         <p>
-          Series B Pre-Money Valuation: &nbsp; &nbsp;<span ref='roundSlider'></span> <small>(Left for down round)</small>
+          Series B Pre-Money Valuation: &nbsp; &nbsp;<span ref='roundSlider'></span> <br/>
+          <small>(Left for down round)</small>
         </p>
 
         <div className="btn-group poor-mans-toggle">

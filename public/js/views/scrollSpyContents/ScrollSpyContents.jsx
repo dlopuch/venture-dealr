@@ -13,6 +13,7 @@ var DownRound  = require('jsx!views/scrollSpyContents/DownRound.jsx');
 var Exit       = require('jsx!views/scrollSpyContents/Exit.jsx');
 var LiquidationPreferencesExit = require('jsx!views/scrollSpyContents/LiquidationPreferencesExit.jsx');
 var UnderwaterOptionsExit = require('jsx!views/scrollSpyContents/UnderwaterOptionsExit.jsx');
+var Credits = require('jsx!views/scrollSpyContents/Credits.jsx');
 
 module.exports = React.createClass({
   render() {
@@ -41,6 +42,8 @@ module.exports = React.createClass({
         <LiquidationPreferencesExit />
 
         <UnderwaterOptionsExit />
+
+        <Credits />
       </div>
     )
   }
