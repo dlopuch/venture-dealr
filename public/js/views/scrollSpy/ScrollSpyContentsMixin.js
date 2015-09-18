@@ -33,30 +33,34 @@ module.exports = {
   },
 
   _onScrollSpyTargetTriggered: function(targetId) {
+    // Different target, unfocus
     if (targetId !== this.state.scrollSpy.id) {
 
+      // Do stuff only if previously focused
       if (this.state.scrollSpy.isFocused) {
         this.state.scrollSpy.isFocused = false;
         this.setState({
           scrollSpy: this.state.scrollSpy
         });
+
+        if (this.onScrollSpyUnfocus)
+          this.onScrollSpyUnfocus();
       }
 
-      if (this.onScrollSpyUnfocus)
-        this.onScrollSpyUnfocus();
+    // Matches this target, focus
+    } else {
 
-      return;
+      // Do stuff only if previously not focused
+      if (!this.state.scrollSpy.isFocused) {
+        this.state.scrollSpy.isFocused = true;
+        this.setState({
+          scrollSpy: this.state.scrollSpy
+        });
+
+        if (this.onScrollSpyFocus)
+          this.onScrollSpyFocus();
+      }
     }
-
-    if (!this.state.scrollSpy.isFocused) {
-      this.state.scrollSpy.isFocused = true;
-      this.setState({
-        scrollSpy: this.state.scrollSpy
-      });
-    }
-
-    if (this.onScrollSpyFocus)
-      this.onScrollSpyFocus();
   }
 
 };

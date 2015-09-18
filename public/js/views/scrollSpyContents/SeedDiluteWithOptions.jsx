@@ -16,8 +16,8 @@ module.exports = React.createClass({
 
   onScrollSpyFocus: function() {
     actions.chart.selectMeasure('percentages');
-    storyScenarios.actions.makeSeedHaveOptions();
     actions.round.setScenario(storyScenarios.rounds.seed);
+    storyScenarios.actions.makeSeedHaveOptions();
   },
 
   getInitialState() {
