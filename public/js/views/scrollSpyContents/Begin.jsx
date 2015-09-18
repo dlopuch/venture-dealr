@@ -28,7 +28,7 @@ module.exports = React.createClass({
     });
   },
   componentDidMount() {
-    $(window).on('resize', this._setHeightState.bind(this));
+    $(window).on('resize', this._setHeightState);
     this._setHeightState();
   },
 
