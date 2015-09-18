@@ -31,27 +31,26 @@ module.exports = React.createClass({
       <div id={SCROLLSPY_PROPS.id}>
         <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Options Pools Necessarily Dilute Further</h2>
         <p>
-          You will need additional talent to grow your venture, and often what you can't pay in salary you pay with
-          equity.  But where does this equity come from?
+          You will need additional talent to grow your venture, and this talent will want equity in your risky venture.
+          But where does this equity come from?
         </p>
         <p>
-          When you raise a round, the investors' shares are created out of thin air, but you also create shares reserved
-          for employee stock grants.  This bucket of equity is called
-          an <span className="highlight-round-options"><strong>options pool</strong></span>. Option pools are generally
-          counted as part of your total <span className="highlight-round-valuation">pre-money</span> (hover over the
-          seed round stack for details).
+          Every round you create another bucket of new shares reserved for employee stock grants.
+          This bucket of equity is called an <span className="highlight-round-options"><strong>options pool</strong></span>.
+          Options pools are another contributor of dilution -- they also increase the size of the pie.  In this
+          visualization, they will be shown as shades of grey.
         </p>
+
+        <div className="panel panel-info side-note">
+          <div className="panel-body">
+            Options pools can be confusing. Although they are generally counted as part of your
+            total <span className="highlight-round-valuation">pre-money</span>, they are specified as a percentage of the
+            post-round financing.  This practice has been called <a href="http://venturehacks.com/articles/option-pool-shuffle" target="blank">the
+            Options Pool Shuffle</a> and can be a source of unexpected dilution.
+          </div>
+        </div>
         <p>
-          Options pools are created
-          at every round and are an important knob in the dilution calculations.  In this visualization, they will be
-          shown as shades of grey.
-        </p>
-        <p>
-          Both the investors' equity and the options pool's equity are new shares created out of nothing and added to
-          the pie.
-        </p>
-        <p>
-          Next we will see that <strong>as long as the pie keeps getting bigger, dilution is not a bad thing.</strong>
+          Next we will see that <strong>as long as the pie keeps getting bigger, dilution is not always terrible.</strong>
         </p>
       </div>
     );

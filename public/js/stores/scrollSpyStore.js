@@ -28,6 +28,29 @@ var state = {
 
 var lastActivation = Date.now();
 
+var doLogLastActivation;
+var logLastActivationTimeout;
+
+var queueLogLastActivationFn = function(scenario) {
+  if (doLogLastActivation) {
+    doLogLastActivation();
+    clearTimeout(logLastActivationTimeout);
+  }
+
+  lastActivation = Date.now();
+
+  doLogLastActivation = function() {
+    var timeSpentMs = Date.now() - lastActivation;
+    window.mixpanel.track(
+      'Scroll Spy Target Triggered',
+      {scenario: scenario, timeSpentMs: timeSpentMs}
+    );
+    window.ga('send', 'event', 'Scroll Spy', 'Target Triggered', scenario, timeSpentMs);
+
+    lastActivation = Date.now();
+  };
+};
+
 module.exports = Reflux.createStore({
   init: function() {
     this.listenTo(actions.scrollSpy.mounted, this._onMounted);
@@ -59,14 +82,7 @@ module.exports = Reflux.createStore({
 
     actions.scrollSpy.targetTriggered(scenario);
 
-    var msSinceLastActivation = Date.now() - lastActivation;
-    window.mixpanel.track(
-      'Scroll Spy Target Triggered',
-      {scenario: scenario,  msSinceLastActivation: msSinceLastActivation}
-    );
-    window.ga('send', 'event', 'Scroll Spy', 'Target Triggered', scenario, msSinceLastActivation);
 
-    lastActivation = Date.now();
   },
 
   _onRefreshed: function(domId) {

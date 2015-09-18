@@ -33,10 +33,11 @@ module.exports = React.createClass({
     this._slider = new Slider( React.findDOMNode(this.refs.roundSlider), {
       enabled: this.state.sliderEnabled,
       value: this.state.sliderValue,
-      min: 1000000,
-      max: 110000000,
+      min: 10000000,
+      max: 150000000,
       step: 1000000,
-      formatter: ChartStore.CURRENCY_FORMATTER
+      formatter: ChartStore.CURRENCY_FORMATTER,
+      scale: 'logarithmic'
     })
     .on('change', this._onSliderChange);
   },
@@ -105,21 +106,27 @@ module.exports = React.createClass({
         <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Underwater Options: A Positive Exit With Nothing</h2>
         <p>Even a positive exit can still leave some shareholders with nothing.</p>
         <p>
-          Because the exit amount is subject to preferences, the pie is not split evenly.  For example, common-stock
-          holders see nothing until all preferred-stock holders get their money out.  Only then is the remainder split
-          equally (however, it is split between both the common <em>and</em> preferred holders, so the preferred holders
-          get an additional bonus).
+          Because the exit is subject to preferences, the pie is not split evenly.  Common-stock
+          holders see nothing until all preferred-stock holders get their initial money back out.  Only then is the
+          remainder split equally (however, it is split between both the common <em>and</em> preferred holders).
         </p>
         <p>
-          This remainder may not be enough to cover all claims.  To the preferred holders, it is an additional
-          bonus on top of their already-satisfied liquidation preference.  To the common holders, it may not be enough
-          to match the value of their claims.
+          To the preferred holders, this remainder split is an additional return on top of their already-satisfied
+          liquidation preferences.  Common-stock holders, however, may find themselves where <strong>they would have to
+          pay more to exercise their options than their stakes were worth</strong> and instead just walk away with
+          nothing.
         </p>
-        <p>
-          If the underwater common stock is in the form of options, <strong>the options holder would have to pay more
-          than their stakes were worth</strong> in order to exercise the options.  The holder would instead just walk
-          away with nothing.
-        </p>
+
+        <div className="panel panel-info side-note">
+          <div className="panel-body">
+            Common stock is generally granted to employees in the form of <strong>options</strong>. An option is merely
+            a contract giving the right to purchase shares at a specified price, specifically the price of a share at
+            the last valuation event before the option was granted.  An early employee, then, may have options granting
+            her the ability to purchase shares at the Seed round valuation price that are now valued according to the
+            exit's liquidation distribution.
+          </div>
+        </div>
+
         <p>
           Our last round, the Series C, had a post-money valuation
           of <strong onMouseOver={this.selectSeriesC}><span className="highlight-round-valuation">$ 6</span><span className="highlight-round-money">5M</span></strong>.

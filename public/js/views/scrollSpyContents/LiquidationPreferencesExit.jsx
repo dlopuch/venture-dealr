@@ -35,17 +35,21 @@ module.exports = React.createClass({
       <div id={SCROLLSPY_PROPS.id}>
         <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Liquidation Preferences and the Empty-Handed Exit</h2>
         <p>
-          Liquidation preferences reduce risk for later investors at the expense of earlier investors and
-          common-stock holders.  Bringing new investors on-board often works with
-          a <strong>"Last-In-First-Out"</strong> model -- if the exit does not produce enough money to reward everyone,
-          the last investors in get their investment returned before anyone else gets anything.
+          Not all exits work out so well.
         </p>
         <p>
-          If you're near the back, your claim may even be <strong>underwater</strong> -- it may be worth less than you
-          initially put in.
+          Bringing new investors onboard in a round often works with
+          a <strong>"Last-In-First-Out"</strong> model by granting them <strong>liquidation preferences</strong> -- if
+          the exit does not produce enough money to match the investments put in, the last investors in get their
+          investment returned before anyone else gets anything.  Liquidation preferences reduce risk for later
+          investors at the expense of earlier investors and common-stock holders.
         </p>
         <p>
-          If you're in the back of the line (such as founder and employee <strong>common stock</strong> versus the
+          If you're near the back, your shares may even be <strong>underwater</strong> -- they may be worth less than
+          the initial investment that created them.
+        </p>
+        <p>
+          If you're at the very back (such as founder and employee <strong>common stock</strong> versus the
           investors' <strong>preferred stock</strong>), you may even walk away with nothing if there's not
           enough to satisfy the claims in front of you.
         </p>
