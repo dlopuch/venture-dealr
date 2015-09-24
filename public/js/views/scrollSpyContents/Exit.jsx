@@ -36,7 +36,7 @@ module.exports = React.createClass({
       <div id={SCROLLSPY_PROPS.id}>
         <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>The (Successful) Exit</h1>
         <p>
-          And now our journey is coming to an end.  Ideally it's a happy ending -- the buyout or IPO value is high
+          And now our journey is coming to an end.  Ideally it's a happy ending &mdash; the buyout or IPO value is high
           enough that all shareholders get a positive return.  Pop the champagne!
         </p>
       </div>

@@ -34,8 +34,8 @@ module.exports = React.createClass({
         <p>
           The prototype was a hit and you've convinced investors to give you seed money.  Nothing comes for free, and
           the price of the investment money is giving away a percentage of your company. Here, then, is our first
-          encounter with <b>dilution</b>.  Figuring out how much you get diluted -- how much of the company you have
-          given away -- is easy.
+          encounter with <b>dilution</b>.  Figuring out how much you get diluted &mdash; how much of the company you have
+          given away &mdash; is straightforward.
         </p>
         <p>
           Your investors assign a value to your company:
@@ -50,7 +50,7 @@ module.exports = React.createClass({
           <div className="panel-body">
             Not all shares are created equal. Investors are generally given <strong>preferred stock</strong> (shown here
             with teal bars), while employees and founders are generally given <strong>common stock</strong> (shown here
-            with red/brown bars). The distinction becomes important in exit events -- as we will see at the end of our
+            with red/brown bars). The distinction becomes important in exit events &mdash; as we will see at the end of our
             journey, the pie will not be split evenly.
           </div>
         </div>

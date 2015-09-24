@@ -37,7 +37,7 @@ module.exports = React.createClass({
         <p>
           Every round you create another bucket of new shares reserved for employee stock grants.
           This bucket of equity is called an <span className="highlight-round-options"><strong>options pool</strong></span>.
-          Options pools are another contributor of dilution -- they also increase the size of the pie.  In this
+          Options pools are another contributor of dilution &mdash; they also increase the size of the pie.  In this
           visualization, they will be shown as shades of grey.
         </p>
 

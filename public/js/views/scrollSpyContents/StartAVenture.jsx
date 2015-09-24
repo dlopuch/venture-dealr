@@ -32,13 +32,13 @@ module.exports = React.createClass({
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>The Beginning of the Journey</h1>
+        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>The Beginning of a Journey</h1>
         <p>
           You have an idea and a co-founder.  Great, lets go start our venture!
         </p>
         <p>
-          You and your co-founder agree to an initial 60-40 equity split.  Now go start building the prototype that
-          will woo investors onboard...
+          You and your co-founder agree to an <strong>initial 60-40</strong> equity split.
+          Now go start building the prototype that will woo investors onboard...
         </p>
       </div>
     );

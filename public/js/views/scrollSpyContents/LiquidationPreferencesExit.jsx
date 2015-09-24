@@ -39,13 +39,13 @@ module.exports = React.createClass({
         </p>
         <p>
           Bringing new investors onboard in a round often works with
-          a <strong>"Last-In-First-Out"</strong> model by granting them <strong>liquidation preferences</strong> -- if
+          a <strong>"Last-In-First-Out"</strong> model by granting them <strong>liquidation preferences</strong> &mdash; if
           the exit does not produce enough money to match the investments put in, the last investors in get their
           investment returned before anyone else gets anything.  Liquidation preferences reduce risk for later
           investors at the expense of earlier investors and common-stock holders.
         </p>
         <p>
-          If you're near the back, your shares may even be <strong>underwater</strong> -- they may be worth less than
+          If you're near the back, your shares may even be <strong>underwater</strong> &mdash; they may be worth less than
           the initial investment that created them.
         </p>
         <p>

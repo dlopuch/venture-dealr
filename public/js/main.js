@@ -21,6 +21,10 @@ window.onload = function() {
   window.mixpanel.identify('Rando ' + Math.random());
 
 
+  // Non-react js init
+  // ---------
+  $('#datahero').tooltip();
+
   var RoundChart = require('./RoundChart');
   window.roundChart = new RoundChart('#round-chart');
 

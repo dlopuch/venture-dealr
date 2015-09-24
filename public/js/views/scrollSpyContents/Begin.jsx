@@ -75,7 +75,7 @@ module.exports = React.createClass({
 
         <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Understanding Finance Through Play</h1>
         <p>
-          Venture capital deal structures are a type of technology -- a financial technology rather than a silicon-based
+          Venture capital deal structures are a type of technology &mdash; a financial technology rather than a silicon-based
           technology, but a technology nevertheless.  Like all technologies, it has various structures and incentives
           built into it, structures and incentives that can interact in complex ways.
         </p>

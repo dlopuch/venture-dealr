@@ -22,7 +22,8 @@ module.exports = React.createClass({
     $('#round-details-display')
     .affix({
       offset: {
-        top: $('#round-details-display').offset().top - $('#charts-container').height()
+        top: $('#round-details-display').offset().top -
+             $('#charts-container').height() - $('#header-affix-bar').height() - 5
       }
     })
     .on('affixed.bs.affix', function() {
