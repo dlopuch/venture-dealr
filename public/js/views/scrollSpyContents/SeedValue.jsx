@@ -50,8 +50,8 @@ module.exports = React.createClass({
         <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Investors Dilute but Assign Value</h1>
         <p>
           Instead of looking at <a onClick={this.switchToPercentage} className={'btn btn-xs ' + (this.state.lastMeasure === 'percentages' ? 'btn-primary' : 'btn-default')}>
-            percentages
-          </a>, we can look
+            percentage
+          </a> ownership, we can look
           at the <a onClick={this.switchToValue} className={'btn btn-xs ' + (this.state.lastMeasure === 'percentages' ? 'btn-default' : 'btn-primary')}>
             value
           </a> of your equity.

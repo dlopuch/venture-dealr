@@ -26,11 +26,15 @@ body > header {
 
   h1 {
     color: white;
+    font-weight: 300;
+
   }
 
   .subtitle {
     color: lighten(@brand-primary, 40%);
     max-width: 605px;
+    font-weight: 300;
+    letter-spacing: 0.03em
   }
 
   p {
@@ -62,8 +66,15 @@ h1, h2, h3, h4 {
 }
 
 #scenarios {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+
   h1, h2, h3, h4 {
     color: lighten(@brand-primary, 20%);
+    font-weight: 300;
+    border-bottom: 3px solid;
+    letter-spacing: -0.02em;
 
     &.focus {
       color: @brand-primary

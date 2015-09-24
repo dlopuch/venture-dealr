@@ -32,7 +32,7 @@ module.exports = React.createClass({
   render() {
     return (
       <div id={SCROLLSPY_PROPS.id}>
-        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Lets start a venture!</h1>
+        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>The Beginning of the Journey</h1>
         <p>
           You have an idea and a co-founder.  Great, lets go start our venture!
         </p>

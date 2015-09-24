@@ -32,8 +32,11 @@ module.exports = React.createClass({
       <div id={SCROLLSPY_PROPS.id}>
         <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Investors Dilute</h1>
         <p>
-          The prototype was a hit and you've convinced investors to give you seed money.  Here is our first encounter
-          with <b>dilution</b>.</p>
+          The prototype was a hit and you've convinced investors to give you seed money.  Nothing comes for free, and
+          the price of the investment money is giving away a percentage of your company. Here, then, is our first
+          encounter with <b>dilution</b>.  Figuring out how much you get diluted -- how much of the company you have
+          given away -- is easy.
+        </p>
         <p>
           Your investors assign a value to your company:
           the <span className="highlight-round-valuation"><strong>pre-money</strong></span> valuation. <span className="highlight-round-money">Their percentage stake</span> is
