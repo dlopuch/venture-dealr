@@ -79,7 +79,9 @@ module.exports = React.createClass({
       max: 60000000,
       step: 500000,
       formatter: function(n) {
-        return numeral(n).format('$ 00.0a');
+        return numeral(n).format('$ 00.0a') + (
+          n < 25000000 ? ' (Down Round)' : ''
+        );
       },
       ticksPositions: [0, 50, 100],
       ticksLabels: ['Down Round', '|', 'Growth Round']
@@ -118,8 +120,8 @@ module.exports = React.createClass({
         <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Down Round</h1>
         <p>
           A down round happens when your valuation decreases relative to the previous round.  Investors will still
-          give you money, but on terms that value your company less than before.  <strong>Down rounds are dangerous
-          because they can dilute your shares in a way that shifts future value gains away from you (and existing
+          give you money, but on terms that value your company less than before.  Down rounds are dangerous because
+          they can dilute your shares in a way that <strong>shift future value gains away from you (and existing
           investors) towards the new investors.</strong>
         </p>
         <p>
@@ -128,13 +130,14 @@ module.exports = React.createClass({
           of dilution results from a set investment amount</strong>.  Lets see that in action.
         </p>
         <p>
-          Lets look at your Series B.
+          Look at your Series B.
         </p>
         <p>
           Your Series B investors are willing to give you a
           fixed <span className="highlight-round-money"><strong>$ 6M</strong></span>.  How much you get diluted depends
-          on your pre-money valuation.  Tweak it and note the relative composition of your Series B.  <strong>More
-          importantly, note how differently the future Series C growth gets distributed with a down round.</strong>
+          on the size of your <span className="highlight-round-options">pre-</span><span className="highlight-round-valuation">money valuation</span>.
+          Tweak it and note the relative composition of your Series B.  More
+          importantly, <strong>note how differently the future Series C growth gets distributed after a down round.</strong>
         </p>
         <p>
           <span className="highlight-round-options">Ser</span><span className="highlight-round-valuation">ies B Pre-Money Valuation</span>: &nbsp; &nbsp;<span ref='roundSlider'></span> <br/>

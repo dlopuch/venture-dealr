@@ -35,7 +35,7 @@ module.exports = React.createClass({
           Thanks for tuning in.  Hope you learned something.
         </p>
         <p>
-          Loved it? Hated it? Something broken? Would love to hear your
+          Loved it? Something broken, confusing, or missing?  Want to add a topic?  I would love to hear your
           feedback. <a href="https://twitter.com/floatrock" target="blank">@floatrock</a>.
         </p>
         <p>
