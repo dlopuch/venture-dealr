@@ -50,7 +50,7 @@ module.exports = React.createClass({
           </div>
         </div>
         <p>
-          Next we will see that <strong>as long as the pie keeps getting bigger, dilution is not always terrible.</strong>
+          Next we will see that <strong>as long as the pie keeps getting bigger, dilution is not a bad thing.</strong>
         </p>
       </div>
     );
