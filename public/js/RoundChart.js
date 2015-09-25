@@ -28,7 +28,7 @@ class Chart {
       }
     });
 
-    this._throttleProcessNewChartData = _.throttle(this._processNewChartData, DEFAULT_TRANSITION_MS * 2/5);
+    this._throttleProcessNewChartData = _.throttle(this._processNewChartData, DEFAULT_TRANSITION_MS * 4/5);
 
     var svgW = parseInt(this.svg.attr('width'), 10);
     var svgH = parseInt(this.svg.attr('height'), 10);

@@ -92,14 +92,15 @@ module.exports = React.createClass({
           a <strong>"Last-In-First-Out"</strong> model by granting them <strong>liquidation preferences</strong> &mdash; if
           the exit does not produce enough money to match the investments put in, the last investors in get their
           investment returned before anyone else gets anything.  Liquidation preferences reduce risk for later
-          investors at the expense of earlier investors and common-stock holders.
+          investors; later rounds tend to require higher amounts of capital, so reducing risk for those investors can
+          help get them on board.  However, this comes at the expense of earlier investors and common-stock holders,
+          who now require a far larger exit to get anything.
         </p>
         <div className="panel panel-info side-note">
           <div className="panel-body">
             Liquidation preferences can also come with multipliers.  A late-round investor with a 2x liquidation
-            preference will get twice his investment out before other shareholders get anything.  This greatly reduces
-            risk for later investors at the expense of early investors and common-stock holders, who now require a far
-            larger exit to get anything.
+            preference will get twice his investment out before other shareholders get anything.  This further reduces
+            risk for later investors by guarenteeing them a profit (if there is a profit to be had by anyone).
           </div>
         </div>
         <p>

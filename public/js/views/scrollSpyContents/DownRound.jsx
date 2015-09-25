@@ -13,7 +13,9 @@ var chartStore = require('stores/ChartStore');
 var SCROLLSPY_PROPS = {
   id: 'scenario-down-round',
   name: 'Down Round'
-}
+};
+
+var PERCENTAGE_FORMATTER = d3.format('%');
 
 module.exports = React.createClass({
   mixins: [
@@ -100,7 +102,8 @@ module.exports = React.createClass({
       return; // don't care about it
 
     this.setState({
-      sliderValue: value
+      sliderValue: value,
+      percentNewInvestor: 6000000 / (value + 6000000)
     });
   },
 
@@ -139,10 +142,16 @@ module.exports = React.createClass({
           Tweak it and note the relative composition of your Series B.  More
           importantly, <strong>note how differently the future Series C growth gets distributed after a down round.</strong>
         </p>
-        <p>
-          <span className="highlight-round-options">Ser</span><span className="highlight-round-valuation">ies B Pre-Money Valuation</span>: &nbsp; &nbsp;<span ref='roundSlider'></span> <br/>
-          <small>(Left for down round)</small>
-        </p>
+        <div>
+          <div className="pull-left" style={{height: '3em'}}>
+            <span className="highlight-round-options">Ser</span><span className="highlight-round-valuation">ies B Pre-Money Valuation</span>: &nbsp; &nbsp;
+          </div>
+          <div style={{height: '3.5em'}}>
+            <span ref='roundSlider'></span> <br/>
+            <small>% Series C growth going to Series B investors: {PERCENTAGE_FORMATTER(this.state.percentNewInvestor)}</small>
+          </div>
+        </div>
+        <p>&nbsp;</p>
 
         <div className="btn-group poor-mans-toggle">
           <div

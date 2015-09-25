@@ -21,7 +21,7 @@ module.exports = class PercentValueScatter {
       }
     });
 
-    this._throttledRenderData = _.throttle(this._renderData, DEFAULT_TRANSITION_MS * 2/5);
+    this._throttledRenderData = _.throttle(this._renderData, DEFAULT_TRANSITION_MS * 4/5);
 
     // margin convention: http://bl.ocks.org/mbostock/3019563
     svg = svg.append('g')

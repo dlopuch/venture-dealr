@@ -81,8 +81,7 @@ module.exports = React.createClass({
         <p>
           Venture Dealr is an interactive sandbox for building typical VC sandcastles.  We can learn about the different
           components and interactions of this financial technology by turning the various knobs and seeing how the
-          visualization reacts.  How can a net positive exit still leave founders with nothing? Through
-          interactive visualization and play, we're about to find out.
+          visualization reacts.  How can a net positive exit still leave founders with nothing? We're about to find out.
         </p>
         <p>&nbsp;</p>
         <p>
