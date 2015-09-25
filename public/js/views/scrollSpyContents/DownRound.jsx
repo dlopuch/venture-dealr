@@ -90,7 +90,7 @@ module.exports = React.createClass({
   },
 
   _onSliderChange: function(sliderVals) {
-    actions.round.changeRoundPreMoneyValuation(storyScenarios.rounds.seriesB, sliderVals.newValue);
+    actions.round.changeRoundPreMoneyValuation(storyScenarios.rounds.seriesB, sliderVals.newValue, {throttle: true});
 
     actions.chart.selectRound(storyScenarios.rounds.seriesB);
   },

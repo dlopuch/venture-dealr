@@ -21,6 +21,8 @@ module.exports = class PercentValueScatter {
       }
     });
 
+    this._throttledRenderData = _.throttle(this._renderData, DEFAULT_TRANSITION_MS * 2/5);
+
     // margin convention: http://bl.ocks.org/mbostock/3019563
     svg = svg.append('g')
       .attr('transform', 'translate(' + opts.margin.left + ', ' + opts.margin.top + ')');
@@ -56,7 +58,7 @@ module.exports = class PercentValueScatter {
     ChartStore.listen(this._onChartStoreChange.bind(this));
   }
 
-  _onChartStoreChange(chartStoreState) {
+  _onChartStoreChange(chartStoreState, opts) {
     if (this._data === chartStoreState.percentValueConfig)
       return;
 
@@ -65,7 +67,12 @@ module.exports = class PercentValueScatter {
     this._data = chartConfig;
     this._renderXAxis(chartConfig.axes.percentage);
     this._renderYAxis(chartConfig.axes.value);
-    this._renderData(chartConfig.series);
+
+    if (opts && opts.throttle) {
+      this._throttledRenderData(chartConfig.series);
+    } else {
+      this._renderData(chartConfig.series);
+    }
   }
 
   _renderData(series) {

@@ -181,7 +181,7 @@ module.exports = Reflux.createStore({
     };
   },
 
-  onNewRoundData: function(chartData) {
+  onNewRoundData: function(chartData, opts) {
 
     // new round data means the round selection needs to be cleared out
     //this.state.selectedRound = null;
@@ -294,24 +294,24 @@ module.exports = Reflux.createStore({
     window.hdPercentValueConfig = percentValueConfig;
     this.state.percentValueConfig = percentValueConfig;
 
-    this.emitState();
+    this.emitState(opts);
   },
 
-  onSelectMeasure: function(measureName) {
+  onSelectMeasure: function(measureName, opts) {
     this.state.selectedMeasure = measureName;
 
-    this.emitState();
+    this.emitState(opts);
   },
 
-  onSelectRound: function(newRound) {
+  onSelectRound: function(newRound, opts) {
     if (this.state.selectedRound === newRound)
       return;
 
     this.state.selectedRound = newRound;
-    this.emitState();
+    this.emitState(opts);
   },
 
-  emitState: function() {
-    this.trigger(_.clone(this.state));
+  emitState: function(opts) {
+    this.trigger(_.clone(this.state), opts);
   }
 });

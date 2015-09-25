@@ -38,12 +38,12 @@ module.exports = React.createClass({
           given away &mdash; is straightforward.
         </p>
         <p>
-          Your investors assign a value to your company:
+          Your investors look at what your company consists of today and assign it a value:
           the <span className="highlight-round-valuation"><strong>pre-money</strong></span> valuation. <span className="highlight-round-money">Their percentage stake</span> is
           how much they put in relative to the pre-money valuation.
         </p>
         <p>
-          Dilution happens because investors get shares created out of thin air.
+          Dilution happens because investors get new shares created out of thin air.
           They increase the size of the pie, making your original shares a smaller piece of a larger pie.
         </p>
         <div className="panel panel-info side-note">

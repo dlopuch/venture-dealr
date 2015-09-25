@@ -37,14 +37,14 @@ module.exports = React.createClass({
         <p>
           Every round you create another bucket of new shares reserved for employee stock grants.
           This bucket of equity is called an <span className="highlight-round-options"><strong>options pool</strong></span>.
-          Options pools are another contributor of dilution &mdash; they also increase the size of the pie.  In this
+          Like investor shares, options pools increase the size of the pie and contribute to dilution.  In this
           visualization, they will be shown as shades of grey.
         </p>
 
         <div className="panel panel-info side-note">
           <div className="panel-body">
             Options pools can be confusing. Although they are generally counted as part of your
-            total <span className="highlight-round-valuation">pre-money</span>, they are specified as a percentage of the
+            total <span className="highlight-round-valuation">pre-money</span>, they are often specified as a percentage of the
             post-round financing.  This practice has been called <a href="http://venturehacks.com/articles/option-pool-shuffle" target="blank">the
             Options Pool Shuffle</a> and can be a source of unexpected dilution.
           </div>

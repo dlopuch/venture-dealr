@@ -28,6 +28,8 @@ class Chart {
       }
     });
 
+    this._throttleProcessNewChartData = _.throttle(this._processNewChartData, DEFAULT_TRANSITION_MS * 2/5);
+
     var svgW = parseInt(this.svg.attr('width'), 10);
     var svgH = parseInt(this.svg.attr('height'), 10);
 
@@ -76,6 +78,7 @@ class Chart {
     // ChartStore.on(ChartStore.EVENTS.ROUND_SELECTED     , this.handleRoundSelected.bind(this));
 
     ChartStore.listen(this.onNewChartData.bind(this));
+      // throttle to let some of the animation run when rapidly switching, eg by sliders
 
     // Example load
     // this.handleRoundTimelineData({
@@ -121,7 +124,7 @@ class Chart {
     .style('opacity', 0);
   }
 
-  onNewChartData(chartStoreState) {
+  onNewChartData(chartStoreState, options) {
     var newData = chartStoreState.roundChartConfig;
 
     var hasNewData = false;
@@ -138,6 +141,17 @@ class Chart {
 
     if (!hasNewData && !hasNewMeasure)
       return; // nothing to update, ignore
+
+    if (options && options.throttle) {
+      this._easing = 'cubic-in-out';
+      this._throttleProcessNewChartData(chartStoreState, hasNewData, newData);
+    } else {
+      this._easing = 'cubic-in-out';
+      this._processNewChartData(chartStoreState, hasNewData, newData);
+    }
+  }
+
+  _processNewChartData(chartStoreState, hasNewData, newData) {
 
     if (hasNewData) {
       this._renderXAxis(newData.xAxis);
@@ -203,6 +217,7 @@ class Chart {
     underwaterExitStackBg
     .transition()
       .duration(DEFAULT_TRANSITION_MS)
+      .ease(this._easing)
     .attr({
       'width': barWidth,
       'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
@@ -216,6 +231,7 @@ class Chart {
     underwaterExitStackBg.exit()
     .transition()
       .duration(DEFAULT_TRANSITION_MS)
+      .ease(this._easing)
     .attr({
       'height': 0
     })
@@ -278,6 +294,7 @@ class Chart {
     rects
     .transition()
       .duration(DEFAULT_TRANSITION_MS)
+      .ease(this._easing)
       .style('fill', colorBar)
       .call(setBarWidth) // changes width if underwater
       .attr({
@@ -294,6 +311,7 @@ class Chart {
       selection
       .transition()
         .duration(DEFAULT_TRANSITION_MS)
+        .ease(self._easing)
       .attr({
         'height': 0,
         'y': 0
@@ -344,6 +362,7 @@ class Chart {
     typeLines
     .transition()
       .duration(DEFAULT_TRANSITION_MS)
+      .ease(this._easing)
     .attr({
       'x1': lineXPositioner,
       'x2': lineXPositioner,
@@ -355,6 +374,7 @@ class Chart {
       selection
       .transition()
         .duration(DEFAULT_TRANSITION_MS)
+        .ease(self._easing)
       .attr({
         'y1': 0,
         'y2': 0
