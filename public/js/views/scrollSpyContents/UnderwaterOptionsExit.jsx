@@ -43,7 +43,7 @@ module.exports = React.createClass({
   },
 
   _onSliderChange: function(sliderVals) {
-    actions.exit.changeValuation(storyScenarios.rounds.exit, sliderVals.newValue);
+    actions.exit.changeValuation(storyScenarios.rounds.exit, sliderVals.newValue, {throttle: true});
     actions.chart.selectRound(storyScenarios.rounds.exit);
   },
 
@@ -134,7 +134,6 @@ module.exports = React.createClass({
         </p>
         <div>
           Exit valuation: <span ref='roundSlider'></span><br/>
-          <small>(Note the Last-In-First-Out dynamics in the <a onClick={this._select20M}>$20M - $35M</a> range)</small>
         </div>
       </div>
     );

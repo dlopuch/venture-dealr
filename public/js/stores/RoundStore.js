@@ -39,9 +39,9 @@ module.exports = Reflux.createStore({
     actions.round.updatedMoney(round);
   },
 
-  onChangeRoundPreMoneyValuation: function(round, newValuation) {
+  onChangeRoundPreMoneyValuation: function(round, newValuation, options) {
     round.preMoneyValuation = newValuation;
-    actions.round.updatedMoney(round);
+    actions.round.updatedMoney(round, options);
   },
 
   onChangeOptionsPoolSpec: function(round, newOptionsPoolSpec) {
@@ -49,16 +49,16 @@ module.exports = Reflux.createStore({
     actions.round.updatedMoney(round);
   },
 
-  onExitChangeValuation: function(exit, newValuation) {
+  onExitChangeValuation: function(exit, newValuation, opts) {
     if (!(exit instanceof Exit))
       throw new Error('Exit model expected!');
 
     exit.valuation = newValuation;
-    actions.round.updatedMoney(exit);
+    actions.round.updatedMoney(exit, opts);
   },
 
-  onUpdatedMoney: function(roundOrExit) {
-    this.chartNewData();
+  onUpdatedMoney: function(roundOrExit, opts) {
+    this.chartNewData(opts);
   },
 
   // actions.investment.changeMoney
@@ -71,8 +71,8 @@ module.exports = Reflux.createStore({
   /**
    * Given a round, generates chart series data for everything up to the round
    */
-  chartNewData: function() {
-    actions.round.newRoundData( this._generateChartSeries( latestRound ) );
+  chartNewData: function(opts) {
+    actions.round.newRoundData( this._generateChartSeries( latestRound ), opts );
   },
 
   /**

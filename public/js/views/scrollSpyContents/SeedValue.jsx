@@ -57,8 +57,8 @@ module.exports = React.createClass({
           </a> of your equity.
         </p>
         <p>
-          Note that your company had no value until your first valuation event.  In <i>percentage</i> terms you were
-          diluted, but in <i>value</i> terms you went from nothing to actual value! (At least on paper.)
+          Note that <strong>your company had no value until your first valuation event</strong>.  In <i>percentage</i> terms
+          you were diluted, but in <i>value</i> terms you went from nothing to actual value! (At least on paper.)
         </p>
       </div>
     );

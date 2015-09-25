@@ -8,6 +8,7 @@ module.exports = {
     /**
      * Indicates a round model has been converted into a new chart series
      * @param {Object} chartSeriesData
+     * @param {Object} [options] Misc. options to pass through to consumers
      */
     'newRoundData',
 
@@ -27,6 +28,7 @@ module.exports = {
     /**
      * Indicates the round money has changed (valuation or investments)
      * @param {models.Round | models.Exit} Updated round
+     * @param {Object} [options] Misc. options to pass through to consumers
      */
     'updatedMoney',
 
@@ -34,6 +36,7 @@ module.exports = {
      * Update a round's pre-money valuation
      * @param {models.Round} Round to update
      * @param {number} New valuation
+     * @param {Object} [options] Misc. options to pass through to consumers
      */
     'changeRoundPreMoneyValuation',
 
@@ -53,6 +56,7 @@ module.exports = {
      * Changes the valuation of an Exit event
      * @param {models.Exit} Exit event
      * @param {number} New valuation
+     * @param {Object} [options] Misc. options to pass through to consumers
      */
     'changeValuation'
   ]),

@@ -2,6 +2,9 @@
 
 @import '../../../node_modules/bootstrap-slider/css/bootstrap-slider.css';
 
+@headerAffixBarHeight: 7px;
+@chartsContainerHeight: 255px;
+
 @round-money-color: limegreen;
 @round-money-opacity: 0.5;
 @round-valuation-color: steelblue;
@@ -17,12 +20,15 @@ html {
   height: 100%; // some hack that also makes scrollspy work. nooooo idea on this one.... https://github.com/twbs/bootstrap/issues/5007
 }
 
+.headerGradient () {
+  #gradient > .radial(@brand-primary; darken(@brand-primary, 10%));
+}
 
 body > header {
 
-  #gradient > .radial(@brand-primary; darken(@brand-primary, 10%));
+  .headerGradient();
+
   padding: 15px;
-  margin-bottom: 20px;
 
   h1 {
     color: white;
@@ -58,6 +64,29 @@ body > header {
     top: 0px;
     right: 0px;
     z-index: 200;
+  }
+}
+
+#header-affix-bar {
+  height: @headerAffixBarHeight;
+  position: relative; // to position initially at bottom of header
+  top: -@headerAffixBarHeight;
+  margin-bottom: -@headerAffixBarHeight; // needed so stuff below it ignores on initial positioning
+
+  font-size: 8px;
+  color: white;
+  width: 100%;
+  z-index: 101;
+
+  &.affix-top {
+    background: none;
+  }
+
+  &.affix {
+    position: fixed;
+    top: 0;
+
+    .headerGradient();
   }
 }
 

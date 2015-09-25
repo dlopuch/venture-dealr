@@ -34,23 +34,23 @@ module.exports = React.createClass({
         <p>
           The prototype was a hit and you've convinced investors to give you seed money.  Nothing comes for free, and
           the price of the investment money is giving away a percentage of your company. Here, then, is our first
-          encounter with <b>dilution</b>.  Figuring out how much you get diluted -- how much of the company you have
-          given away -- is easy.
+          encounter with <b>dilution</b>.  Figuring out how much you get diluted &mdash; how much of the company you have
+          given away &mdash; is straightforward.
         </p>
         <p>
-          Your investors assign a value to your company:
+          Your investors look at what your company consists of today and assign it a value:
           the <span className="highlight-round-valuation"><strong>pre-money</strong></span> valuation. <span className="highlight-round-money">Their percentage stake</span> is
           how much they put in relative to the pre-money valuation.
         </p>
         <p>
-          Dilution happens because investors get shares created out of thin air.
+          Dilution happens because investors get new shares created out of thin air.
           They increase the size of the pie, making your original shares a smaller piece of a larger pie.
         </p>
         <div className="panel panel-info side-note">
           <div className="panel-body">
             Not all shares are created equal. Investors are generally given <strong>preferred stock</strong> (shown here
             with teal bars), while employees and founders are generally given <strong>common stock</strong> (shown here
-            with red/brown bars). The distinction becomes important in exit events -- as we will see at the end of our
+            with red/brown bars). The distinction becomes important in exit events &mdash; as we will see at the end of our
             journey, the pie will not be split evenly.
           </div>
         </div>
