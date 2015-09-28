@@ -78,7 +78,7 @@ module.exports = React.createClass({
           </thead>
           <tbody>
             {stats.orderedStakesAndPayouts.map(function(snp) {
-              var isUnderwater = snp.roi !== Infinity && !_.isNaN(snp.roi) && snp.roi < 1;
+              var isUnderwater = snp.roi !== Infinity && !_.isNaN(snp.roi) && snp.roi < -0.005;
 
               return (
                 <tr key={snp.stake.id}>

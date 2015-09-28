@@ -166,7 +166,7 @@ module.exports = class Exit extends EventEmitter {
     var self = this;
     stakesAndPayouts.forEach(function(payoutStat) {
 
-      payoutStat.roi = payoutStat.payout / payoutStat.breakevenValue;
+      payoutStat.roi = (payoutStat.payout - payoutStat.breakevenValue) / payoutStat.breakevenValue;
 
       payoutStat.stake = payoutStat.stakeAndPercentage.stake;
 
