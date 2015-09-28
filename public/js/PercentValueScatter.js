@@ -46,6 +46,9 @@ module.exports = class PercentValueScatter {
       yAxis: d3.svg.axis().tickSize(3).tickPadding(6).orient('left'),
     };
 
+    this._lastXAxisDomain = [Infinity, -Infinity];
+    this._lastYAxisDomain = [Infinity, -Infinity];
+
     this._svg = {
       xAxis: svg.append('g').classed('x axis', true)
         .attr('transform', 'translate(0, ' + opts.chartArea.height + ')'),
@@ -59,14 +62,15 @@ module.exports = class PercentValueScatter {
   }
 
   _onChartStoreChange(chartStoreState, opts) {
-    if (this._data === chartStoreState.percentValueConfig)
-      return;
-
     var chartConfig = chartStoreState.percentValueConfig;
 
+    var axisChanged = this._renderXAxis(chartConfig.axes.percentage);
+    axisChanged = this._renderYAxis(chartConfig.axes.value) || axisChanged;
+
+    if (!axisChanged && this._data === chartStoreState.percentValueConfig)
+      return;
+
     this._data = chartConfig;
-    this._renderXAxis(chartConfig.axes.percentage);
-    this._renderYAxis(chartConfig.axes.value);
 
     if (opts && opts.throttle) {
       this._throttledRenderData(chartConfig.series);
@@ -266,6 +270,10 @@ module.exports = class PercentValueScatter {
   } //done with paths
 
   _renderXAxis(xAxisConfig) {
+    if (xAxisConfig.domain[0] === this._lastXAxisDomain[0] && xAxisConfig.domain[1] === this._lastXAxisDomain[1])
+      return;
+    this._lastXAxisDomain = xAxisConfig.domain.slice();
+
     if (this._notFirstXScale) {
       // copy the previous one for pre-transition updates
       this._components.prevXScale = this._components.xScale.copy();
@@ -282,9 +290,15 @@ module.exports = class PercentValueScatter {
     .ticks(5);
 
     this._svg.xAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.xAxis );
+
+    return true; // something changed
   }
 
   _renderYAxis(yAxisConfig) {
+    if (yAxisConfig.domain[0] === this._lastYAxisDomain[0] && yAxisConfig.domain[1] === this._lastYAxisDomain[1])
+      return;
+    this._lastYAxisDomain = yAxisConfig.domain.slice();
+
     if (this._notFirstYScale) {
       // copy the previous one for pre-transition updates
       this._components.prevYScale = this._components.yScale.copy();
@@ -301,5 +315,7 @@ module.exports = class PercentValueScatter {
     .ticks(5);
 
     this._svg.yAxis.transition().duration(DEFAULT_TRANSITION_MS).call( this._components.yAxis );
+
+    return true; // something changed
   }
 };

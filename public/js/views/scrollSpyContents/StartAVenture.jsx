@@ -18,6 +18,7 @@ module.exports = React.createClass({
   ],
 
   onScrollSpyFocus: function(target) {
+    actions.chart.setAxisLock();
     actions.chart.selectMeasure('percentages');
     actions.round.setScenario(storyScenarios.rounds.founding);
     actions.chart.selectRound(null);

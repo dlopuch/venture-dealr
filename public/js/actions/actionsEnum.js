@@ -76,7 +76,17 @@ module.exports = {
      * Changes the selected Round for drill-down views, etc
      * @param {models.Round} The new active Round to focus on
      */
-    'selectRound'
+    'selectRound',
+
+    /**
+     * Lock the percentage-value scatter's axes to the max limits seen
+     */
+    'setAxisLock',
+
+    /**
+     * Clears the percentage-value scatter's axis lock
+     */
+    'clearAxisLock'
   ])
 
 };
