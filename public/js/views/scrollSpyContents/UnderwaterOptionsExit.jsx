@@ -117,16 +117,6 @@ module.exports = React.createClass({
           nothing.
         </p>
 
-        <div className="panel panel-info side-note">
-          <div className="panel-body">
-            Common stock is generally granted to employees in the form of <strong>options</strong>. An option is merely
-            a contract giving the right to purchase shares at a specified price, specifically the price of a share at
-            the last valuation event before the option was granted.  An early employee, then, may have options granting
-            her the ability to purchase shares at the Seed round valuation price that are now valued according to the
-            exit's liquidation distribution.
-          </div>
-        </div>
-
         <p>
           Our last round, the Series C, had a post-money valuation
           of <strong onMouseOver={this.selectSeriesC}><span className="highlight-round-valuation">$ 6</span><span className="highlight-round-money">5M</span></strong>.

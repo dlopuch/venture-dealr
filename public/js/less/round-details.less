@@ -53,4 +53,28 @@ table.exit-table {
   .underwater {
     color: red;
   }
+
+  td {
+    line-height: 17px; // defaults 1.428 @ 12px == 17.1ish.  Need precise for ROI fill-bar spacing
+  }
+
+  td.roi {
+    position: relative;
+    top: 0;
+    left: 0;
+
+    &.underwater .fill-bar {
+      background-color: rgba(255, 0, 0, 0.2);
+    }
+
+    .fill-bar {
+      background-color: rgba(95, 158, 160, 0.2);
+
+      position: absolute;
+      margin-left: -5px;
+      width: 100%;
+      height: 27px;
+
+    }
+  }
 }

@@ -8,6 +8,11 @@ var ChartStore = require('stores/ChartStore');
 var FORMAT_VALUE = n => d3.format('$s')( n === 0 ? 0 : d3.format('.3r')(n) );
 var FORMAT_PERCENT = d3.format('%');
 
+/**
+ * The line-height + padding-top + padding-bottom CSS of table.exit-table
+ */
+var EXIT_ROW_MAX_HEIGHT_PX = 27;
+
 module.exports = React.createClass({
   mixins: [Reflux.listenTo(ChartStore, '_onChartStoreChange')],
 
@@ -80,14 +85,30 @@ module.exports = React.createClass({
             {stats.orderedStakesAndPayouts.map(function(snp) {
               var isUnderwater = snp.roi !== Infinity && !_.isNaN(snp.roi) && snp.roi < -0.005;
 
+              var underwaterBarH = EXIT_ROW_MAX_HEIGHT_PX;
+              if (snp.roi < 0) {
+                underwaterBarH = EXIT_ROW_MAX_HEIGHT_PX * (1 + snp.roi);
+
+              // don't show the fill-bar for found stakes
+              } else if (snp.roi === Infinity || _.isNaN(snp.roi)) {
+                underwaterBarH = 0;
+              }
+
+
               return (
                 <tr key={snp.stake.id}>
                   <td>{snp.stake.name}</td>
                   <td>{snp.stake.shareClass === 'common' ? 'Common' : 'Preferred'}</td>
                   <td>{snp.breakevenValue === 0 ? '-' : ChartStore.CURRENCY_FORMATTER(snp.breakevenValue)}</td>
                   <td className={isUnderwater ? 'underwater' : ''}>{ChartStore.CURRENCY_FORMATTER(snp.payout)}</td>
-                  <td className={isUnderwater ? 'underwater' : ''}>
+                  <td className={'roi ' + (isUnderwater ? 'underwater' : '')}>
                     {snp.roi === Infinity || _.isNaN(snp.roi) ? '' : FORMAT_PERCENT(snp.roi) }
+                    <div className="fill-bar"
+                      style={{
+                        height: underwaterBarH,
+                        top: 27 - underwaterBarH
+                      }}
+                    ></div>
                   </td>
                 </tr>
               );
