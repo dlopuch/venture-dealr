@@ -168,14 +168,21 @@ module.exports = Reflux.createStore({
 
   init: function() {
     this.listenToMany({
-      'newRoundData' : actions.round.newRoundData,
-      'selectMeasure': actions.chart.selectMeasure,
-      'selectRound'  : actions.chart.selectRound
+      'onNewRoundData' : actions.round.newRoundData,
+      'onSelectMeasure': actions.chart.selectMeasure,
+      'onSelectRound'  : actions.chart.selectRound,
+      'onSetAxisLock'  : actions.chart.setAxisLock,
+      'onClearAxisLock': actions.chart.clearAxisLock
     });
 
     this.state = {
       roundChartConfig: null,
       percentValueConfig: null,
+      percentValueConfigAxisLimits: {
+        axisLock: false,
+        value: [Infinity, -Infinity],
+        percentage: [Infinity, -Infinity]
+      },
       selectedMeasure: 'values',
       selectedRound: null
     };
@@ -283,10 +290,24 @@ module.exports = Reflux.createStore({
         formatter: PERCENTAGE_FORMATTER,
         domain: [
           0,
-          _(allDataPoints).pluck('percentage').max()
+          Math.min( _(allDataPoints).pluck('percentage').max(), 1 ) // make sure never past 100%, eg 1.00000002
         ]
       }
     };
+
+    // Axis Lock.  Keep the axes the max seen since the last time the axis lock was enabled.
+    var axisLimits = this.state.percentValueConfigAxisLimits; // convenience alias
+    axisLimits.value[0] = Math.min(axisLimits.value[0], percentValueConfig.axes.value.domain[0]);
+    axisLimits.value[1] = Math.max(axisLimits.value[1], percentValueConfig.axes.value.domain[1]);
+    axisLimits.percentage[0] = Math.min(axisLimits.percentage[0], percentValueConfig.axes.percentage.domain[0]);
+    axisLimits.percentage[1] = Math.max(axisLimits.percentage[1], percentValueConfig.axes.percentage.domain[1]);
+    axisLimits.lastValueDomain = percentValueConfig.axes.value.domain;
+    axisLimits.lastPercentageDomain = percentValueConfig.axes.percentage.domain;
+
+    if (this.state.percentValueConfigAxisLimits.axisLock) {
+      percentValueConfig.axes.value.domain = axisLimits.value;
+      percentValueConfig.axes.percentage.domain = axisLimits.percentage;
+    }
 
     window.hdRoundChartConfig = roundChartConfig;
     this.state.roundChartConfig = roundChartConfig;
@@ -309,6 +330,25 @@ module.exports = Reflux.createStore({
 
     this.state.selectedRound = newRound;
     this.emitState(opts);
+  },
+
+  resetAxisLock: function() {
+    this.state.percentValueConfigAxisLimits.value      = [Infinity, -Infinity];
+    this.state.percentValueConfigAxisLimits.percentage = [Infinity, -Infinity];
+    this.state.percentValueConfig.axes.value.domain      = this.state.percentValueConfigAxisLimits.lastValueDomain;
+    this.state.percentValueConfig.axes.percentage.domain = this.state.percentValueConfigAxisLimits.lastPercentageDomain;
+  },
+
+  onSetAxisLock: function() {
+    this.state.percentValueConfigAxisLimits.axisLock = true;
+    this.resetAxisLock();
+    this.emitState();
+  },
+
+  onClearAxisLock: function() {
+    this.state.percentValueConfigAxisLimits.axisLock = false;
+    this.resetAxisLock();
+    this.emitState();
   },
 
   emitState: function(opts) {

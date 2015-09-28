@@ -68,6 +68,7 @@ module.exports = React.createClass({
     this.setState({
       sliderEnabled: true
     });
+    actions.chart.setAxisLock();
     actions.chart.selectMeasure('values');
 
     // Sleight-of-hand: the positive-exit-some-have-nothing scenario case becomes noticable mainly on low round-to-round
