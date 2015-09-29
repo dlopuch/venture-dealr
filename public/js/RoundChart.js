@@ -49,7 +49,7 @@ class Chart {
     };
 
     // margin convention: http://bl.ocks.org/mbostock/3019563
-    svg = svg.append('g')
+    svg = this.svg = svg.append('g')
       .attr('transform', 'translate(' + opts.margin.left + ', ' + opts.margin.top + ')');
 
     this._svg = {
@@ -109,7 +109,7 @@ class Chart {
 
     self._svg.tooltipText
     .attr('x', mouseXY[0] + 10)
-    .attr('y', mouseXY[1] - 10)
+    .attr('y', mouseXY[1])
     .text(d.yStake.name)
     .transition().duration(100).style('opacity', 1);
   }
