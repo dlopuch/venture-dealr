@@ -9,6 +9,7 @@ var d3 = require('d3');
 
 var actions = require('actions/actionsEnum');
 var ChartStore = require('stores/ChartStore');
+var firstRoundLabels = require('./firstRoundLabels');
 
 var DEFAULT_TRANSITION_MS = 1000;
 
@@ -140,6 +141,8 @@ class Chart {
       hasNewMeasure = true;
     }
 
+    this._showFirstRoundLabels = !!chartStoreState.showFirstRoundLabels;
+
     if (!hasNewData && !hasNewMeasure)
       return; // nothing to update, ignore
 
@@ -165,6 +168,10 @@ class Chart {
 
   _getBarWidth() {
     return this._components.xScale.rangeBand() * 0.8;
+  }
+
+  _getBarGutter() {
+    return this._components.xScale.rangeBand() * 0.2 / 2;
   }
 
   /**
@@ -248,8 +255,6 @@ class Chart {
     // First, render the underwater exit stack background (incase there is an exit)
     this._renderUnderwaterExitBG(measure);
 
-
-
     var self = this;
     var barWidth = this._getBarWidth();
 
@@ -328,6 +333,15 @@ class Chart {
     // But we may have series that exited too (series introduced by new rounds we have removed)
     // Select those and do same exit animation
     seriesG.exit().selectAll('rect').call(removeBars);
+
+
+    // ----------------------
+    // Draw the first round labels
+    firstRoundLabels.drawFirstRoundLabels.call(this, measure, !this._showFirstRoundLabels, seriesG)
+    .on('mouseover', this.positionTooltip)
+    .on('mousemove', this.positionTooltip)
+    .on('mouseout', this.hideTooltip)
+    .on('mouseover', d => actions.chart.selectRound(d.xRound));
 
 
     // ----------------------

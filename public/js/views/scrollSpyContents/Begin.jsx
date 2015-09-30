@@ -17,6 +17,7 @@ module.exports = React.createClass({
   ],
 
   onScrollSpyFocus: function(target) {
+    actions.chart.showFirstRoundLabels(false);
     actions.chart.selectMeasure('values');
     actions.round.setScenario(storyScenarios.rounds.demoExit);
     actions.chart.selectRound(null);
@@ -85,8 +86,8 @@ module.exports = React.createClass({
         </p>
         <p>&nbsp;</p>
         <p>
-          Best experienced using <a href="https://www.google.com/chrome">Chrome</a>.  Firefox and Safari will work, but
-          it won't be as smooth and immersive.
+          Best experienced using <a href="https://www.google.com/chrome">Chrome</a>.  Firefox and Safari work, but they
+          have quirks and the experience won't be as immersive as it could be.
         </p>
         <p>&nbsp;</p>
         <p>

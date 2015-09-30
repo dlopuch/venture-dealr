@@ -25,10 +25,10 @@ window.onload = function() {
   // ---------
   $('#datahero').tooltip();
 
-  var RoundChart = require('./RoundChart');
+  var RoundChart = require('views/charts/RoundChart');
   window.roundChart = new RoundChart('#round-chart');
 
-  var PercentValueScatter = require('./PercentValueScatter');
+  var PercentValueScatter = require('views/charts/PercentValueScatter');
   window.percentValueScatter = new PercentValueScatter('#percent-equity-scatter');
 
 
