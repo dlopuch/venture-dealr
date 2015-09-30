@@ -86,7 +86,13 @@ module.exports = {
     /**
      * Clears the percentage-value scatter's axis lock
      */
-    'clearAxisLock'
+    'clearAxisLock',
+
+    /**
+     * Show or hide the first-round labels on the Round Chart.  Should turn off once it gets crowded.
+     * @param {boolean} show True to show
+     */
+    'showFirstRoundLabels'
   ])
 
 };

@@ -9,6 +9,7 @@ var d3 = require('d3');
 
 var actions = require('actions/actionsEnum');
 var ChartStore = require('stores/ChartStore');
+var firstRoundLabels = require('./firstRoundLabels');
 
 var DEFAULT_TRANSITION_MS = 1000;
 
@@ -48,19 +49,20 @@ class Chart {
       yAxis: d3.svg.axis().tickSize(3).tickPadding(6).orient('left'),
     };
 
+    // margin convention: http://bl.ocks.org/mbostock/3019563
+    svg = this.svg = svg.append('g')
+      .attr('transform', 'translate(' + opts.margin.left + ', ' + opts.margin.top + ')');
+
     this._svg = {
       chartArea: svg.append('g')
-        .classed('chart-canvas', true)
-        .attr("transform", "translate(" + opts.margin.left + "," + (opts.margin.top + opts.chartArea.height) + ")" +
-              " scale(1, -1)"), // flip y-axis to y-is-up instead of svg's y-is-down
+        .classed('chart-canvas', true),
 
       xAxis: svg.append('g')
         .classed('x axis', true)
-        .attr("transform", "translate(" + opts.margin.left + "," + (opts.margin.top + opts.chartArea.height) + ")"),
+        .attr('transform', 'translate(0, ' + opts.chartArea.height + ')'),
 
       yAxis: svg.append('g')
-        .classed('y axis', true)
-        .attr("transform", "translate( "+ opts.margin.left + "," + opts.margin.top + ")"),
+        .classed('y axis', true),
 
       tooltipContainer: svg.append('g')
         .classed('chart-tooltip', true)
@@ -108,7 +110,7 @@ class Chart {
 
     self._svg.tooltipText
     .attr('x', mouseXY[0] + 10)
-    .attr('y', mouseXY[1] - 10)
+    .attr('y', mouseXY[1])
     .text(d.yStake.name)
     .transition().duration(100).style('opacity', 1);
   }
@@ -139,6 +141,8 @@ class Chart {
       hasNewMeasure = true;
     }
 
+    this._showFirstRoundLabels = !!chartStoreState.showFirstRoundLabels;
+
     if (!hasNewData && !hasNewMeasure)
       return; // nothing to update, ignore
 
@@ -166,6 +170,10 @@ class Chart {
     return this._components.xScale.rangeBand() * 0.8;
   }
 
+  _getBarGutter() {
+    return this._components.xScale.rangeBand() * 0.2 / 2;
+  }
+
   /**
    * For stacks' rectangle segments, sets their initial zero-position when they enter the stage
    * @param {d3.selection.enter} The enter selection for rectangles
@@ -177,7 +185,7 @@ class Chart {
       'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - this._getBarWidth()/2,
 
       'height': 0,
-      'y': 0
+      'y': this._components.yScale(0)
     });
   }
 
@@ -215,6 +223,9 @@ class Chart {
 
     // The stack scales height and position with the data stacks
     underwaterExitStackBg
+    .each(function(d) {
+      d._exitCumulative = d.xRoundStats.stakesAndPayouts.reduce( (sum, snp) => sum + snp.value, 0 );
+    })
     .transition()
       .duration(DEFAULT_TRANSITION_MS)
       .ease(this._easing)
@@ -223,9 +234,8 @@ class Chart {
       'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
 
       // The height however is the sum of all the exit stakes' values.  We can get this from xRoundStats
-      'height': d => !d.y ? 0 : this._components.yScale(
-        d.xRoundStats.stakesAndPayouts.reduce( (sum, snp) => sum + snp.value, 0 )
-      ),
+      'height': d => !d.y ? 0 : this._components.yHeightScale(d._exitCumulative),
+      'y': d => this._components.yScale(d._exitCumulative)
     });
 
     underwaterExitStackBg.exit()
@@ -233,7 +243,8 @@ class Chart {
       .duration(DEFAULT_TRANSITION_MS)
       .ease(this._easing)
     .attr({
-      'height': 0
+      'height': 0,
+      'y': d => this._components.yScale(0)
     })
     .remove();
   }
@@ -243,8 +254,6 @@ class Chart {
 
     // First, render the underwater exit stack background (incase there is an exit)
     this._renderUnderwaterExitBG(measure);
-
-
 
     var self = this;
     var barWidth = this._getBarWidth();
@@ -301,8 +310,8 @@ class Chart {
         'x': d => this._components.xScale(d.x) + this._components.xScale.rangeBand() / 2 - barWidth/2,
         // (width set by underwaterify())
 
-        'height': d => !d.y ? 0 : this._components.yScale(d.y),
-        'y': d => this._components.yScale(d.y0)
+        'height': d => !d.y ? 0 : this._components.yHeightScale(d.y),
+        'y': d => this._components.yScale(d.y0) - this._components.yHeightScale(d.y)
       });
 
 
@@ -314,7 +323,7 @@ class Chart {
         .ease(self._easing)
       .attr({
         'height': 0,
-        'y': 0
+        'y': self._components.yScale(0)
       })
       .remove();
     }
@@ -325,6 +334,14 @@ class Chart {
     // Select those and do same exit animation
     seriesG.exit().selectAll('rect').call(removeBars);
 
+
+    // ----------------------
+    // Draw the first round labels
+    firstRoundLabels.drawFirstRoundLabels.call(this, measure, !this._showFirstRoundLabels, seriesG)
+    .on('mouseover', this.positionTooltip)
+    .on('mousemove', this.positionTooltip)
+    .on('mouseout', this.hideTooltip)
+    .on('mouseover', d => actions.chart.selectRound(d.xRound));
 
 
     // ----------------------
@@ -341,8 +358,8 @@ class Chart {
       .attr({
         'x1': lineXPositioner,
         'x2': lineXPositioner,
-        'y1': 0,
-        'y2': 0,
+        'y1': this._components.yScale(0),
+        'y2': this._components.yScale(0),
         'class': function(d) {
           var originRound = d.yStake.round === d.xRound;
 
@@ -366,8 +383,8 @@ class Chart {
     .attr({
       'x1': lineXPositioner,
       'x2': lineXPositioner,
-      'y1': d => d.y ? this._components.yScale(d.y0) : 0,
-      'y2': d => d.y ? this._components.yScale(d.y0 + d.y) : 0,
+      'y1': d => this._components.yScale(d.y ? d.y0 : 0),
+      'y2': d => this._components.yScale(d.y ? d.y0 + d.y : 0),
     });
 
     function removeLines(selection) {
@@ -376,8 +393,8 @@ class Chart {
         .duration(DEFAULT_TRANSITION_MS)
         .ease(self._easing)
       .attr({
-        'y1': 0,
-        'y2': 0
+        'y1': self._components.yScale(0),
+        'y2': self._components.yScale(0)
       })
       .remove();
     }
@@ -403,20 +420,20 @@ class Chart {
   }
 
   _renderYAxis(yAxis) {
-    // yScale is normal, but yOutputScale is reversed because we've applied a -1*y transform on y chart area to make
-    // easier to work with
     this._components.yScale = d3.scale.linear()
+      .domain(yAxis.domain)
+      .range([this.opts.chartArea.height, 0])
+      .nice();
+
+    // yScale is inverted to correct for top-to-bottom SVG coordinates, but we need a non-inverted scale that tells us
+    // how many pixels a given value takes up so we can size the height of squares correctly.
+    this._components.yHeightScale = d3.scale.linear()
       .domain(yAxis.domain)
       .range([0, this.opts.chartArea.height])
       .nice();
 
-    this._components.yOutputScale = d3.scale.linear()
-      .domain(yAxis.domain.slice().reverse())
-      .range([0, this.opts.chartArea.height])
-      .nice();
-
     this._components.yAxis
-    .scale( this._components.yOutputScale )
+    .scale( this._components.yScale )
     .tickFormat( yAxis.formatter );
     this._svg.yAxis.transition().duration(DEFAULT_TRANSITION_MS).call(this._components.yAxis);
   }

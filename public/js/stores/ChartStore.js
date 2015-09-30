@@ -168,11 +168,12 @@ module.exports = Reflux.createStore({
 
   init: function() {
     this.listenToMany({
-      'onNewRoundData' : actions.round.newRoundData,
-      'onSelectMeasure': actions.chart.selectMeasure,
-      'onSelectRound'  : actions.chart.selectRound,
-      'onSetAxisLock'  : actions.chart.setAxisLock,
-      'onClearAxisLock': actions.chart.clearAxisLock
+      'onNewRoundData'         : actions.round.newRoundData,
+      'onSelectMeasure'        : actions.chart.selectMeasure,
+      'onSelectRound'          : actions.chart.selectRound,
+      'onSetAxisLock'          : actions.chart.setAxisLock,
+      'onClearAxisLock'        : actions.chart.clearAxisLock,
+      'onShowFirstRoundLabels' : actions.chart.showFirstRoundLabels
     });
 
     this.state = {
@@ -184,8 +185,13 @@ module.exports = Reflux.createStore({
         percentage: [Infinity, -Infinity]
       },
       selectedMeasure: 'values',
-      selectedRound: null
+      selectedRound: null,
+      showFirstRoundLabels: false
     };
+  },
+
+  onShowFirstRoundLabels: function(showLabels) {
+    this.state.showFirstRoundLabels = !!showLabels;
   },
 
   onNewRoundData: function(chartData, opts) {
@@ -244,7 +250,9 @@ module.exports = Reflux.createStore({
         'percentages': processStakesIntoMeasureDataset(chartData, 'percentages'),
 
         'values': processStakesIntoMeasureDataset(chartData, 'values'),
-      }
+      },
+
+      showFirstRoundLabels: this.state.showFirstRoundLabels
     };
 
 
