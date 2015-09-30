@@ -167,6 +167,10 @@ class Chart {
     return this._components.xScale.rangeBand() * 0.8;
   }
 
+  getBarGutter() {
+    return this._components.xScale.rangeBand() * 0.2 / 2;
+  }
+
   /**
    * For stacks' rectangle segments, sets their initial zero-position when they enter the stage
    * @param {d3.selection.enter} The enter selection for rectangles
@@ -248,8 +252,6 @@ class Chart {
     // First, render the underwater exit stack background (incase there is an exit)
     this._renderUnderwaterExitBG(measure);
 
-
-
     var self = this;
     var barWidth = this._getBarWidth();
 
@@ -328,6 +330,98 @@ class Chart {
     // But we may have series that exited too (series introduced by new rounds we have removed)
     // Select those and do same exit animation
     seriesG.exit().selectAll('rect').call(removeBars);
+
+
+    // ----------------------
+    // Now similar pattern for labels of new rounds
+    var firstRoundGlyphs = seriesG.selectAll('g.first-round-glyph')
+      .data(
+        function(d) {
+          // want to create one text element at the first non-null y value
+          return [ _.find(d.data, datum => datum.y !== null) ];
+        },
+        d => '' + d.id
+      );
+
+    var firstRoundGlyphsEnter = firstRoundGlyphs.enter().append('g')
+      .classed('first-round-glyph', true);
+
+    var faGlyphs = firstRoundGlyphsEnter.append('text')
+      .attr({
+        'text-anchor': 'middle',
+        'x': '-35px'
+      });
+
+    faGlyphs.append('tspan')
+      .classed('fa', true)
+      .html('&#xf067') // .fa-plus
+      .attr({
+        'dominant-baseline': 'middle',
+        'y': '-10px',
+      })
+      .style({
+        'font-size': '20px'
+      });
+
+    faGlyphs.append('tspan')
+      .classed('fa', true)
+      .attr({
+        'dominant-baseline' : 'middle',
+        'y': '0',
+        'dx': '3px'
+      })
+      .style({
+        'font-size'         : '40px'
+      })
+      .html('&#xf183'); // .fa-male
+
+   var firstRoundGlyphsText = firstRoundGlyphsEnter.append('text')
+      .attr('text-anchor', 'left');
+
+
+    firstRoundGlyphsText.append('tspan')
+      .attr({
+        'dominant-baseline': 'middle',
+        'dy': '-1em',
+      })
+      .text(function(d) {
+        return d.yStake.name;
+      });
+
+    firstRoundGlyphsText.append('tspan')
+      .classed('series-value', true)
+      .attr({
+        'dominant-baseline': 'middle',
+        'dy': '1em',
+        'x': 0
+      })
+      .style({
+        'font-size': '20px',
+        'font-weight': 200
+      });
+      // text filled in on update
+
+    firstRoundGlyphs
+    .attr({
+      'transform': function(d) {
+        return 'translate(' +
+          (this._components.xScale(d.x) + this._getBarGutter() + 40 + 20) +
+          ', ' +
+          (this._components.yScale(d.y0) - (d.y ? this._components.yHeightScale(d.y) / 2 : 0)) +
+          ')';
+      }.bind(this)
+    });
+
+    firstRoundGlyphs.selectAll('tspan.series-value')
+    .text(function() {
+      // ignore the function d, that's stale because it was bound at create time.
+      // Look at the g.first-round-glyph parent to get latest data
+      var d = this.parentElement.parentElement.__data__;
+      return measure.yAxis.formatter(d.n) + ' equity';
+    });
+
+    firstRoundGlyphs.exit().remove();
+    seriesG.exit().selectAll('g.first-round-glyph').remove();
 
 
     // ----------------------
