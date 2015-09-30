@@ -337,7 +337,11 @@ class Chart {
 
     // ----------------------
     // Draw the first round labels
-    seriesG.call(firstRoundLabels.drawFirstRoundLabels.bind(this, measure, !this._showFirstRoundLabels));
+    firstRoundLabels.drawFirstRoundLabels.call(this, measure, !this._showFirstRoundLabels, seriesG)
+    .on('mouseover', this.positionTooltip)
+    .on('mousemove', this.positionTooltip)
+    .on('mouseout', this.hideTooltip)
+    .on('mouseover', d => actions.chart.selectRound(d.xRound));
 
 
     // ----------------------

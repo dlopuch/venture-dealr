@@ -141,4 +141,6 @@ exports.drawFirstRoundLabels = function(measure, hideLabels, seriesG) {
 
   firstRoundLabels.exit().remove();
   seriesG.exit().selectAll('g.first-round-label').remove();
+
+  return firstRoundLabels;
 };
