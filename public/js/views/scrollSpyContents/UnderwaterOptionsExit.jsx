@@ -68,6 +68,7 @@ module.exports = React.createClass({
     this.setState({
       sliderEnabled: true
     });
+    actions.ui.showPVScatter(true);
     actions.chart.setAxisLock();
     actions.chart.selectMeasure('values');
 

@@ -15,6 +15,7 @@ module.exports = React.createClass({
   mixins: [ScrollSpyContentsMixin],
 
   onScrollSpyFocus: function() {
+    actions.ui.showPVScatter(false);
     actions.chart.selectMeasure('percentages');
     actions.round.setScenario(storyScenarios.rounds.seed);
     actions.chart.selectRound(storyScenarios.rounds.seed);

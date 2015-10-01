@@ -93,6 +93,10 @@ module.exports = {
      * @param {boolean} show True to show
      */
     'showFirstRoundLabels'
+  ]),
+
+  ui: Reflux.createActions([
+    'showPVScatter'
   ])
 
 };

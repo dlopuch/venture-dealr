@@ -54,6 +54,7 @@ module.exports = React.createClass({
       sliderEnabled: true
     });
 
+    actions.ui.showPVScatter(true);
     actions.chart.setAxisLock();
     actions.chart.selectMeasure('values');
     actions.exit.changeValuation(storyScenarios.rounds.exit, 33000000);

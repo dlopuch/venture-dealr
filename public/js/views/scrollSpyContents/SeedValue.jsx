@@ -31,6 +31,8 @@ module.exports = React.createClass({
   },
 
   onScrollSpyFocus: function(target) {
+    actions.ui.showPVScatter(false);
+    actions.chart.setAxisLock(); // set axis lock here so enabled when it becomes visible next step (eg coming back to it)
     actions.chart.showFirstRoundLabels(true);
     actions.chart.selectMeasure('values');
     actions.round.setScenario(storyScenarios.rounds.seed);

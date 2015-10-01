@@ -25,6 +25,7 @@ module.exports = React.createClass({
   },
 
   onScrollSpyFocus: function(target) {
+    actions.ui.showPVScatter(true);
     actions.chart.selectMeasure('values');
     actions.exit.changeValuation(storyScenarios.rounds.exit, this._origExitValuation);
     actions.round.setScenario(storyScenarios.rounds.exit);

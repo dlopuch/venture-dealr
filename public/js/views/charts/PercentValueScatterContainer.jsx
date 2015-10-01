@@ -2,11 +2,13 @@ var React = require('react');
 var Reflux = require('reflux');
 
 var actions = require('actions/actionsEnum');
+var uiStore = require('stores/uiStore');
 
 var PercentValueScatterSVG = require('views/charts/PercentValueScatterSVG.jsx');
 
 module.exports = React.createClass({
   mixins: [
+    Reflux.connect(uiStore, 'ui')
   ],
 
   // shouldComponentUpdate() {
@@ -21,13 +23,15 @@ module.exports = React.createClass({
 
   getInitialState() {
     return {
-      offStage: true
+      ui: {
+        hidePVScatter: true
+      }
     };
   },
 
   render() {
     return (
-      <div className={'svg-container ' + (this.state.offStage ? 'off-stage' : '')}>
+      <div className={'svg-container ' + (this.state.ui.hidePVScatter ? 'off-stage' : '')}>
         <PercentValueScatterSVG />
       </div>
     );
