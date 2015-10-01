@@ -18,7 +18,7 @@ var Reflux = require('reflux');
 var actions = require('actions/actionsEnum.js');
 
 
-var OFFSET = $('#charts-container').height() + 200;
+var OFFSET = 200;
 
 var wasMounted = false;
 
@@ -66,7 +66,7 @@ module.exports = Reflux.createStore({
 
     $('body').scrollspy({
       target: '#' + domId,
-      offset: OFFSET
+      offset: $('#charts-container').height() + OFFSET
     })
     .on('activate.bs.scrollspy', this._onActivateTarget);
     this.trigger(state);
