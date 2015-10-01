@@ -18,6 +18,7 @@ module.exports = React.createClass({
   ],
 
   onScrollSpyFocus: function(target) {
+    actions.ui.showPVScatter(false);
     actions.chart.showFirstRoundLabels(true);
     actions.chart.setAxisLock();
     actions.chart.selectMeasure('percentages');

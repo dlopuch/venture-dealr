@@ -38,6 +38,7 @@ module.exports = React.createClass({
   },
 
   onScrollSpyFocus: function(target) {
+    actions.ui.showPVScatter(true);
     actions.round.setScenario(storyScenarios.rounds.seriesC);
     actions.chart.selectRound(storyScenarios.rounds.seriesC);
   },

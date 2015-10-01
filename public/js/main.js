@@ -25,12 +25,6 @@ window.onload = function() {
   // ---------
   $('#datahero').tooltip();
 
-  var RoundChart = require('views/charts/RoundChart');
-  window.roundChart = new RoundChart('#round-chart');
-
-  var PercentValueScatter = require('views/charts/PercentValueScatter');
-  window.percentValueScatter = new PercentValueScatter('#percent-equity-scatter');
-
 
   // flux
   var RoundStore = window.RoundStore = require('stores/RoundStore');
@@ -66,6 +60,6 @@ window.onload = function() {
 
 
   require('views/reactApp.jsx');
-  require('views/chartsAffixSpy');
+  require('views/headerAffixSpy');
 
 };

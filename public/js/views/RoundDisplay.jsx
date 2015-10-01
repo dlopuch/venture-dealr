@@ -24,29 +24,32 @@ module.exports = React.createClass({
 
   componentDidMount: function() {
     var self = this;
-    $('#round-details-display')
-    .affix({
-      offset: {
-        top: $('#round-details-display').offset().top -
-             $('#charts-container').height() - $('#header-affix-bar').height() - 5
-      }
-    })
-    .on('affixed.bs.affix', function() {
-      self.setState({
-        affixClass: 'affix'
-      });
-    })
-    .on('affixed-top.bs.affix', function() {
-      self.setState({
-        affixClass: 'affix-top'
-      });
-    })
-    .on('affixed-bottom.bs.affix', function() {
-      self.setState({
-        affixClass: 'affix-bottom'
-      });
-    })
-    console.log('affixed', $('#round-details-display').offset().top - $('#charts-container').height());
+
+    $.when(this.props.promiseRoundChartRendered, this.props.promisePVScatterRendered)
+    .then(function() {
+      $('#round-details-display')
+      .affix({
+        offset: {
+          top: $('#round-details-display').offset().top -
+               $('#charts-container').height() - $('#header-affix-bar').height() - 10
+        }
+      })
+      .on('affixed.bs.affix', function() {
+        self.setState({
+          affixClass: 'affix'
+        });
+      })
+      .on('affixed-top.bs.affix', function() {
+        self.setState({
+          affixClass: 'affix-top'
+        });
+      })
+      .on('affixed-bottom.bs.affix', function() {
+        self.setState({
+          affixClass: 'affix-bottom'
+        });
+      })
+    });
   },
 
   _onChartStoreChange: function(chartStoreState) {

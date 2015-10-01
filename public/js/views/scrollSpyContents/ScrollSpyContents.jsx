@@ -6,6 +6,7 @@ var StartAVenture = require('jsx!views/scrollSpyContents/StartAVenture.jsx');
 var SeedDilute = require('jsx!views/scrollSpyContents/SeedDilute.jsx');
 var SeedDiluteWithOptions = require('jsx!views/scrollSpyContents/SeedDiluteWithOptions.jsx');
 var SeedValue  = require('jsx!views/scrollSpyContents/SeedValue.jsx');
+var PVScatter  = require('jsx!views/scrollSpyContents/PercentageValueScatter.jsx');
 var SeriesA    = require('jsx!views/scrollSpyContents/SeriesA.jsx');
 var SeriesB    = require('jsx!views/scrollSpyContents/SeriesB.jsx');
 var SeriesC    = require('jsx!views/scrollSpyContents/SeriesC.jsx');
@@ -28,6 +29,8 @@ module.exports = React.createClass({
         <SeedDiluteWithOptions />
 
         <SeedValue />
+
+        <PVScatter />
 
         <SeriesA />
 

@@ -35,6 +35,7 @@ module.exports = React.createClass({
   },
 
   onScrollSpyFocus: function(target) {
+    actions.ui.showPVScatter(true);
     actions.chart.selectMeasure('values');
     actions.round.setScenario(storyScenarios.rounds.seriesC);
     actions.round.changeRoundPreMoneyValuation(storyScenarios.rounds.seriesB, 6000000);

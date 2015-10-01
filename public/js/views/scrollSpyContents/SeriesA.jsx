@@ -21,6 +21,7 @@ module.exports = React.createClass({
   },
 
   onScrollSpyFocus: function(target) {
+    actions.ui.showPVScatter(true);
     actions.chart.showFirstRoundLabels(false);
     actions.chart.selectMeasure('values');
     actions.round.setScenario(storyScenarios.rounds.seriesA);
