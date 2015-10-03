@@ -9,9 +9,11 @@ var d3 = require('d3');
 
 var actions = require('actions/actionsEnum');
 var ChartStore = require('stores/ChartStore');
+var uiStore = require('stores/uiStore');
 var firstRoundLabels = require('./firstRoundLabels');
 
 var DEFAULT_TRANSITION_MS = 1000;
+var TOOLTIP_PADDING_PX = 5;
 
 class Chart {
   constructor(svgSelector='svg', opts={}) {
@@ -68,6 +70,15 @@ class Chart {
         .classed('chart-tooltip', true)
     };
 
+    this._svg.tooltipBg = this._svg.tooltipContainer.append('rect')
+    .attr({
+      'x': -TOOLTIP_PADDING_PX,
+      'y': -TOOLTIP_PADDING_PX
+    })
+    .style({
+      fill: 'white',
+      opacity: 0.75
+    });
     this._svg.tooltipText = this._svg.tooltipContainer.append('text').style('font-weight', 'bold');
 
     // bind this context to function self args
@@ -75,12 +86,13 @@ class Chart {
     this.hideTooltip     = _.partial(this.hideTooltip, this);
     this._doHideTooltip  = _.partial(this._doHideTooltip, this);
 
-    // ChartStore.on(ChartStore.EVENTS.ROUND_TIMELINE_DATA, this.handleRoundTimelineData.bind(this));
-    // ChartStore.on(ChartStore.EVENTS.MEASURE_SELECTED   , this.handleSelectMeasure.bind(this));
-    // ChartStore.on(ChartStore.EVENTS.ROUND_SELECTED     , this.handleRoundSelected.bind(this));
+
+    uiStore.listen(this.onNewUiData.bind(this));
+    this._hideRoundHighlights = uiStore.INITIAL_STATE.hideRoundHighlights;
+
 
     ChartStore.listen(this.onNewChartData.bind(this));
-      // throttle to let some of the animation run when rapidly switching, eg by sliders
+
 
     // Example load
     // this.handleRoundTimelineData({
@@ -95,9 +107,16 @@ class Chart {
 
   }
 
+  onNewUiData(uiState) {
+    this._hideRoundHighlights = uiState.hideRoundHighlights;
+  }
+
   positionTooltip(self, d) {
     if (!d.yStake)
       return; // skip if not hovering over a series bar
+
+    if (self._hideRoundHighlights)
+      return;
 
     // clear hide timer
     if (self._hideTooltipTimeout) {
@@ -109,9 +128,21 @@ class Chart {
     var mouseXY = d3.mouse(self.svg[0][0]);
 
     self._svg.tooltipText
-    .attr('x', mouseXY[0] + 10)
-    .attr('y', mouseXY[1])
-    .text(d.yStake.name)
+    .text(d.yStake.name);
+
+    var bbox = self._svg.tooltipText.node().getBoundingClientRect();
+
+    self._svg.tooltipBg.attr({
+      y: 0 - bbox.height - TOOLTIP_PADDING_PX + 2, // + 2 fudge factor
+      height: bbox.height + 2 * TOOLTIP_PADDING_PX,
+      width : bbox.width  + 2 * TOOLTIP_PADDING_PX
+    });
+
+    self._svg.tooltipContainer
+    .attr('transform', 'translate(' +
+      Math.min(mouseXY[0] + 10, self.opts.chartArea.width - bbox.width - 10) + ', ' +
+      (mouseXY[1] - TOOLTIP_PADDING_PX - 10) + ')'
+    )
     .transition().duration(100).style('opacity', 1);
   }
 
@@ -121,7 +152,7 @@ class Chart {
   }
 
   _doHideTooltip(self) {
-    self._svg.tooltipText
+    self._svg.tooltipContainer
     .transition().duration(200)
     .style('opacity', 0);
   }
@@ -147,6 +178,7 @@ class Chart {
       return; // nothing to update, ignore
 
     if (options && options.throttle) {
+      // throttle to let some of the animation run when rapidly switching, eg by sliders
       this._easing = 'cubic-in-out';
       this._throttleProcessNewChartData(chartStoreState, hasNewData, newData);
     } else {

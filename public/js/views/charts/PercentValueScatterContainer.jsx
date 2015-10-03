@@ -11,21 +11,13 @@ module.exports = React.createClass({
     Reflux.connect(uiStore, 'ui')
   ],
 
-  // shouldComponentUpdate() {
-//
-  // },
-
   componentDidMount() {
-    window.pvs = this;
-
     this.props.promisePVScatterRendered.resolve();
   },
 
   getInitialState() {
     return {
-      ui: {
-        hidePVScatter: true
-      }
+      ui: uiStore.INITIAL_STATE
     };
   },
 

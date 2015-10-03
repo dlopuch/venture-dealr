@@ -96,7 +96,17 @@ module.exports = {
   ]),
 
   ui: Reflux.createActions([
-    'showPVScatter'
+    /**
+     * Shows or hides the percentage-value scatter view
+     * @param {boolean} True to show it, false to hide it
+     */
+    'showPVScatter',
+
+    /**
+     * Tells misc. views to ignore selecting specific rounds (the chart.selectRound action)
+     * @param {boolean} True to hide, false to show
+     */
+    'hideSelectRound'
   ])
 
 };

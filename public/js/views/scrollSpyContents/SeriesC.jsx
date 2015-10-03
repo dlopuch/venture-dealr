@@ -55,13 +55,13 @@ module.exports = React.createClass({
         <p>
           Since times are good, let's revisit dilution.  Switch over
           to <a onClick={this.switchToPercentage} className={'btn btn-xs ' + (this.state.lastMeasure === 'percentages' ? 'btn-primary' : 'btn-default')}>
-            percentage view
+            <i className="fa fa-hand-o-right"></i> percentage view
           </a>.  Note how our stakes are becoming a smaller and smaller percentage of the whole.  We're giving away parts
           of the company as we bring on new investors.
         </p>
         <p>
           Now switch back to <a onClick={this.switchToValue} className={'btn btn-xs ' + (this.state.lastMeasure === 'percentages' ? 'btn-default' : 'btn-primary')}>
-            value view
+            <i className="fa fa-hand-o-right"></i> value view
           </a>.  Although our percentage-stake keeps getting smaller, the value of the equity keeps growing due to the
           increasing valuation in each subsequent round.
         </p>

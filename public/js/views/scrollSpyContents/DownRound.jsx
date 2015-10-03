@@ -35,6 +35,7 @@ module.exports = React.createClass({
   },
 
   onScrollSpyFocus: function(target) {
+    actions.ui.hideSelectRound(false);
     actions.ui.showPVScatter(true);
     actions.chart.selectMeasure('values');
     actions.round.setScenario(storyScenarios.rounds.seriesC);
@@ -133,37 +134,48 @@ module.exports = React.createClass({
           way, <strong>your pre-money valuation is merely a knob your investors spin to determine what level
           of dilution results from a set investment amount</strong>.  Lets see that in action.
         </p>
-        <p>
-          Look at your Series B.
-        </p>
-        <p>
-          Your Series B investors are willing to give you a
-          fixed <span className="highlight-round-money"><strong>$ 6M</strong></span>.  How much you get diluted depends
-          on the size of your <span className="highlight-round-options">pre-</span><span className="highlight-round-valuation">money valuation</span>.
-          Tweak it and note the relative composition of your Series B.  More
-          importantly, <strong>note how differently the future Series C growth gets distributed after a down round.</strong>
-        </p>
-        <div>
-          <div className="pull-left" style={{height: '3em'}}>
-            <span className="highlight-round-options">Ser</span><span className="highlight-round-valuation">ies B Pre-Money Valuation</span>: &nbsp; &nbsp;
-          </div>
-          <div style={{height: '3.5em'}}>
-            <span ref='roundSlider'></span> <br/>
-            <small>% Series C growth going to Series B investors: {PERCENTAGE_FORMATTER(this.state.percentNewInvestor)}</small>
-          </div>
-        </div>
-        <p>&nbsp;</p>
 
-        <div className="btn-group poor-mans-toggle">
-          <div
-            className={'btn ' + (this.state.lastMeasure === 'values' ? 'btn-default' : 'btn-primary disabled')}
-            onClick={this.switchToPercentages}
-          >Percentage View</div>
-          <div
-            className={'btn ' + (this.state.lastMeasure === 'values' ? 'btn-primary disabled' : 'btn-default')}
-            onClick={this.switchToValues}
-          >Value View</div>
+        <div className="panel panel-info">
+          <div className="panel-heading">
+            <i className="fa fa-hand-o-right"> </i> The Down Round
+          </div>
+          <div className="panel-body">
+
+            <p>
+              Look at your Series B.
+            </p>
+            <p>
+              Your Series B investors are willing to give you a
+              fixed <span className="highlight-round-money"><strong>$ 6M</strong></span>.  How much you get diluted depends
+              on the size of your <span className="highlight-round-options">pre-</span><span className="highlight-round-valuation">money valuation</span>.
+              Tweak it and note the relative composition of your Series B.  More
+              importantly, <strong>note how differently the future Series C growth gets distributed after a down round.</strong>
+            </p>
+            <div>
+              <div className="pull-left" style={{height: '3em'}}>
+                <span className="highlight-round-options">Ser</span><span className="highlight-round-valuation">ies B Pre-Money Valuation</span>: &nbsp; &nbsp;
+              </div>
+              <div style={{height: '3.5em'}}>
+                <span ref='roundSlider'></span> <br/>
+                <small>% Series C growth going to Series B investors: {PERCENTAGE_FORMATTER(this.state.percentNewInvestor)}</small>
+              </div>
+            </div>
+            <p>&nbsp;</p>
+
+            <div className="btn-group poor-mans-toggle">
+              <div
+                className={'btn ' + (this.state.lastMeasure === 'values' ? 'btn-default' : 'btn-primary disabled')}
+                onClick={this.switchToPercentages}
+              >Percentage View</div>
+              <div
+                className={'btn ' + (this.state.lastMeasure === 'values' ? 'btn-primary disabled' : 'btn-default')}
+                onClick={this.switchToValues}
+              >Value View</div>
+            </div>
+          </div>
+
         </div>
+
 
       </div>
     );
