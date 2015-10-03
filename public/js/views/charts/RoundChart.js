@@ -12,6 +12,7 @@ var ChartStore = require('stores/ChartStore');
 var firstRoundLabels = require('./firstRoundLabels');
 
 var DEFAULT_TRANSITION_MS = 1000;
+var TOOLTIP_PADDING_PX = 5;
 
 class Chart {
   constructor(svgSelector='svg', opts={}) {
@@ -68,6 +69,15 @@ class Chart {
         .classed('chart-tooltip', true)
     };
 
+    this._svg.tooltipBg = this._svg.tooltipContainer.append('rect')
+    .attr({
+      'x': -TOOLTIP_PADDING_PX,
+      'y': -TOOLTIP_PADDING_PX
+    })
+    .style({
+      fill: 'white',
+      opacity: 0.75
+    });
     this._svg.tooltipText = this._svg.tooltipContainer.append('text').style('font-weight', 'bold');
 
     // bind this context to function self args
@@ -109,9 +119,21 @@ class Chart {
     var mouseXY = d3.mouse(self.svg[0][0]);
 
     self._svg.tooltipText
-    .attr('x', mouseXY[0] + 10)
-    .attr('y', mouseXY[1])
-    .text(d.yStake.name)
+    .text(d.yStake.name);
+
+    var bbox = self._svg.tooltipText.node().getBoundingClientRect();
+
+    self._svg.tooltipBg.attr({
+      y: 0 - bbox.height - TOOLTIP_PADDING_PX + 2, // + 2 fudge factor
+      height: bbox.height + 2 * TOOLTIP_PADDING_PX,
+      width : bbox.width  + 2 * TOOLTIP_PADDING_PX
+    });
+
+    self._svg.tooltipContainer
+    .attr('transform', 'translate(' +
+      Math.min(mouseXY[0] + 10, self.opts.chartArea.width - bbox.width - 10) + ', ' +
+      (mouseXY[1] - TOOLTIP_PADDING_PX - 10) + ')'
+    )
     .transition().duration(100).style('opacity', 1);
   }
 
@@ -121,7 +143,7 @@ class Chart {
   }
 
   _doHideTooltip(self) {
-    self._svg.tooltipText
+    self._svg.tooltipContainer
     .transition().duration(200)
     .style('opacity', 0);
   }
