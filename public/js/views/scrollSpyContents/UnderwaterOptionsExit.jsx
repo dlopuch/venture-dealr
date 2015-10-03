@@ -68,6 +68,7 @@ module.exports = React.createClass({
     this.setState({
       sliderEnabled: true
     });
+    actions.ui.hideSelectRound(false);
     actions.ui.showPVScatter(true);
     actions.chart.setAxisLock();
     actions.chart.selectMeasure('values');
@@ -119,13 +120,21 @@ module.exports = React.createClass({
           nothing.
         </p>
 
-        <p>
-          Our last round, the Series C, had a post-money valuation
-          of <strong onMouseOver={this.selectSeriesC}><span className="highlight-round-valuation">$ 6</span><span className="highlight-round-money">5M</span></strong>.
-          How big do you think our exit needs to be before no one is underwater?
-        </p>
-        <div>
-          Exit valuation: <span ref='roundSlider'></span><br/>
+        <div className="panel panel-info">
+          <div className="panel-heading">
+            <i className="fa fa-hand-o-right"></i> The Underwater Exit
+          </div>
+          <div className="panel-body">
+
+            <p>
+              Our last round, the Series C, had a post-money valuation
+              of <strong onMouseOver={this.selectSeriesC}><span className="highlight-round-valuation">$ 6</span><span className="highlight-round-money">5M</span></strong>.
+              How big do you think our exit needs to be before no one is underwater?
+            </p>
+            <div>
+              Exit valuation: <span ref='roundSlider'></span><br/>
+            </div>
+          </div>
         </div>
       </div>
     );

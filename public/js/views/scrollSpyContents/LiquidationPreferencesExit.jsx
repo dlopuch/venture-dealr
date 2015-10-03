@@ -54,6 +54,7 @@ module.exports = React.createClass({
       sliderEnabled: true
     });
 
+    actions.ui.hideSelectRound(false);
     actions.ui.showPVScatter(true);
     actions.chart.setAxisLock();
     actions.chart.selectMeasure('values');
@@ -114,12 +115,20 @@ module.exports = React.createClass({
           investors' <strong>preferred stock</strong>), you may even walk away with nothing if there's not
           enough to satisfy the claims in front of you.
         </p>
-        <p>
-          Today is not a good day.  Adjust the exit valuation.  Which investors would want the company to take this exit
-          opportunity today, and which investors might push to wait for another day?
-        </p>
-        <div>
-          Exit valuation: <span ref='roundSlider'></span><br/>
+
+        <div className="panel panel-info">
+          <div className="panel-heading">
+            <i className="fa fa-hand-o-right"></i> The Liquidation Preference
+          </div>
+          <div className="panel-body">
+            <p>
+              Today is not a good day.  Adjust the exit valuation.  Which investors would want the company to take this exit
+              opportunity today, and which investors might push to wait for another day?
+            </p>
+            <div>
+              Exit valuation: <span ref='roundSlider'></span><br/>
+            </div>
+          </div>
         </div>
       </div>
     );
