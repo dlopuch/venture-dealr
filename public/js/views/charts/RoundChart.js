@@ -9,6 +9,7 @@ var d3 = require('d3');
 
 var actions = require('actions/actionsEnum');
 var ChartStore = require('stores/ChartStore');
+var uiStore = require('stores/uiStore');
 var firstRoundLabels = require('./firstRoundLabels');
 
 var DEFAULT_TRANSITION_MS = 1000;
@@ -85,12 +86,13 @@ class Chart {
     this.hideTooltip     = _.partial(this.hideTooltip, this);
     this._doHideTooltip  = _.partial(this._doHideTooltip, this);
 
-    // ChartStore.on(ChartStore.EVENTS.ROUND_TIMELINE_DATA, this.handleRoundTimelineData.bind(this));
-    // ChartStore.on(ChartStore.EVENTS.MEASURE_SELECTED   , this.handleSelectMeasure.bind(this));
-    // ChartStore.on(ChartStore.EVENTS.ROUND_SELECTED     , this.handleRoundSelected.bind(this));
+
+    uiStore.listen(this.onNewUiData.bind(this));
+    this._hideRoundHighlights = uiStore.INITIAL_STATE.hideRoundHighlights;
+
 
     ChartStore.listen(this.onNewChartData.bind(this));
-      // throttle to let some of the animation run when rapidly switching, eg by sliders
+
 
     // Example load
     // this.handleRoundTimelineData({
@@ -105,9 +107,16 @@ class Chart {
 
   }
 
+  onNewUiData(uiState) {
+    this._hideRoundHighlights = uiState.hideRoundHighlights;
+  }
+
   positionTooltip(self, d) {
     if (!d.yStake)
       return; // skip if not hovering over a series bar
+
+    if (self._hideRoundHighlights)
+      return;
 
     // clear hide timer
     if (self._hideTooltipTimeout) {
@@ -169,6 +178,7 @@ class Chart {
       return; // nothing to update, ignore
 
     if (options && options.throttle) {
+      // throttle to let some of the animation run when rapidly switching, eg by sliders
       this._easing = 'cubic-in-out';
       this._throttleProcessNewChartData(chartStoreState, hasNewData, newData);
     } else {
