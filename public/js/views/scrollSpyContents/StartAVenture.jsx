@@ -9,7 +9,7 @@ var ScrollSpyContentsMixin = require('views/scrollSpy/ScrollSpyContentsMixin');
 var SCROLLSPY_PROPS = {
   id: 'scenario-start-a-venture',
   name: 'Start a Venture'
-}
+};
 
 module.exports = React.createClass({
   mixins: [
@@ -18,6 +18,7 @@ module.exports = React.createClass({
   ],
 
   onScrollSpyFocus: function(target) {
+    actions.ui.hideSelectRound(true);
     actions.ui.showPVScatter(false);
     actions.chart.showFirstRoundLabels(true);
     actions.chart.setAxisLock();

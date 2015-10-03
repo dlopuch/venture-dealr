@@ -4,6 +4,7 @@ var Reflux = require('reflux');
 var Exit = require('models/Exit');
 
 var ChartStore = require('stores/ChartStore');
+var uiStore = require('stores/uiStore');
 
 var FORMAT_VALUE = n => d3.format('$s')( n === 0 ? 0 : d3.format('.3r')(n) );
 var FORMAT_PERCENT = d3.format('%');
@@ -14,11 +15,16 @@ var FORMAT_PERCENT = d3.format('%');
 var EXIT_ROW_MAX_HEIGHT_PX = 27;
 
 module.exports = React.createClass({
-  mixins: [Reflux.listenTo(ChartStore, '_onChartStoreChange')],
+  mixins: [
+    Reflux.listenTo(ChartStore, '_onChartStoreChange'),
+    Reflux.connect(uiStore, 'ui')
+  ],
 
   getInitialState: function() {
     return {
-      round: null
+      round: null,
+
+      ui: uiStore.INITIAL_STATE
     };
   },
 
@@ -234,7 +240,7 @@ module.exports = React.createClass({
     var header = '';
     var breakdown = '';
 
-    if (this.state.round && this.state.round.stats) {
+    if (!this.state.ui.hideRoundHighlights && this.state.round && this.state.round.stats) {
       header = this._renderHeader();
       breakdown = this._renderBreakdown();
     }

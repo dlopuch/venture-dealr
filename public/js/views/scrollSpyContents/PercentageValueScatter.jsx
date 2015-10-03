@@ -30,6 +30,7 @@ module.exports = React.createClass({
   },
 
   onScrollSpyFocus: function(target) {
+    actions.ui.hideSelectRound(false);
     actions.ui.showPVScatter(true);
     actions.chart.showFirstRoundLabels(true);
     actions.round.setScenario(storyScenarios.rounds.seed);
@@ -46,11 +47,11 @@ module.exports = React.createClass({
         </p>
         <p>
           Instead of switching between Percentage View and Value View, lets add a visualization that focuses on how
-          the two quantities interact: introducing the Percentage-Value Scatterplot.
+          the two quantities interact: <strong>introducing the Percentage-Value Scatterplot</strong>.
         </p>
         <p>
-          Generally equity plots will go to the right and up -- stakes get diluted, but become more valuable.
-          As we continue on our journey, take note of each equity stake's shape relative to the others. (<em>Do all stakes
+          Generally equity plots will go to the right and up -- stakes get diluted but become more valuable.
+          As we continue on our journey, take note of each equity stake's shape relative to the others. (<em>Do </em>all<em> stakes
           get diluted but more valuable?</em>) Interesting things start to happen once some plots begin to diverge.
         </p>
       </div>
