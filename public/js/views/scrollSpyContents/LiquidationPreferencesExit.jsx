@@ -91,13 +91,18 @@ module.exports = React.createClass({
           But not all exits work out so well.
         </p>
         <p>
-          Bringing new investors onboard in a round often works with
-          a <strong>"Last-In-First-Out"</strong> model by granting them <strong>liquidation preferences</strong> &mdash; if
+          When a new financing round brings new investors onboard, they often come onboard with
+          a <strong>"Last-In-First-Out"</strong> investment model &mdash; if
           the exit does not produce enough money to match the investments put in, the last investors in get their
-          investment returned before anyone else gets anything.  Liquidation preferences reduce risk for later
-          investors; later rounds tend to require higher amounts of capital, so reducing risk for those investors can
-          help get them on board.  However, this comes at the expense of earlier investors and common-stock holders,
-          who now require a far larger exit to get anything.
+          investment returned before anyone else gets anything.  The mechanism for this is called <strong>liquidation
+          preferences</strong>.
+        </p>
+        <p>
+          Later rounds tend to require higher amounts of capital with even higher exit growth needed to produce a return
+          on that capital. By giving later investors the right to exit first, they may be able to get a return even if
+          that higher growth does not materialize.  <strong>Thus, liquidation preferences reduce risk for later
+          investors</strong>, helping to get on board.  However, this comes at the expense of earlier investors and
+          common-stock holders, who now <em>require</em> the larger exit growth in order to get any return.
         </p>
         <div className="panel panel-info side-note">
           <div className="panel-body">
@@ -122,8 +127,12 @@ module.exports = React.createClass({
           </div>
           <div className="panel-body">
             <p>
-              Today is not a good day.  Adjust the exit valuation.  Which investors would want the company to take this exit
-              opportunity today, and which investors might push to wait for another day?
+              Today is not a good day.  Adjust the exit valuation and note to which investors the exit return flows to
+              in which order using the table on the right.
+            </p>
+            <p>
+              If the future outlook of you venture is uncertain, which investors might push the company to take this
+              exit opportunity today, and which investors might push to wait for another day?
             </p>
             <div>
               Exit valuation: <span ref='roundSlider'></span><br/>

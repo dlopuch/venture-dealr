@@ -76,13 +76,13 @@ module.exports = React.createClass({
           </p>
         </div>
 
-        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Understanding Finance Through Play</h1>
+        <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>A Visual Introduction to VC Financing</h1>
         <p>
-          Venture capital deal structures are a type of technology &mdash; a financial technology rather than a silicon-based
-          technology, but still a technology full of complex structures and incentives that interact in unintuitive ways.
+          Venture capital deal structures are a type of financial technology. Like all technologies, it
+          consists of complex structures and incentives that interact in unintuitive ways.
         </p>
         <p>
-          Venture Dealr is an interactive sandbox for building typical VC sandcastles.  We can learn about the different
+          Venture Dealr is an interactive sandbox for building typical VC structures.  We can learn about the different
           components and interactions of this financial technology by turning the various knobs and seeing how the
           visualization reacts.  How can a net positive exit still leave founders with nothing? We're about to find out.
         </p>
