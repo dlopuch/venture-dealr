@@ -109,20 +109,21 @@ module.exports = React.createClass({
         <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Underwater Options: A Positive Exit With Nothing</h2>
         <p>Even a positive exit can still leave some shareholders with nothing.</p>
         <p>
-          Because the exit is subject to preferences, the pie is not split evenly.  Common-stock
-          holders see nothing until all preferred-stock holders get their initial money back out.  Only then is the
-          remainder split equally (however, it is split between both the common <em>and</em> preferred holders).
+          Because the exit is subject to preferences, the pie is not split evenly.  Depending on liquidation
+          preferences, common-stock holders may see nothing until all preferred-stock holders get their initial money
+          back out.  Only then is the remainder split equally (however, note it is split equally between both the
+          common <em>and</em> preferred holders).
         </p>
         <p>
-          To the preferred holders, this remainder split is an additional return on top of their already-satisfied
-          liquidation preferences.  Common-stock holders, however, may find themselves where <strong>they would have to
-          pay more to exercise their options than their stakes were worth</strong> and instead just walk away with
+          To the preferred-stock holders, this remainder split produces an additional return on top of their
+          already-satisfied liquidation preferences.  Common-stock holders, however, may find themselves <strong>needing
+          to pay more to exercise their options than their stakes are worth</strong> and instead just walk away with
           nothing.
         </p>
 
         <div className="panel panel-info">
           <div className="panel-heading">
-            <i className="fa fa-hand-o-right"></i> The Underwater Exit
+            <i className="fa fa-hand-o-right"></i> The Underwater Options
           </div>
           <div className="panel-body">
 
