@@ -82,7 +82,7 @@ module.exports = React.createClass({
           consist of complex structures and incentives that interact in unintuitive ways.
         </p>
         <p>
-          Venture Dealr is an interactive sandbox for building typical VC structures.  We can learn about the different
+          Venture Dealr is an interactive sandbox for building typical VC deal structures.  We can learn about the different
           components and interactions of this financial technology by turning the various knobs and seeing how the
           visualization reacts.  How can a net positive exit still leave founders with nothing? We're about to find out.
         </p>
