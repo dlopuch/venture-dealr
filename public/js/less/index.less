@@ -20,6 +20,18 @@ html {
   height: 100%; // some hack that also makes scrollspy work. nooooo idea on this one.... https://github.com/twbs/bootstrap/issues/5007
 }
 
+@media (max-width: 1015px) {
+  .hidden-no-pvs-width {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1015px) {
+  .visible-no-pvs-width {
+    display: none !important;
+  }
+}
+
 .headerGradient () {
   #gradient > .radial(@brand-primary; darken(@brand-primary, 10%));
 }

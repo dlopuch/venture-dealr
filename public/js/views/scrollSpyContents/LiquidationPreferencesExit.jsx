@@ -150,6 +150,14 @@ module.exports = React.createClass({
               Today is not a good day.  Adjust the exit valuation and note the order in which the exit's returns flow
               to different investors using the table on the right.
             </p>
+
+            <div className="visible-xs-block alert alert-danger">
+              <strong>Wider is Better</strong>
+              <p>
+                View this on a wider screen for a detailed cap table showing each investor's exit share!
+              </p>
+            </div>
+
             <p>
               If the future outlook of you venture is uncertain, which investors might push the company to take this
               exit opportunity today, and which investors might push to wait for another day? Scenarios like these are

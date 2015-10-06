@@ -40,15 +40,15 @@ module.exports = React.createClass({
           discounts, tax implications of exercising options, valuation triggers, and many more.
         </p>
         <p>
-          Want more detail on a specific topic?  Was something confusing or not completely accurate?  Want to just give
-          some love? <a href="https://twitter.com/floatrock" target="blank">@floatrock</a>.
+          Want more detail on a specific topic?  Was something confusing or not completely accurate?  Want to just send
+          some love? (It's free.) <a href="https://twitter.com/floatrock" target="blank">@floatrock</a>.
         </p>
         <p>
           Found a bug?  <a href="https://github.com/dlopuch/venture-dealr/issues">File a bug</a>!
         </p>
         <p>
-          Thanks to everyone for the early reviews, feedback, and suggestions: Ray, Dave, Sean, Kyan, Adam, Jeff, and
-          the whole crew
+          A special thanks to everyone who gave early reviews, feedback, and suggestions: Ray, Dave, Sean, Kyan, Islam,
+          Adam, Jeff, and the whole crew
           at <a id="datahero2" href="https://www.datahero.com" target="_blank" data-toggle="tooltip" data-placement="bottom"
                 title="Join our team to build more interactive visualizations like this!">DataHero</a> for the
           original hackathon inspiration.  <i className="fa fa-heart"> </i>

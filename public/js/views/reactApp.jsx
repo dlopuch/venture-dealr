@@ -18,10 +18,10 @@ React.render(
     <ScrollSpy domId="the-scroll-spy-target" />
 
     <div className="row">
-      <div className="col-md-6">
+      <div className="col-sm-6">
         <ScrollSpyContents />
       </div>
-      <div className="col-md-6">
+      <div className="col-sm-6 hidden-xs">
         <RoundDisplay
           promiseRoundChartRendered={roundChartRenderedPromise}
           promisePVScatterRendered={PVScatterRenderedPromise}

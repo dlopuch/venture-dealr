@@ -23,7 +23,7 @@ module.exports = React.createClass({
 
   render() {
     return (
-      <div className={'svg-container ' + (this.state.ui.hidePVScatter ? 'off-stage' : '')}>
+      <div className={'hidden-no-pvs-width svg-container ' + (this.state.ui.hidePVScatter ? 'off-stage' : '')}>
         <PercentValueScatterSVG />
       </div>
     );

@@ -55,8 +55,8 @@ module.exports = React.createClass({
             </p>
           </div>
 
-          <div className="visible-sm">
-            <strong className="visible-sm">Wider is Better</strong>
+          <div className="visible-no-pvs-width hidden-xs">
+            <strong>Wider is Better</strong>
             <p>
               This experience has been optimized for full-sized screens.  Your screen is a bit too narrow.  Please
               increase the width a little bit or come back on a full-sized device.  It will be worth it, I promise.

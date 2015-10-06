@@ -77,12 +77,12 @@ module.exports = React.createClass({
           </a>.  Although our percentage-stake keeps getting smaller, the value of the equity keeps growing due to the
           increasing valuation in each subsequent round.
         </p>
-        <p>
+        <p className="hidden-no-pvs-width">
           You can see this playing out in the percentage-value scatter plot on the right.  Each equity stake keeps
           moving to the right and up: the ownership percentage gets diluted, but the value of the stake keeps going
           higher.
         </p>
-        <p>
+        <p className="hidden-no-pvs-width">
           Things don't always work out this way.  Could the scatterplot series twist down into a &cap; shape?  Or
           could you play the game so that your series twists back on itself like a &sup;, <em>increasing</em> your
           percentage of the whole while still being more valuable?  Lets find out!

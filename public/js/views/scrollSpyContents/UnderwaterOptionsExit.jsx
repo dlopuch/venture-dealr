@@ -152,6 +152,14 @@ module.exports = React.createClass({
               of <strong onMouseOver={this.selectSeriesC}><span className="highlight-round-valuation">$ 6</span><span className="highlight-round-money">5M</span></strong>.
               How big do you think our exit needs to be before no one is underwater?
             </p>
+
+            <div className="visible-xs-block alert alert-danger">
+              <strong>Wider is Better</strong>
+              <p>
+                View this on a wider screen for a detailed cap table showing each investor's exit share!
+              </p>
+            </div>
+
             <div>
               Exit valuation: <span ref='roundSlider'></span><br/>
             </div>

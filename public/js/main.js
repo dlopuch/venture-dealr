@@ -1,7 +1,7 @@
 var d3 = require('d3');
 var _ = require('lodash');
 
-var storyScenarios = require('models/storyScenarios');
+var storyScenarios = window.scenarios = require('models/storyScenarios');
 
 // Various subcomponents require bootstrap js, but bootstrap needs jquery on global scope.
 // Bring it all in before anything starts up.
@@ -41,25 +41,19 @@ window.onload = function() {
   var Exit        = window.Exit        = require('models/Exit');
 
 
-
-  window.scenario = require('../../test/unit/_scenarios/simpleFoundingSeedSeriesA')();
-
-  // Add a demo b round at 30M pre
-  var bRound = new Round('B round', window.scenario.seriesARound, 30000000, {type: 'post', percent: 0.05});
-  var bInvestment1 = window.bInvestment1 = new Investment(bRound, 20000000, {name: '20M series B'});
-  window.bRound = bRound;
-
-  // Add a demo exit at 50M
-  var exit = window.exit = new Exit(bRound, 50000000);
-
-
-
   actions.round.setScenario(storyScenarios.rounds.demoExit);
-  //actions.chart.selectMeasure('values');
 
 
 
   require('views/reactApp.jsx');
   require('views/headerAffixSpy');
+
+  if (window.console && window.console.warn) {
+    window.console.warn('Hello, Hacker. Wanna see something fun? Scroll back to the top then:');
+    window.console.warn('  > actions.round.changeRoundPreMoneyValuation(scenarios.rounds.demoSeriesC, 500000000)');
+    window.console.warn('or if you want a windfall,');
+    window.console.warn('  > actions.exit.changeValuation(scenarios.rounds.demoExit , 5000000000)');
+    window.console.warn('Now go enjoy the full source at https://github.com/dlopuch/venture-dealr');
+  }
 
 };
