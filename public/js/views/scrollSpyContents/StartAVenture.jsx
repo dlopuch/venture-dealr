@@ -38,7 +38,7 @@ module.exports = React.createClass({
       <div id={SCROLLSPY_PROPS.id}>
         <h1 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>The Beginning of a Journey</h1>
         <p>
-          You have an idea and a co-founder.  Great, lets go start our venture!
+          You have an idea and a co-founder.  Great, time to go start the venture!
         </p>
         <p>
           You and your co-founder agree to an <strong>initial 60-40</strong> equity split.
