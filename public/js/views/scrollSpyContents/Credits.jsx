@@ -48,7 +48,7 @@ module.exports = React.createClass({
         </p>
         <p>
           A special thanks to everyone who gave early reviews, feedback, and suggestions: Ray, Dave, Sean, Kyan, Islam,
-          Adam, Jeff, and the whole crew
+          Adam, Connor, Jeff, and the whole crew
           at <a id="datahero2" href="https://www.datahero.com" target="_blank" data-toggle="tooltip" data-placement="bottom"
                 title="Join our team to build more interactive visualizations like this!">DataHero</a> for the
           original hackathon inspiration.  <i className="fa fa-heart"> </i>
