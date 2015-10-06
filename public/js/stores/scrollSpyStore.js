@@ -69,9 +69,9 @@ window.onbeforeunload = function(e) {
 
     // do something unnoticable but time consuming like writing data to console to let final tracking go through
     // (real way is synchronous ajax (oxymoron...) but we can't control analytics libs)
-    if (console && console.log) {
+    if (window.console && window.console.log) {
       for (var i=0; i<2000; i++) {
-        console.log('just stallin you for a few ms while your browser shoots off some requests...');
+        window.console.log('just stallin you for a few ms while your browser shoots off some requests...');
       }
     }
   }
