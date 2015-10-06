@@ -4,6 +4,7 @@ var Reflux = require('reflux');
 
 var Slider = require('bootstrap-slider');
 
+var analytics = require('analytics');
 var storyScenarios = require('models/storyScenarios');
 
 var ChartStore = require('stores/ChartStore');
@@ -38,6 +39,9 @@ module.exports = React.createClass({
   componentDidMount: function() {
     this._origExitValuation = storyScenarios.rounds.exit.valuation;
 
+    var slideStartMs;
+    var slideStartValue;
+
     this._slider = new Slider( React.findDOMNode(this.refs.roundSlider), {
       enabled: this.state.sliderEnabled,
       value: this.state.sliderValue,
@@ -46,7 +50,23 @@ module.exports = React.createClass({
       step: 100000,
       formatter: ChartStore.CURRENCY_FORMATTER
     })
-    .on('change', this._onSliderChange);
+    .on('change', this._onSliderChange)
+    .on('slideStart', function(value) {
+      slideStartMs = Date.now();
+      slideStartValue = value;
+    })
+    .on('slideStop', function(slideEndValue) {
+      analytics.event(
+        analytics.E.SLIDER.ID,
+        analytics.E.SLIDER.SLIDE_STOP,
+        SCROLLSPY_PROPS.id,
+        Date.now() - slideStartMs,
+        {
+          startValue: slideStartValue,
+          endValue: slideEndValue
+        }
+      );
+    });
   },
 
   onScrollSpyFocus: function(target) {
@@ -127,12 +147,13 @@ module.exports = React.createClass({
           </div>
           <div className="panel-body">
             <p>
-              Today is not a good day.  Adjust the exit valuation and note to which investors the exit return flows to
-              in which order using the table on the right.
+              Today is not a good day.  Adjust the exit valuation and note the order in which the exit's returns flow
+              to different investors using the table on the right.
             </p>
             <p>
               If the future outlook of you venture is uncertain, which investors might push the company to take this
-              exit opportunity today, and which investors might push to wait for another day?
+              exit opportunity today, and which investors might push to wait for another day? Scenarios like these are
+              when board voting preferences become important.
             </p>
             <div>
               Exit valuation: <span ref='roundSlider'></span><br/>

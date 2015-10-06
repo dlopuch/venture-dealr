@@ -47,6 +47,7 @@ module.exports = React.createClass({
         <UnderwaterOptionsExit />
 
         <Credits />
+
       </div>
     )
   }

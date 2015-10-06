@@ -16,6 +16,7 @@ var Reflux = require('reflux');
 // assumes bootstrap js and it's jquery plugins have been loaded
 
 var actions = require('actions/actionsEnum.js');
+var analytics = require('analytics');
 
 
 var OFFSET = 200;
@@ -26,30 +27,56 @@ var state = {
   spyTargets: []
 };
 
-var lastActivation = Date.now();
+var spyTargetsTriggered = {};
 
 var doLogLastActivation;
-var logLastActivationTimeout;
+var doLogLastActivationTimeout;
 
-var queueLogLastActivationFn = function(scenario) {
+function queueLogScenarioActivation(scenario) {
+  var firstTime = !spyTargetsTriggered[scenario];
+  spyTargetsTriggered[scenario] = true;
+
+  // Fire queued event from last scenario
   if (doLogLastActivation) {
     doLogLastActivation();
-    clearTimeout(logLastActivationTimeout);
   }
 
-  lastActivation = Date.now();
+  // Log that we triggered it
+  analytics.event(analytics.E.SCROLL_SPY.ID, analytics.E.SCROLL_SPY.SCENARIO_TRIGGERED, scenario, firstTime ? 1 : 0);
+
+  // But also queue up an event that will fire with how long we stayed on it when we visit the next scenario...
+
+  var scenarioHitMs = Date.now();
 
   doLogLastActivation = function() {
-    var timeSpentMs = Date.now() - lastActivation;
-    window.mixpanel.track(
-      'Scroll Spy Target Triggered',
-      {scenario: scenario, timeSpentMs: timeSpentMs}
-    );
-    window.ga('send', 'event', 'Scroll Spy', 'Target Triggered', scenario, timeSpentMs);
+    // cleanup
+    doLogLastActivation = null;
+    clearTimeout(doLogLastActivationTimeout);
 
-    lastActivation = Date.now();
+    // log the previous event
+    var timeSpentMs = Date.now() - scenarioHitMs;
+    analytics.event(analytics.E.SCROLL_SPY.ID, analytics.E.SCROLL_SPY.SCENARIO_DURATION, scenario, timeSpentMs);
+
+    // queue up a watchdog
+    doLogLastActivationTimeout = setTimeout(doLogLastActivation, 6 * 60 * 1000);
   };
+}
+
+/** Stall the page exit until we fire off last queued ajax */
+window.onbeforeunload = function(e) {
+  if (doLogLastActivation) {
+    doLogLastActivation();
+
+    // do something unnoticable but time consuming like writing data to console to let final tracking go through
+    // (real way is synchronous ajax (oxymoron...) but we can't control analytics libs)
+    if (console && console.log) {
+      for (var i=0; i<2000; i++) {
+        console.log('just stallin you for a few ms while your browser shoots off some requests...');
+      }
+    }
+  }
 };
+
 
 module.exports = Reflux.createStore({
   init: function() {
@@ -80,9 +107,9 @@ module.exports = Reflux.createStore({
 
     scenario = scenario.substring(1); // bootstrap makes this '#target-id'.  We want to lose the #
 
+    queueLogScenarioActivation(scenario);
+
     actions.scrollSpy.targetTriggered(scenario);
-
-
   },
 
   _onRefreshed: function(domId) {

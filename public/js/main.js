@@ -14,10 +14,10 @@ window.onload = function() {
 
   // Analytics (available only on gh-pages branch)
   window.mixpanel = window.mixpanel || {
-    track: function() {},
+    track: function() { },
     identify: function() {}
   };
-  window.ga = window.ga || function() {};
+  window.ga = window.ga || function() { console.log.apply(console, ['GA'].concat(arguments)); };
   window.mixpanel.identify('Rando ' + Math.random());
 
 
