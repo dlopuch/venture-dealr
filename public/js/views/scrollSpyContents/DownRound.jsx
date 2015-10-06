@@ -4,6 +4,7 @@ var React = require('react');
 var Reflux = require('reflux');
 var Slider = require('bootstrap-slider');
 
+var analytics = require('analytics');
 var storyScenarios = require('models/storyScenarios');
 
 var ScrollSpyContentsMixin = require('views/scrollSpy/ScrollSpyContentsMixin');
@@ -66,15 +67,28 @@ module.exports = React.createClass({
   },
 
   switchToPercentages() {
+    analytics.event(
+      analytics.E.ROUND_CHART_BUTTON.ID,
+      analytics.E.ROUND_CHART_BUTTON.PERCENTAGE_VIEW,
+      SCROLLSPY_PROPS.id
+    );
     actions.chart.selectMeasure('percentages');
   },
 
   switchToValues() {
+    analytics.event(
+      analytics.E.ROUND_CHART_BUTTON.ID,
+      analytics.E.ROUND_CHART_BUTTON.VALUE_VIEW,
+      SCROLLSPY_PROPS.id
+    );
     actions.chart.selectMeasure('values');
   },
 
   componentDidMount() {
     this._origPreMoney = storyScenarios.rounds.seriesB.preMoneyValuation;
+
+    var slideStartMs;
+    var slideStartValue;
 
     this._slider = new Slider( React.findDOMNode(this.refs.roundSlider), {
       enabled: this.state.sliderEnabled,
@@ -90,7 +104,23 @@ module.exports = React.createClass({
       ticksPositions: [0, 50, 100],
       ticksLabels: ['Down Round', '|', 'Growth Round']
     })
-    .on('change', this._onSliderChange);
+    .on('change', this._onSliderChange)
+    .on('slideStart', function(value) {
+      slideStartMs = Date.now();
+      slideStartValue = value;
+    })
+    .on('slideStop', function(slideEndValue) {
+      analytics.event(
+        analytics.E.SLIDER.ID,
+        analytics.E.SLIDER.SLIDE_STOP,
+        SCROLLSPY_PROPS.id,
+        Date.now() - slideStartMs,
+        {
+          startValue: slideStartValue,
+          endValue: slideEndValue
+        }
+      );
+    });
   },
 
   _onSliderChange: function(sliderVals) {

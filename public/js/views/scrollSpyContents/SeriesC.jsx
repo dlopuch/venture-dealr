@@ -2,6 +2,7 @@ var _ = require('lodash');
 var React = require('react');
 var Reflux = require('reflux');
 
+var analytics = require('analytics');
 var storyScenarios = require('models/storyScenarios');
 
 var ScrollSpyContentsMixin = require('views/scrollSpy/ScrollSpyContentsMixin');
@@ -30,10 +31,20 @@ module.exports = React.createClass({
   },
 
   switchToPercentage() {
+    analytics.event(
+      analytics.E.ROUND_CHART_BUTTON.ID,
+      analytics.E.ROUND_CHART_BUTTON.PERCENTAGE_VIEW,
+      SCROLLSPY_PROPS.id
+    );
     actions.chart.selectMeasure('percentages');
   },
 
   switchToValue() {
+    analytics.event(
+      analytics.E.ROUND_CHART_BUTTON.ID,
+      analytics.E.ROUND_CHART_BUTTON.VALUE_VIEW,
+      SCROLLSPY_PROPS.id
+    );
     actions.chart.selectMeasure('values');
   },
 

@@ -27,13 +27,24 @@ var state = {
   spyTargets: []
 };
 
+var spyTargetsTriggered = {};
+
 var doLogLastActivation;
 var doLogLastActivationTimeout;
 
 function queueLogScenarioActivation(scenario) {
+  var firstTime = !spyTargetsTriggered[scenario];
+  spyTargetsTriggered[scenario] = true;
+
+  // Fire queued event from last scenario
   if (doLogLastActivation) {
     doLogLastActivation();
   }
+
+  // Log that we triggered it
+  analytics.event(analytics.E.SCROLL_SPY.ID, analytics.E.SCROLL_SPY.SCENARIO_TRIGGERED, scenario, firstTime ? 1 : 0);
+
+  // But also queue up an event that will fire with how long we stayed on it when we visit the next scenario...
 
   var scenarioHitMs = Date.now();
 
@@ -44,7 +55,7 @@ function queueLogScenarioActivation(scenario) {
 
     // log the previous event
     var timeSpentMs = Date.now() - scenarioHitMs;
-    analytics.event('Scroll Spy', 'Target Triggered', scenario, timeSpentMs);
+    analytics.event(analytics.E.SCROLL_SPY.ID, analytics.E.SCROLL_SPY.SCENARIO_DURATION, scenario, timeSpentMs);
 
     // queue up a watchdog
     doLogLastActivationTimeout = setTimeout(doLogLastActivation, 6 * 60 * 1000);
@@ -59,7 +70,7 @@ window.onbeforeunload = function(e) {
     // do something unnoticable but time consuming like writing data to console to let final tracking go through
     // (real way is synchronous ajax (oxymoron...) but we can't control analytics libs)
     if (console && console.log) {
-      for (var i=0; i<20000; i++) {
+      for (var i=0; i<2000; i++) {
         console.log('just stallin you for a few ms while your browser shoots off some requests...');
       }
     }

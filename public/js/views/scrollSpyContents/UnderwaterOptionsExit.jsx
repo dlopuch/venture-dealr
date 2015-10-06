@@ -4,6 +4,7 @@ var React = require('react');
 var Reflux = require('reflux');
 var Slider = require('bootstrap-slider');
 
+var analytics = require('analytics');
 var ChartStore = require('stores/ChartStore');
 var ScrollSpyContentsMixin = require('views/scrollSpy/ScrollSpyContentsMixin');
 
@@ -30,6 +31,9 @@ module.exports = React.createClass({
     this._origSeriesCValuation = storyScenarios.rounds.seriesC.preMoneyValuation;
     this._origExitValuation = storyScenarios.rounds.exit.valuation;
 
+    var slideStartMs;
+    var slideStartValue;
+
     this._slider = new Slider( React.findDOMNode(this.refs.roundSlider), {
       enabled: this.state.sliderEnabled,
       value: this.state.sliderValue,
@@ -39,7 +43,23 @@ module.exports = React.createClass({
       formatter: ChartStore.CURRENCY_FORMATTER,
       scale: 'logarithmic'
     })
-    .on('change', this._onSliderChange);
+    .on('change', this._onSliderChange)
+    .on('slideStart', function(value) {
+      slideStartMs = Date.now();
+      slideStartValue = value;
+    })
+    .on('slideStop', function(slideEndValue) {
+      analytics.event(
+        analytics.E.SLIDER.ID,
+        analytics.E.SLIDER.SLIDE_STOP,
+        SCROLLSPY_PROPS.id,
+        Date.now() - slideStartMs,
+        {
+          startValue: slideStartValue,
+          endValue: slideEndValue
+        }
+      );
+    });
   },
 
   _onSliderChange: function(sliderVals) {

@@ -4,6 +4,7 @@ var Reflux = require('reflux');
 
 var Slider = require('bootstrap-slider');
 
+var analytics = require('analytics');
 var storyScenarios = require('models/storyScenarios');
 
 var ChartStore = require('stores/ChartStore');
@@ -38,6 +39,9 @@ module.exports = React.createClass({
   componentDidMount: function() {
     this._origExitValuation = storyScenarios.rounds.exit.valuation;
 
+    var slideStartMs;
+    var slideStartValue;
+
     this._slider = new Slider( React.findDOMNode(this.refs.roundSlider), {
       enabled: this.state.sliderEnabled,
       value: this.state.sliderValue,
@@ -46,7 +50,23 @@ module.exports = React.createClass({
       step: 100000,
       formatter: ChartStore.CURRENCY_FORMATTER
     })
-    .on('change', this._onSliderChange);
+    .on('change', this._onSliderChange)
+    .on('slideStart', function(value) {
+      slideStartMs = Date.now();
+      slideStartValue = value;
+    })
+    .on('slideStop', function(slideEndValue) {
+      analytics.event(
+        analytics.E.SLIDER.ID,
+        analytics.E.SLIDER.SLIDE_STOP,
+        SCROLLSPY_PROPS.id,
+        Date.now() - slideStartMs,
+        {
+          startValue: slideStartValue,
+          endValue: slideEndValue
+        }
+      );
+    });
   },
 
   onScrollSpyFocus: function(target) {
