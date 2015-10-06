@@ -31,6 +31,13 @@ module.exports = React.createClass({
         <SeedValue />
 
         <PVScatter />
+        <h3 className="visible-no-pvs-width" style={{borderBottom: 'none'}}>&nbsp;</h3>
+        <div className="visible-no-pvs-width alert alert-danger">
+          <strong>Wider is Better</strong>
+          <p>
+            View this on a wider screen for bonus visualizations!
+          </p>
+        </div>
 
         <SeriesA />
 

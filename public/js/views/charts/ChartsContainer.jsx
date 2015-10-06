@@ -61,8 +61,8 @@ module.exports = React.createClass({
 
   render() {
     return (
-      <div>
-        <div id="charts-container" ref="chartsContainer">
+      <div className="row">
+        <div id="charts-container" ref="chartsContainer" className="col-md-12">
           <svg id="round-chart" ref="roundChart" className="round-chart" width="700" height="250"></svg>
           <PercentValueScatterContainer promisePVScatterRendered={this.props.promisePVScatterRendered} />
         </div>

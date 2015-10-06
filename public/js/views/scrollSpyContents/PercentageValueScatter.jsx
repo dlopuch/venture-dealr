@@ -39,7 +39,7 @@ module.exports = React.createClass({
 
   render() {
     return (
-      <div id={SCROLLSPY_PROPS.id}>
+      <div id={SCROLLSPY_PROPS.id} className="hidden-no-pvs-width">
         <h2 className={this.state.scrollSpy.isFocused ? 'focus' : ''}>Percentage or Value?</h2>
         <p>
           Typically with each round, your percentage stake gets smaller (dilution).  The interesting questions, however,
