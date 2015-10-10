@@ -2,7 +2,7 @@
 
 Visualize and turn the knobs on venture financing concepts such as dilution, option pools, liquidation preferences, down-rounds, and more!
 
-![Venture Dealr](https://dlopuch.github.io/venture-dealr/og_image.png "Venture Dealr")
+![Venture Dealr](https://dlopuch.github.io/venture-dealr/og_image_2_retina.png "Venture Dealr")
 
 [https://dlopuch.github.io/venture-dealr](https://dlopuch.github.io/venture-dealr)
 
