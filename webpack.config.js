@@ -4,10 +4,13 @@ var APP_ROOT = __dirname + '/public/js';
 
 module.exports = {
   context: APP_ROOT,
-  entry: './main',
+  entry: {
+    'main': './main',
+    'demo-reel': './main-demo-reel'
+  },
   output: {
-    path: './public/',
-    filename: 'bundle.js'
+    path: './dist/',
+    filename: 'bundle.[name].js'
   },
   module: {
     preLoaders: [
