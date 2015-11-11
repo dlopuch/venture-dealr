@@ -52,9 +52,9 @@ var OPTIONS_LAST = '#DDD';
 //   Inter-round: interpolate from dark-to-light (earlier rounds are darker)
 //   Intra-round: interpolate across color scales (brown-to-purple for common, teal-to-green for preferred)
 // Color scales are based off of colorbrewer.org diverging scales
-var COMMON_FIRST_FIRST = '#8c510a'; // BrBG, brown dark-to-light
+var COMMON_FIRST_FIRST = '#DEB887'; // BrBG, brown dark-to-light
 var COMMON_LAST_FIRST  = '#f6e8c3';
-var COMMON_FIRST_LAST  = '#762a83'; // PRGn, purple dark-to-light
+var COMMON_FIRST_LAST  = '#A0522D'; // PRGn, purple dark-to-light
 var COMMON_LAST_LAST   = '#e7d4e8';
 
 var PREF_FIRST_FIRST   = '#01665e'; // BrBG, teal dark-to-light
@@ -87,7 +87,7 @@ function createColorMatrix(chartData) {
     var interpolator = d3.interpolateRgb(commonFirstByRound(roundI), commonLastByRound(roundI));
     ret[ ShareClass.COMMON ] = d3.scale.ordinal()
       .domain(_.pluck(equities, 'id'))
-      .range( d3.range(0, 1 + 1 / equities.length, 1 / equities.length) // range from 0 to 1 inclusive
+      .range( d3.range(0, 1.0001, 1 / (equities.length-1)) // range from 0 to 1 inclusive
               .map(interpolator));
 
     // preferred scale

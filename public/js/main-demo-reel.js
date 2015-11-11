@@ -27,15 +27,17 @@ window.onload = function() {
   var origExit;
   var demos = [
     {
-      title: 'Founding',
+      title: 'The Founding',
       actions: () => {
         actions.chart.showFirstRoundLabels(true);
         actions.chart.selectMeasure('percentages');
         actions.round.setScenario(storyScenarios.rounds.founding);
-      }
+        d3.select('#supertitle').style({opacity: 1});
+      },
+      waitFor: 3000
     },
     {
-      title: 'Seed',
+      title: 'Seed Investments',
       actions: () => {
         storyScenarios.actions.makeSeedNoOptions();
         actions.round.setScenario(storyScenarios.rounds.seed);
@@ -49,26 +51,27 @@ window.onload = function() {
       }
     },
     {
-      title: 'Equity Values',
+      title: 'Valuations',
       actions: () => {
         actions.chart.selectMeasure('values');
         actions.round.setScenario(storyScenarios.rounds.seed);
       }
     },
     {
-      title: 'Series A',
+      title: 'Funding Rounds',
       actions: () => {
         actions.chart.showFirstRoundLabels(false);
         actions.round.setScenario(storyScenarios.rounds.seriesA);
-      }
+      },
+      waitFor: 1000
     },
     {
-      title: 'Series B',
+      title: 'Funding Rounds',
       actions: () => actions.round.setScenario(storyScenarios.rounds.seriesB),
-      waitFor: 1500
+      waitFor: 1000
     },
     {
-      title: 'Series C',
+      title: 'Funding Rounds',
       actions: () => actions.round.setScenario(storyScenarios.rounds.seriesC)
     },
     {
@@ -92,7 +95,7 @@ window.onload = function() {
       }
     },
     {
-      title: 'Exit',
+      title: 'Exits',
       actions: () => {
         actions.round.changeRoundPreMoneyValuation(storyScenarios.rounds.seriesB, origBPreMoney);
         actions.round.setScenario(storyScenarios.rounds.exit);
@@ -143,15 +146,16 @@ window.onload = function() {
       actions: () => actions.exit.changeValuation(storyScenarios.rounds.exit, 104000000),
     },
     {
-      title: 'And Moonshots',
+      title: 'And the Moonshots',
       actions: () => {
         actions.round.changeRoundPreMoneyValuation(storyScenarios.rounds.seriesC, origCPreMoney);
         actions.exit.changeValuation(storyScenarios.rounds.exit, 1000000000);
+        d3.select('#supertitle').style({opacity: 0});
       },
       waitFor: 5000
     },
     {
-      title: 'And Moonshots',
+      title: 'And the Moonshots',
       actions: () => {
         actions.exit.changeValuation(storyScenarios.rounds.exit, origExit);
       },
@@ -164,16 +168,21 @@ window.onload = function() {
     actions.round.setScenario(storyScenarios.rounds.demoExit);
 
     var i = 0;
-    function doNextScene() {
+    window.cycle = true;
+    window.doNextScene = function doNextScene() {
+      if (!window.cycle)
+        return;
+
       var demo = demos[i % demos.length];
 
       console.log('Triggering: ', demo.title);
+      actions.demo.newDemoTitle(demo.title);
       demo.actions();
       i++;
 
       setTimeout(doNextScene, demo.waitFor || 2000);
-    }
-    setTimeout(doNextScene);
+    };
+    setTimeout(window.doNextScene);
   });
 
 };

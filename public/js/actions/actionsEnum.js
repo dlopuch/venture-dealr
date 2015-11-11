@@ -107,6 +107,10 @@ module.exports = {
      * @param {boolean} True to hide, false to show
      */
     'hideSelectRound'
+  ]),
+
+  demo: Reflux.createActions([
+    'newDemoTitle'
   ])
 
 };

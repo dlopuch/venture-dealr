@@ -183,3 +183,43 @@ body .slider-handle {
 
   background-image: -webkit-linear-gradient(top, cadetblue 0%, darken(cadetblue, 15%) 100%)
 }
+
+.demo-reel {
+  position: relative;
+  padding: 20px;
+
+  h1 {
+    position: absolute;
+    bottom: -75px;
+    right: 450px;
+
+    &.animated {
+      transition: all 300ms ease-out;
+    }
+
+    &.fade-out {
+      bottom: 40px;
+      opacity: 0;
+    }
+
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: @brand-primary
+  }
+
+  .supertitle, .subtitle {
+    position: absolute;
+    right: 450px;
+  }
+
+  .supertitle {
+    bottom: -20px;
+    color: cadetblue;
+  }
+
+  .subtitle {
+    bottom: -90px;
+    font-weight: 300;
+    color: lighten(@brand-primary, 20%);
+  }
+}
